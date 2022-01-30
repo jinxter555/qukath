@@ -60,6 +60,8 @@ defmodule Qukath.OrganizationsTest do
     # @tag :skip
     test "update_employee/2 with invalid data returns error changeset" do
       employee = employee_fixture()
+                 |> forget(:entity) 
+                 |> forget(:user) 
       assert {:error, %Ecto.Changeset{}} = Employees.update_employee(employee, @invalid_attrs)
       assert employee == Employees.get_employee!(employee.id)
     end
