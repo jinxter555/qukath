@@ -1,0 +1,41 @@
+/* This file is for your main application CSS */
+// @import "../node_modules/bootstrap/scss/bootstrap";
+
+@import "../node_modules/bulma/bulma.sass";
+
+
+@import "../node_modules/@fortawesome/fontawesome-free/scss/fontawesome";
+@import "../node_modules/@fortawesome/fontawesome-free/scss/regular";
+@import "../node_modules/@fortawesome/fontawesome-free/scss/solid";
+@import "../node_modules/@fortawesome/fontawesome-free/scss/brands";
+
+
+
+body { /* Add this */
+  padding-top: 5rem;
+}
+
+
+/* LiveView specific classes for your customization */
+.phx-no-feedback.invalid-feedback,
+.phx-no-feedback .invalid-feedback {
+  display: none;
+}
+
+.phx-click-loading {
+  opacity: 0.5;
+  transition: opacity 1s ease-out;
+}
+
+.phx-disconnected{
+  cursor: wait;
+}
+
+.phx-disconnected *{
+  pointer-events: none;
+}
+
+.alert:empty {
+  display: none;
+}
+
