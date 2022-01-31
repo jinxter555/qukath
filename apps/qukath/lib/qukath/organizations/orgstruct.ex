@@ -21,9 +21,9 @@ defmodule Qukath.Organizations.Orgstruct do
   @doc false
   def changeset(orgstruct, attrs) do
     orgstruct
-    |> cast(attrs, [:name, :type])
+    |> cast(attrs, [:name, :type, :leader_entity_id])
     |> cast_assoc(:entity)
     |> cast_assoc(:leader_entity)
-    |> validate_required([:name, :type, :leader_entity])
+    |> validate_required([:name, :type, :leader_entity_id])
   end
 end

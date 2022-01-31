@@ -34,6 +34,7 @@ defmodule Qukath.Factory do
     %Orgstruct {
       name: Faker.Company.name(),
       type: :company,
+      # leader_entity: build(:entity, %{type: :employee}),
       entity: build(:entity, %{type: :org}),
     }
   end

@@ -38,6 +38,30 @@ defmodule Qukath.Employees do
   """
   def get_employee!(id), do: Repo.get!(Employee, id)
 
+  def get_employee_entity_id!(id) do  
+    employee = get_employee!(id) 
+    employee.entity_id
+  end
+
+  def get_employee_by_entity_id!(entity_id) do  
+    query = from emp in Employee, where: emp.entity_id == ^entity_id, select: emp
+    Repo.all(query)
+  end
+
+  def get_employee_by_user_id!(user_id) do  
+    query = from emp in Employee, where: emp.user_id == ^user_id, select: emp
+    Repo.all(query)
+  end
+
+  def get_employee_by_user_orgstruct_ids!(user_id, orgstruct_id) do  
+    query = from emp in Employee,
+      where: emp.user_id == ^user_id
+      and emp.orgstruct_id == ^orgstruct_id,
+      select: emp
+    Repo.all(query)
+  end
+
+
   @doc """
   Creates a employee.
 

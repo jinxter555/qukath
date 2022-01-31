@@ -54,9 +54,16 @@ defmodule Qukath.Orgstructs do
   """
   def create_orgstruct(attrs \\ %{}) do
     Repo.transaction(fn ->
-      orgstruct_entity = Entities.create_entity(%{type: :org})
-      create_orgstruct(orgstruct_entity.id, attrs)
-    end)
+      with {:ok, orgstruct_entity} <- Entities.create_entity(%{type: :org}),
+           {:ok, orgstruct} <- create_orgstruct(orgstruct_entity.id, attrs) do
+        {:ok, orgstruct}
+      else
+        error -> error
+      end
+    end) |> case do
+      {:ok, result} -> result
+    end
+
   end
 
   def create_orgstruct(entity_id, attrs) do
@@ -66,17 +73,26 @@ defmodule Qukath.Orgstructs do
     |> Repo.insert()
   end
 
-  def create_orgstruct_init(user_id, attrs \\ %{}) do
+  def create_orgstruct_init(user_id, attrs \\ %{}, username \\ nil) do
     user = Accounts.get_user!(user_id)
+    username = username  || hd(String.split(user.email, "@"))
     Repo.transaction(fn ->
-      leader_entity = Entities.create_entity(%{type: :employee})
-      orgstruct_entity = Entities.create_entity(%{type: :org})
 
-      attrs = Map.put(attrs, :leader_entity_id, leader_entity.id)
-      orgstruct = create_orgstruct(orgstruct_entity.id, attrs)
-      Employees.create_employee(leader_entity.id, %{user_id: user.id, orgstruct_id: orgstruct.id})
-      orgstruct
-    end)
+      with {:ok, leader_entity} <- Entities.create_entity(%{type: :employee}),
+           {:ok, orgstruct_entity} <- Entities.create_entity(%{type: :org}),
+
+           attrs <- Map.put(attrs, :leader_entity_id, leader_entity.id),
+
+           {:ok, orgstruct} <- create_orgstruct(orgstruct_entity.id, attrs),
+           {:ok, _} <- Employees.create_employee(leader_entity.id, 
+             %{user_id: user.id, name: username, orgstruct_id: orgstruct.id}) do
+        {:ok, orgstruct}
+      else
+        error -> error
+      end
+    end) |> case do
+      {:ok, result} -> result
+    end
   end
 
   @doc """
