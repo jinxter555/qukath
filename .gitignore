@@ -22,4 +22,5 @@ erl_crash.dump
 # Temporary files, for example, from tests.
 /tmp
 
-
+# Ignore generated js hook files for components
+assets/js/_hooks/

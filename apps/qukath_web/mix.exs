@@ -11,7 +11,7 @@ defmodule QukathWeb.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:gettext] ++ Mix.compilers(),
+      compilers: [:gettext] ++ Mix.compilers() ++ [:surface],
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -30,6 +30,7 @@ defmodule QukathWeb.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:dev), do: ["lib"] ++ catalogues()
   defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
@@ -55,7 +56,7 @@ defmodule QukathWeb.MixProject do
       {:dart_sass, "~> 0.3", runtime: Mix.env() == :dev},
       {:bulma, "~> 0.9.3"},
       {:surface_bulma, "~> 0.3.2"},
-      {:surface, git: "https://github.com/surface-ui/surface.git", branch: "master", override: true},
+      {:surface, git: "https://github.com/surface-ui/surface", branch: "master", override: true},
       {:surface_catalogue, "~> 0.2.0"},
       {:phx_gen_auth, "~> 0.7"},
 
@@ -76,6 +77,12 @@ defmodule QukathWeb.MixProject do
         "sass default --no-source-map --style=compressed",
         "phx.digest"
       ]
+    ]
+  end
+
+  def catalogues do
+    [
+      "priv/catalogue"
     ]
   end
 end

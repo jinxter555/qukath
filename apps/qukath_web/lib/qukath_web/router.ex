@@ -1,6 +1,8 @@
 defmodule QukathWeb.Router do
   use QukathWeb, :router
 
+  import Surface.Catalogue.Router
+
   import QukathWeb.UserAuth
 
   pipeline :browser do
@@ -21,6 +23,17 @@ defmodule QukathWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    live "/demo", Demo
+
+
+    live "/main", MainLive.Index, :index
+    live "/orgstructs/display", OrgstructLive.Display, :index
+    live "/orgstructs/new", OrgstructLive.Index, :new
+    # live "/orgstructs/:orgstruct_id/new", OrgstructLive.Index, :new
+    live "/orgstructs/:id/edit", OrgstructLive.Index, :edit
+    live "/orgstructs/:id", OrgstructLive.Show, :show
+    live "/orgstructs/:id/show/edit", OrgstructLive.Show, :edit
+
   end
 
   # Other scopes may use custom stacks.
@@ -87,5 +100,12 @@ defmodule QukathWeb.Router do
     get "/users/confirm", UserConfirmationController, :new
     post "/users/confirm", UserConfirmationController, :create
     get "/users/confirm/:token", UserConfirmationController, :confirm
+  end
+
+  if Mix.env() == :dev do
+    scope "/" do
+      pipe_through :browser
+      surface_catalogue "/catalogue"
+    end
   end
 end

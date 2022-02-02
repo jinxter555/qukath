@@ -63,8 +63,10 @@ config :qukath_web, QukathWeb.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/qukath_web/(live|views)/.*(ex)$",
-      ~r"lib/qukath_web/templates/.*(eex)$"
+      # ~r"lib/qukath_web/(live|views)/.*(ex)$",
+      ~r"lib/qukath_web/(live|views|components)/.*(ex|sface|js)$",
+      ~r"lib/qukath_web/templates/.*(eex)$",
+      ~r"priv/catalogue/.*(ex)$"
     ]
   ]
 

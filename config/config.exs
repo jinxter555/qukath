@@ -54,6 +54,10 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :surface, :components, [
+  {Surface.Components.Form.ErrorTag, default_translator: {QukathWeb.ErrorHelpers, :translate_error}}
+]
+
 
 config :dart_sass,
   version: "1.49.0",

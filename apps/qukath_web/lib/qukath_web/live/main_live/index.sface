@@ -1,0 +1,25 @@
+    
+<OrgstructFormBulma id={orgstruct_form_cid()} />
+<Link label="New Org" to="#" click="orgstruct" values={id: nil, action: :new, type: :company, cid: orgstruct_form_cid()} class="button"/>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <div id="orgstructs" phx-update="append">
+      {#for orgstruct <- @orgstructs }
+      <div id={"orgstruct-#{orgstruct.id}"} class="container">
+             {orgstruct.name }
+             <Link label="Edit" to="#" click="orgstruct" values={orgstruct_id: orgstruct.id, action: :edit,  cid: orgstruct_form_cid()} />
+             <Link label="Delete" to="#" click="orgstruct" values={orgstruct_id: orgstruct.id, action: :delete,  cid: orgstruct_form_cid()} />
+      </div>
+      {/for}
+    </div>
+  </tbody>
+</table>
+
+
+

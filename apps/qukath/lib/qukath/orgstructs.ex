@@ -53,6 +53,8 @@ defmodule Qukath.Orgstructs do
 
   """
   def create_orgstruct(attrs \\ %{}) do
+    IO.puts "create_orgstruct/1"
+    IO.inspect attrs
     Repo.transaction(fn ->
       with {:ok, orgstruct_entity} <- Entities.create_entity(%{type: :org}),
            {:ok, orgstruct} <- create_orgstruct(orgstruct_entity.id, attrs) do
@@ -67,7 +69,10 @@ defmodule Qukath.Orgstructs do
   end
 
   def create_orgstruct(entity_id, attrs) do
-    attrs = Map.put(attrs, :entity_id, entity_id)
+    # attrs = Map.put(attrs, :entity_id, entity_id)
+    attrs = Map.put(attrs, "entity_id", entity_id)
+    IO.puts "create_orgstruct/2"
+    IO.inspect attrs
     %Orgstruct{}
     |> Orgstruct.changeset(attrs)
     |> Repo.insert()
@@ -81,7 +86,8 @@ defmodule Qukath.Orgstructs do
       with {:ok, leader_entity} <- Entities.create_entity(%{type: :employee}),
            {:ok, orgstruct_entity} <- Entities.create_entity(%{type: :org}),
 
-           attrs <- Map.put(attrs, :leader_entity_id, leader_entity.id),
+           # attrs <- Map.put(attrs, :leader_entity_id, leader_entity.id),
+           attrs <- Map.put(attrs, "leader_entity_id", leader_entity.id),
 
            {:ok, orgstruct} <- create_orgstruct(orgstruct_entity.id, attrs),
            {:ok, _} <- Employees.create_employee(leader_entity.id, 
@@ -126,7 +132,12 @@ defmodule Qukath.Orgstructs do
 
   """
   def delete_orgstruct(%Orgstruct{} = orgstruct) do
-    Repo.delete(orgstruct)
+    Repo.transaction(fn ->
+      entity_id = orgstruct.entity_id
+      orgstruct_changeset = Repo.delete(orgstruct)
+      Entities.get_entity!(entity_id) |> Entities.delete_entity()
+      orgstruct_changeset
+    end)
   end
 
   @doc """
