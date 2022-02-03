@@ -2,12 +2,16 @@ defmodule Qukath.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias  Qukath.Organizations.Employee
+
   @derive {Inspect, except: [:password]}
   schema "users" do
     field :email, :string
     field :password, :string, virtual: true
     field :hashed_password, :string
     field :confirmed_at, :naive_datetime
+    has_many :employees, Employee, foreign_key: :user_id
+
 
     timestamps()
   end

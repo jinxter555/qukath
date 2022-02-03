@@ -15,6 +15,7 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
   data action, :any, default: nil
   data type, :any, default: nil
   data orgstruct_id, :any, default: nil
+  data employee_entity_id, :any, default: nil
   data changeset, :any
 
 
@@ -41,6 +42,7 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
           <HiddenInput field={:action} value={@action} form={f} />
           <HiddenInput field={:type} value={@type} form={f} />
           <HiddenInput field={:orgstruct_id} value={@orgstruct_id} form={f} />
+          <HiddenInput field={:employee_entity_id} value={@employee_entity_id} form={f} />
           <Submit type="Submit"> Save </Submit>
         </Form>
 
@@ -51,11 +53,12 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
   end
 
 
-  def apply_action("new", params, _parent_socket) do
+  def apply_action("new", params, parent_socket) do
     changeset = Orgstructs.change_orgstruct(%Orgstruct{})
     send_update(__MODULE__,
       id: params["cid"],
       type: params["type"],
+      employee_entity_id: parent_socket.assigns.employee_entity_id,
       action: :new,
       changeset: changeset,
       show: true)
@@ -69,6 +72,7 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
       id: params["cid"],
       action: params["action"],
       changeset: changeset,
+      orgstruct: orgstruct,
       type: orgstruct.type, show: true)
   end
 
@@ -76,7 +80,7 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
     Orgstructs.get_orgstruct!(params["orgstruct-id"]) 
     |> Orgstructs.delete_orgstruct()
     |> case do
-      {:ok, changeset} ->
+      {:ok, _changeset} ->
         #IO.puts "deleted changeset"
         #IO.inspect changeset
         changeset = Orgstructs.change_orgstruct(%Orgstruct{})
@@ -110,8 +114,6 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
 
   @impl true
   def handle_event("save", %{"orgstruct" => orgstruct_params}, socket) do
-    IO.puts "save:"
-    IO.inspect orgstruct_params
     save_orgstruct(socket, orgstruct_params["action"], orgstruct_params)
   end
 
@@ -121,14 +123,18 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
       orgstruct_params) 
     |> case do
       {:ok, _orgstruct} ->
-        {:noreply, socket}
+        {:noreply, socket
+        |> assign(show: false)
+        }
     end
   end
 
   defp save_orgstruct(socket, "new", orgstruct_params) do
-    IO.puts "save new:"
-    orgstruct_params = Map.put(orgstruct_params, "leader_entity_id", 2)
-    IO.inspect orgstruct_params
+    orgstruct_params = Map.put(
+      orgstruct_params,
+      "leader_entity_id",
+      orgstruct_params["employee_entity_id"])
+
     case Orgstructs.create_orgstruct(orgstruct_params) do
       {:ok, _orgstruct} ->
         {:noreply, socket

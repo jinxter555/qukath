@@ -53,26 +53,24 @@ defmodule Qukath.Orgstructs do
 
   """
   def create_orgstruct(attrs \\ %{}) do
-    IO.puts "create_orgstruct/1"
-    IO.inspect attrs
     Repo.transaction(fn ->
       with {:ok, orgstruct_entity} <- Entities.create_entity(%{type: :org}),
            {:ok, orgstruct} <- create_orgstruct(orgstruct_entity.id, attrs) do
+
         {:ok, orgstruct}
       else
         error -> error
       end
     end) |> case do
-      {:ok, result} -> result
+      {:ok,  result} -> 
+        broadcast(result, :orgstruct_created)
+        result
     end
 
   end
 
   def create_orgstruct(entity_id, attrs) do
-    # attrs = Map.put(attrs, :entity_id, entity_id)
     attrs = Map.put(attrs, "entity_id", entity_id)
-    IO.puts "create_orgstruct/2"
-    IO.inspect attrs
     %Orgstruct{}
     |> Orgstruct.changeset(attrs)
     |> Repo.insert()
@@ -117,6 +115,7 @@ defmodule Qukath.Orgstructs do
     orgstruct
     |> Orgstruct.changeset(attrs)
     |> Repo.update()
+    |> broadcast(:orgstruct_updated)
   end
 
   @doc """
@@ -152,4 +151,17 @@ defmodule Qukath.Orgstructs do
   def change_orgstruct(%Orgstruct{} = orgstruct, attrs \\ %{}) do
     Orgstruct.changeset(orgstruct, attrs)
   end
+
+
+  def subscribe do
+    Phoenix.PubSub.subscribe(Qukath.PubSub, "orgstructs")
+  end
+
+  defp broadcast({:error, _reason} = error, _event), do: error
+  defp broadcast({:ok, orgstruct}, event) do
+    # IO.puts "broadcast"
+    Phoenix.PubSub.broadcast(Qukath.PubSub, "orgstructs", {event, orgstruct})
+    {:ok, orgstruct}
+  end
+
 end
