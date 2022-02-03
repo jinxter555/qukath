@@ -8,11 +8,11 @@
   <tbody>
     <div id="orgstructs" phx-update="append">
       {#for orgstruct <- @orgstructs }
-      <div id={"orgstruct-#{orgstruct.id}"} class="container">
-             {orgstruct.name }
+        <div id={"orgstruct-#{orgstruct.id}"} class={orgstruct_hidden_class?(orgstruct, "container")}>
+             {orgstruct.name}
              <Link label="Edit" to="#" click="orgstruct" values={orgstruct_id: orgstruct.id, action: :edit,  cid: orgstruct_form_cid()} />
              <Link label="Delete" to="#" click="orgstruct" values={orgstruct_id: orgstruct.id, action: :delete,  cid: orgstruct_form_cid()} />
-      </div>
+        </div>
       {/for}
     </div>
   </tbody>

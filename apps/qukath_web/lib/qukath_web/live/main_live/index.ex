@@ -10,7 +10,7 @@ defmodule QukathWeb.MainLive.Index do
   on_mount QukathWeb.AuthUser
 
   @impl true
-  def mount(_params, session, socket) do
+  def mount(_params, _session, socket) do
     if connected?(socket), do: Orgstructs.subscribe()
     {:ok,
       socket
@@ -43,17 +43,23 @@ defmodule QukathWeb.MainLive.Index do
     end)}
   end
 
+  @impl true
+  def handle_info({:orgstruct_deleted, orgstruct}, socket) do
+    IO.puts "handling info deleted"
+    IO.inspect orgstruct
+    IO.inspect socket
+    {:noreply, update(socket, :orgstructs, fn orgstructs ->
+       [orgstruct | orgstructs]
+    end)}
+  end
 
   defp list_orgstructs do
     Orgstructs.list_orgstructs()
   end
 
-
   defp orgstruct_form_cid() do
     "ofb01"
   end
-
-
 end
 
 

@@ -95,7 +95,9 @@ defmodule Qukath.Orgstructs do
         error -> error
       end
     end) |> case do
-      {:ok, result} -> result
+      {:ok, result} -> 
+        broadcast(result, :orgstruct_created)
+        result
     end
   end
 
@@ -136,7 +138,11 @@ defmodule Qukath.Orgstructs do
       orgstruct_changeset = Repo.delete(orgstruct)
       Entities.get_entity!(entity_id) |> Entities.delete_entity()
       orgstruct_changeset
-    end)
+    end) |> case do
+      {:ok,  result} -> 
+        broadcast(result, :orgstruct_deleted)
+        result
+    end
   end
 
   @doc """
