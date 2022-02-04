@@ -1,4 +1,4 @@
-<Link label="New Org" to="#" click="orgstruct"
+<Link label="New Org" to="#" click="orgstruct_form"
 values={id: nil, action: :new, type: :company, cid: orgstruct_form_cid()} class="button"/>
 
 <OrgstructFormBulma id={orgstruct_form_cid()} />

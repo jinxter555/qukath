@@ -20,14 +20,10 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
   end
 
   @impl true
-  def handle_event("orgstruct", params, socket) do
-    IO.puts "event orgstruct"
-    IO.inspect params
-    IO.inspect socket
+  def handle_event("orgstruct_form", params, socket) do
     OrgstructFormBulma.apply_action(params["action"], params, socket)
     {:noreply, socket}
   end
-
 
   @impl true
   def handle_info({:orgstruct_created, orgstruct}, socket) do

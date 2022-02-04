@@ -11,8 +11,8 @@
       <div id={"orgstruct-#{orgstruct.id}"}
         class={hide_deleted(orgstruct, "container")}>
              {orgstruct.name}
-             <Link label="Edit" to="#" click="orgstruct" values={orgstruct_id: orgstruct.id, action: :edit,  cid: orgstruct_form_cid()} />
-             <Link label="Delete" to="#" click="orgstruct" values={orgstruct_id: orgstruct.id, action: :delete,  cid: orgstruct_form_cid()} />
+             <Link label="Edit" to="#" click="orgstruct_form" values={orgstruct_id: orgstruct.id, action: :edit,  cid: orgstruct_form_cid()} />
+             <Link label="Delete" to="#" click="orgstruct_form" values={orgstruct_id: orgstruct.id, action: :delete,  cid: orgstruct_form_cid()} />
         </div>
       {/for}
     </div>

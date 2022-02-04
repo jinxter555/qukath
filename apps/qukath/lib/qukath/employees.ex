@@ -48,7 +48,7 @@ defmodule Qukath.Employees do
     Repo.all(query)
   end
 
-  def get_employee_by_user_id!(user_id) do  
+  def get_employees_by_user_id!(user_id) do  
     query = from emp in Employee, where: emp.user_id == ^user_id, select: emp
     Repo.all(query)
   end
