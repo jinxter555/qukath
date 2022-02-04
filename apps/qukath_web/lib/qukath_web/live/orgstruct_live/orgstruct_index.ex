@@ -1,20 +1,64 @@
 defmodule QukathWeb.OrgstructLive.OrgstructIndex do
-  use Surface.Component
+  use Surface.LiveView
 
+  alias Qukath.Orgstructs
+  alias QukathWeb.OrgstructLive.OrgstructFormBulma
   alias Surface.Components.Link
 
-  prop orgstructs, :list, default: []
+  alias QukathWeb.OrgstructLive.OrgstructIndexOrgstructs
 
-  defp orgstruct_form_cid() do 
-    "ofb01"                   
-  end                        
+  on_mount QukathWeb.AuthUser
 
-  defp orgstruct_hidden_class?(orgstruct, css_class) do
-    if orgstruct.__meta__.state == :deleted do
-      css_class <> " is-hidden"
-    else
-      css_class
-    end
+  @impl true
+  def mount(_params, _session, socket) do
+    if connected?(socket), do: Orgstructs.subscribe()
+    {:ok,
+      socket
+      |> assign(:orgstructs, list_orgstructs()),
+      temporary_assigns: [orgstructs: []]
+    }
+  end
+
+  @impl true
+  def handle_event("orgstruct", params, socket) do
+    IO.puts "event orgstruct"
+    IO.inspect params
+    IO.inspect socket
+    OrgstructFormBulma.apply_action(params["action"], params, socket)
+    {:noreply, socket}
+  end
+
+
+  @impl true
+  def handle_info({:orgstruct_created, orgstruct}, socket) do
+    IO.puts "handling info created"
+    {:noreply, update(socket, :orgstructs, fn orgstructs ->
+      [orgstruct | orgstructs]
+    end)}
+  end
+
+  @impl true
+  def handle_info({:orgstruct_updated, orgstruct}, socket) do
+    IO.puts "handling info updated"
+    #IO.inspect socket
+    {:noreply, update(socket, :orgstructs, fn orgstructs ->
+       [orgstruct | orgstructs]
+    end)}
+  end
+
+  @impl true
+  def handle_info({:orgstruct_deleted, orgstruct}, socket) do
+    {:noreply, update(socket, :orgstructs, fn orgstructs ->
+       [orgstruct | orgstructs]
+    end)}
+  end
+
+  def orgstruct_form_cid() do
+    "ofb01"
+  end
+
+  defp list_orgstructs do
+    Orgstructs.list_orgstructs()
   end
 
 end

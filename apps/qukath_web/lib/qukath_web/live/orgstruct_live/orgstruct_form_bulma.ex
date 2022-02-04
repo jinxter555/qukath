@@ -65,6 +65,8 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
   end
 
   def apply_action("edit", params, _parent_socket) do
+    IO.puts "bulma form edit"
+    IO.inspect params
     orgstruct = Orgstructs.get_orgstruct!(params["orgstruct-id"]) 
     changeset =  Orgstructs.change_orgstruct(orgstruct)
 
