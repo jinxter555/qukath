@@ -34,6 +34,12 @@ defmodule QukathWeb.Router do
     live "/orgstructs/:id", OrgstructLive.Show, :show
     live "/orgstructs/:id/show/edit", OrgstructLive.Show, :edit
 
+    live "/employees", EmployeeLive.EmployeeIndex, :index        
+    live "/employees/:orgstruct_id/new", EmployeeLive.EmployeeIndex, :new
+    live "/employees/:orgstruct_id/list", EmployeeLive.EmployeeIndex, :list
+    live "/employees/:id/edit", EmployeeLive.EmployeeIndex, :edit  
+
+
   end
 
   # Other scopes may use custom stacks.

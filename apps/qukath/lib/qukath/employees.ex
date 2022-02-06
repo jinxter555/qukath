@@ -7,6 +7,7 @@ defmodule Qukath.Employees do
   alias Qukath.Repo
   alias Qukath.Entities
 
+  alias Qukath.Orgstructs
   alias Qukath.Organizations.Employee
 
   @doc """
@@ -20,6 +21,51 @@ defmodule Qukath.Employees do
   """
   def list_employees do
     Repo.all(Employee)
+  end
+
+  
+  @doc """
+  Returns the list of employees.
+
+  ## Examples
+
+      iex> list_employees(:orgstruct_id: orgstruct_id)
+      [%Employee{}, ...]
+
+  """
+  def list_employees(%{"orgstruct_id" => orgstruct_id}), do:
+      list_employees(orgstruct_id: orgstruct_id)
+
+  def list_employees(orgstruct_id: orgstruct_id) do
+    query = from emp in Employee,
+      where: emp.orgstruct_id == ^orgstruct_id,
+      select: emp
+    Repo.all(query)
+  end
+
+  
+  @doc """
+  Returns the list of employees based on orgstruct_id.
+  ## Examples
+
+      iex> list_employee_members(:orgstruct_id: orgstruct_id)
+      # [%Employee{}, ...]
+
+  """
+  def list_employee_members(%{"orgstruct_id" => orgstruct_id}), do:
+      list_employee_members(orgstruct_id: orgstruct_id) 
+
+  def list_employee_members(orgstruct_id: orgstruct_id) do
+    orgstruct = Orgstructs.get_orgstruct!(orgstruct_id)
+
+    query = from emp in Employee,
+      join: em in EntityMember,
+      on: em.member_id == emp.entity_id,
+      where: em.entity_id == ^orgstruct.entity_id,
+    select: {emp, em.id}
+
+    Repo.all(query)
+    
   end
 
   @doc """
@@ -83,12 +129,14 @@ defmodule Qukath.Employees do
         err -> err
       end
     end) |> case do
-      {:ok, result} ->  result
+      {:ok, result} ->
+        broadcast(result, :employee_created)
+        result
     end
   end
 
   def create_employee(entity_id, attrs) do
-    attrs = Map.put(attrs, :entity_id, entity_id)
+    attrs = Map.put(attrs, "entity_id", entity_id)
     %Employee{}
     |> Employee.changeset(attrs)
     |> Repo.insert()
@@ -110,6 +158,7 @@ defmodule Qukath.Employees do
     employee
     |> Employee.changeset(attrs)
     |> Repo.update()
+    |> broadcast(:employee_updated)
   end
 
   @doc """
@@ -125,7 +174,20 @@ defmodule Qukath.Employees do
 
   """
   def delete_employee(%Employee{} = employee) do
-    Repo.delete(employee)
+    #Repo.delete(employee)
+    #|> broadcast(:employee_updated)
+
+    Repo.transaction(fn ->
+      entity_id = employee.entity_id
+      employee_changeset = Repo.delete(employee)
+      Entities.get_entity!(entity_id) |> Entities.delete_entity()
+      employee_changeset
+    end) |> case do
+      {:ok,  result} -> 
+        broadcast(result, :employee_deleted)
+        result
+    end
+
   end
 
   @doc """
@@ -139,6 +201,17 @@ defmodule Qukath.Employees do
   """
   def change_employee(%Employee{} = employee, attrs \\ %{}) do
     Employee.changeset(employee, attrs)
+  end
+
+  def subscribe do
+    Phoenix.PubSub.subscribe(Qukath.PubSub, "employees")
+  end
+
+  defp broadcast({:error, _reason} = error, _event), do: error
+  defp broadcast({:ok, orgstruct}, event) do
+    # IO.puts "broadcast"
+    Phoenix.PubSub.broadcast(Qukath.PubSub, "employees", {event, orgstruct})
+    {:ok, orgstruct}
   end
 
 end

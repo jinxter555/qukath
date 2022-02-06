@@ -13,6 +13,10 @@
              {orgstruct.name}
              <Link label="Edit" to="#" click="orgstruct_form" values={orgstruct_id: orgstruct.id, action: :edit,  cid: orgstruct_form_cid()} />
              <Link label="Delete" to="#" click="orgstruct_form" values={orgstruct_id: orgstruct.id, action: :delete,  cid: orgstruct_form_cid()} />
+             <Link label="New" to="#" click="orgstruct_form" values={orgstruct_id: orgstruct.id, action: :new, type: :department, cid: orgstruct_form_cid()}"/>
+
+             <LiveRedirect label="Employees" to={Routes.employee_employee_index_path(@socket, :list, orgstruct)}/>
+
         </div>
       {/for}
     </div>

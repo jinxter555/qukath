@@ -3,4 +3,4 @@ values={id: nil, action: :new, type: :company, cid: orgstruct_form_cid()} class=
 
 <OrgstructFormBulma id={orgstruct_form_cid()} />
 
-<OrgstructIndexOrgstructs orgstructs={@orgstructs} />
+<OrgstructIndexOrgstructs orgstructs={@orgstructs} socket={@socket}/>

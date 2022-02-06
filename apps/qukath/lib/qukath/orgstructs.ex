@@ -40,6 +40,25 @@ defmodule Qukath.Orgstructs do
   """
   def get_orgstruct!(id), do: Repo.get!(Orgstruct, id)
 
+  def get_orgstruct_entity_id!(id) do
+    o = get_orgstruct!(id)
+    o.entity_id
+  end
+
+  def get_orgstruct_parent!(id) do
+    parent_entity = get_orgstruct!(id) |> Repo.preload([entity: :parent])
+
+    query = from org in Orgstruct,
+      where: org.entity_id == ^parent_entity.id
+
+    hd Repo.all(query)
+  end
+
+  def get_orgstruct_with_members!(id) do
+    get_orgstruct!(id) |> Repo.preload([entity: :members])
+  end
+
+
   @doc """
   Creates a orgstruct.
 
@@ -54,7 +73,7 @@ defmodule Qukath.Orgstructs do
   """
   def create_orgstruct(attrs \\ %{}) do
     Repo.transaction(fn ->
-      with {:ok, orgstruct_entity} <- Entities.create_entity(%{type: :org}),
+      with {:ok, orgstruct_entity} <- create_orgstruct_entity(attrs),
            {:ok, orgstruct} <- create_orgstruct(orgstruct_entity.id, attrs) do
 
         {:ok, orgstruct}
@@ -80,11 +99,9 @@ defmodule Qukath.Orgstructs do
     user = Accounts.get_user!(user_id)
     username = username  || hd(String.split(user.email, "@"))
     Repo.transaction(fn ->
-
       with {:ok, leader_entity} <- Entities.create_entity(%{type: :employee}),
-           {:ok, orgstruct_entity} <- Entities.create_entity(%{type: :org}),
+           {:ok, orgstruct_entity} <- create_orgstruct_entity(attrs),
 
-           # attrs <- Map.put(attrs, :leader_entity_id, leader_entity.id),
            attrs <- Map.put(attrs, "leader_entity_id", leader_entity.id),
 
            {:ok, orgstruct} <- create_orgstruct(orgstruct_entity.id, attrs),
@@ -100,6 +117,17 @@ defmodule Qukath.Orgstructs do
         result
     end
   end
+
+  defp create_orgstruct_entity(attrs) do
+    parent_entity_id = 
+      if attrs["orgstruct_id"] != "" do 
+        get_orgstruct_entity_id!(attrs["orgstruct_id"])
+      else 
+        nil
+      end
+    Entities.create_entity(%{type: :org, parent_id: parent_entity_id})
+  end
+
 
   @doc """
   Updates a orgstruct.

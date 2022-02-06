@@ -1,0 +1,6 @@
+<Link label="New Employee" to="#" click="employee_form" values={orgstruct_id: @orgstruct_id, action: :new, cid: employee_form_cid()} class="button"/>
+
+<EmployeeFormBulma id={employee_form_cid()} />
+
+<EmployeeIndexEmployees employees={@employees} socket={@socket} />
+

@@ -1,0 +1,21 @@
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <div id="employees" phx-update="append">
+      {#for employee <- @employees }
+      <div id={"employee-#{employee.id}"}
+           class={hide_deleted(employee, "container")}>
+             {employee.name}
+             <Link label="Edit" to="#" click="employee_form" values={employee_id: employee.id, action: :edit, cid: employee_form_cid()} />
+             <Link label="Delete" to="#" click="employee_form" values={employee_id: employee.id, action: :delete} />
+        </div>
+      {/for}
+    </div>
+  </tbody>
+</table>
+

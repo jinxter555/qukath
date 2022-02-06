@@ -12,8 +12,10 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: Orgstructs.subscribe()
+
     {:ok,
       socket
+      # |> assign(:socket, socket)
       |> assign(:orgstructs, list_orgstructs()),
       temporary_assigns: [orgstructs: []]
     }
@@ -27,7 +29,6 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
 
   @impl true
   def handle_info({:orgstruct_created, orgstruct}, socket) do
-    IO.puts "handling info created"
     {:noreply, update(socket, :orgstructs, fn orgstructs ->
       [orgstruct | orgstructs]
     end)}
@@ -35,8 +36,6 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
 
   @impl true
   def handle_info({:orgstruct_updated, orgstruct}, socket) do
-    IO.puts "handling info updated"
-    #IO.inspect socket
     {:noreply, update(socket, :orgstructs, fn orgstructs ->
        [orgstruct | orgstructs]
     end)}
