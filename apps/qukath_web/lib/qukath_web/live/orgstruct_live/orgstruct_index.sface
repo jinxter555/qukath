@@ -7,4 +7,4 @@ values={id: nil, action: :new, type: :company, cid: orgstruct_form_cid()} class=
 
 <OrgstructIndexOrgstructs orgstructs={@orgstructs} socket={@socket} show={@show_orgstructs} />
 
-<OrgstructItem show={@show_item} />
+<OrgstructItem show={@show_item} orgstruct={@orgstruct}/>

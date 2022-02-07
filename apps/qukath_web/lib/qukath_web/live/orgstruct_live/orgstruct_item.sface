@@ -1,3 +1,26 @@
+
 <div class={@show || "is-hidden"}>
-Hello, world
+  Hello, world 
+  {#if @orgstruct}
+    <div id="orgstructs" phx-update="append">
+    <div id={"orgstruct-#{@orgstruct.id}"}>
+
+      {@orgstruct.name}
+      <Link label="Edit" to="#" click="orgstruct_form" 
+      values={orgstruct_id: @orgstruct.id, action: :edit,  cid: orgstruct_form_cid()} />
+
+      <Link label="New Company" to="#" click="orgstruct_form" 
+      values={orgstruct_id: @orgstruct.id, action: :new, type: :company,  cid: orgstruct_form_cid()} />
+
+      <Link label="New Department" to="#" click="orgstruct_form" 
+      values={orgstruct_id: @orgstruct.id, action: :new, type: :department, cid: orgstruct_form_cid()} />
+
+      <Link label="New Team" to="#" click="orgstruct_form" 
+      values={orgstruct_id: @orgstruct.id, action: :new, type: :team, cid: orgstruct_form_cid()} />
+
+    </div>
+    </div>
+
+  {/if}
 </div>
+

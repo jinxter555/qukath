@@ -11,10 +11,9 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
   alias SurfaceBulma.Modal.{Card, Header, Footer}
 
 
+  data orgstruct_id, :any, default: nil
   data show, :boolean, default: false
   data action, :any, default: nil
-  data type, :any, default: nil
-  data orgstruct_id, :any, default: nil
   data employee_entity_id, :any, default: nil
   data changeset, :any
 
@@ -40,7 +39,7 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
             <TextInput label="Name" field={:name} form={f}/>
           </div>
           <HiddenInput field={:action} value={@action} form={f} />
-          <HiddenInput field={:type} value={@type} form={f} />
+          <HiddenInput field={:type} form={f} />
           <HiddenInput field={:orgstruct_id} value={@orgstruct_id} form={f} />
           <HiddenInput field={:leader_entity_id} form={f} />
           <Submit type="Submit"> Save </Submit>
@@ -54,13 +53,16 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
 
 
   def apply_action("new", params, parent_socket) do
+    IO.puts "bulma form new"
+    IO.inspect params
+
     changeset = Orgstructs.change_orgstruct(%Orgstruct{
-      leader_entity_id: parent_socket.assigns.employee_entity_id
+      leader_entity_id: parent_socket.assigns.employee_entity_id,
+      type: params["type"],
     })
     
     send_update(__MODULE__,
       id: params["cid"],
-      type: params["type"],
       action: :new,
       changeset: changeset,
       orgstruct_id: params["orgstruct-id"],
@@ -78,7 +80,7 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
       action: params["action"],
       changeset: changeset,
       orgstruct: orgstruct,
-      type: orgstruct.type, show: true)
+      show: true)
   end
 
   def apply_action("delete", params, socket) do

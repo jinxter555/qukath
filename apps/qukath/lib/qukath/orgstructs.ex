@@ -118,8 +118,6 @@ defmodule Qukath.Orgstructs do
   end
 
   defp create_orgstruct_entity(attrs) do
-    IO.puts "create_orgstruct_entity 2"
-    IO.inspect attrs
     parent_entity_id = 
       if attrs["orgstruct_id"] != "" do 
         get_orgstruct_entity_id!(attrs["orgstruct_id"])

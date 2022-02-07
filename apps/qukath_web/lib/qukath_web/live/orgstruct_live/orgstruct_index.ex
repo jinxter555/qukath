@@ -18,6 +18,7 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
       socket
       |> assign(:show_orgstructs, true)
       |> assign(:show_item, false)
+      |> assign(:orgstruct, nil)
       |> assign(:orgstructs, list_orgstructs()),
       temporary_assigns: [orgstructs: []]
     }
@@ -33,9 +34,11 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
   def handle_event("orgstruct_item", params, socket) do
     IO.puts "show_orgstruct_item"
     IO.inspect params
+    orgstruct = Orgstructs.get_orgstruct!(params["orgstruct-id"])
     # OrgstructItem.apply_action(params["action"], params, socket)
     {:noreply, 
       socket
+      |> assign(:orgstruct, orgstruct)
       |> assign(:show_item, true)
       |> assign(:show_orgstructs, false)
       }
