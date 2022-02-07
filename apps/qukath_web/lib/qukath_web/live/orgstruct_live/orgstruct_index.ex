@@ -15,7 +15,7 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
 
     {:ok,
       socket
-      # |> assign(:socket, socket)
+      |> assign(:show_orgstructs, true)
       |> assign(:orgstructs, list_orgstructs()),
       temporary_assigns: [orgstructs: []]
     }
@@ -25,6 +25,16 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
   def handle_event("orgstruct_form", params, socket) do
     OrgstructFormBulma.apply_action(params["action"], params, socket)
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("show_orgstructs", params, socket) do
+    IO.puts "show_orgstructs"
+    IO.inspect params
+    {:noreply, 
+      socket
+      |> assign(:show_orgstructs, !socket.assigns.show_orgstructs)
+      }
   end
 
   @impl true

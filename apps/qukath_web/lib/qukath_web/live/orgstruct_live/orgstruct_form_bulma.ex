@@ -42,7 +42,7 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
           <HiddenInput field={:action} value={@action} form={f} />
           <HiddenInput field={:type} value={@type} form={f} />
           <HiddenInput field={:orgstruct_id} value={@orgstruct_id} form={f} />
-          <HiddenInput field={:employee_entity_id} value={@employee_entity_id} form={f} />
+          <HiddenInput field={:leader_entity_id} form={f} />
           <Submit type="Submit"> Save </Submit>
         </Form>
 
@@ -54,13 +54,16 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
 
 
   def apply_action("new", params, parent_socket) do
-    changeset = Orgstructs.change_orgstruct(%Orgstruct{})
+    changeset = Orgstructs.change_orgstruct(%Orgstruct{
+      leader_entity_id: parent_socket.assigns.employee_entity_id
+    })
+    
     send_update(__MODULE__,
       id: params["cid"],
       type: params["type"],
-      employee_entity_id: parent_socket.assigns.employee_entity_id,
       action: :new,
       changeset: changeset,
+      orgstruct_id: params["orgstruct-id"],
       show: true)
   end
 
@@ -83,8 +86,6 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
     |> Orgstructs.delete_orgstruct()
     |> case do
       {:ok, _changeset} ->
-        #IO.puts "deleted changeset"
-        #IO.inspect changeset
         changeset = Orgstructs.change_orgstruct(%Orgstruct{})
         {:noreply, socket 
           |> put_flash(:info, "orgstruct delete succeffuly") 
@@ -132,11 +133,6 @@ defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
   end
 
   defp save_orgstruct(socket, "new", orgstruct_params) do
-    orgstruct_params = Map.put(
-      orgstruct_params,
-      "leader_entity_id",
-      orgstruct_params["employee_entity_id"])
-
     case Orgstructs.create_orgstruct(orgstruct_params) do
       {:ok, _orgstruct} ->
         {:noreply, socket

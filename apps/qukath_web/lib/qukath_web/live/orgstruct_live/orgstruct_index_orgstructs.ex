@@ -3,10 +3,11 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndexOrgstructs do
   alias Surface.Components.Link
   prop orgstructs, :list, required: true
   prop socket, :any, required: true
+  prop show, :boolean, default: true
 
   alias QukathWeb.OrgstructLive.OrgstructIndex
   alias Surface.Components.LiveRedirect
-  alias QukathWeb.Router.Helpers, as: Routes                                                                                                                                                                 
+  alias QukathWeb.Router.Helpers, as: Routes
 
   defp hide_deleted(orgstruct, css_class) do
     if orgstruct.__meta__.state == :deleted do
