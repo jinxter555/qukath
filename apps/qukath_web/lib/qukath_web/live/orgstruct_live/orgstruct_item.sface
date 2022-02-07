@@ -1,0 +1,3 @@
+<div class={@show || "is-hidden"}>
+Hello, world
+</div>

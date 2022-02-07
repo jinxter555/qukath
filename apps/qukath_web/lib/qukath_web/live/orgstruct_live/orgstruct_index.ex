@@ -3,6 +3,7 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
 
   alias Qukath.Orgstructs
   alias QukathWeb.OrgstructLive.OrgstructFormBulma
+  alias QukathWeb.OrgstructLive.OrgstructItem
   alias Surface.Components.Link
 
   alias QukathWeb.OrgstructLive.OrgstructIndexOrgstructs
@@ -16,6 +17,7 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
     {:ok,
       socket
       |> assign(:show_orgstructs, true)
+      |> assign(:show_item, false)
       |> assign(:orgstructs, list_orgstructs()),
       temporary_assigns: [orgstructs: []]
     }
@@ -28,9 +30,20 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
   end
 
   @impl true
-  def handle_event("show_orgstructs", params, socket) do
-    IO.puts "show_orgstructs"
+  def handle_event("orgstruct_item", params, socket) do
+    IO.puts "show_orgstruct_item"
     IO.inspect params
+    # OrgstructItem.apply_action(params["action"], params, socket)
+    {:noreply, 
+      socket
+      |> assign(:show_item, true)
+      |> assign(:show_orgstructs, false)
+      }
+  end
+
+
+  @impl true
+  def handle_event("show_orgstructs", _params, socket) do
     {:noreply, 
       socket
       |> assign(:show_orgstructs, !socket.assigns.show_orgstructs)
