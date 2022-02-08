@@ -19,6 +19,7 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
       |> assign(:show_orgstructs, true)
       |> assign(:show_item, false)
       |> assign(:orgstruct, nil)
+      |> assign(:nested_orgstruct, nil)
       |> assign(:orgstructs, list_orgstructs()),
       temporary_assigns: [orgstructs: []]
     }
@@ -35,11 +36,13 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
     IO.puts "show_orgstruct_item"
     IO.inspect params
     orgstruct = Orgstructs.get_orgstruct!(params["orgstruct-id"])
-    # OrgstructItem.apply_action(params["action"], params, socket)
+    nested_orgstruct = Orgstructs.build_nested_orgstruct(orgstruct.id)
+
     {:noreply, 
       socket
       |> assign(:orgstruct, orgstruct)
       |> assign(:show_item, true)
+      |> assign(:nested_orgstruct, nested_orgstruct)
       |> assign(:show_orgstructs, false)
       }
   end

@@ -1,6 +1,5 @@
 
 <div class={@show || "is-hidden"}>
-  Hello, world 
   {#if @orgstruct}
     <div id="orgstructs" phx-update="append">
     <div id={"orgstruct-#{@orgstruct.id}"}>
@@ -24,3 +23,4 @@
   {/if}
 </div>
 
+<NestedOrgstruct nested_orgstruct={@nested_orgstruct} />

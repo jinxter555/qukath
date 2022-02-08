@@ -2,14 +2,19 @@ defmodule Qukath.Orgstructs do
   @moduledoc """
   The Organizations context.
   """
-
   import Ecto.Query, warn: false
-  alias Qukath.Repo
 
+  alias Qukath.Repo
   alias Qukath.Organizations.Orgstruct
   alias Qukath.Employees
   alias Qukath.Entities
   alias Qukath.Accounts
+
+
+  alias Qukath.Entities.EntityMember
+  alias Qukath.Entities.Entity
+
+
 
   @doc """
   Returns the list of orgstructs.
@@ -185,7 +190,98 @@ defmodule Qukath.Orgstructs do
     Orgstruct.changeset(orgstruct, attrs)
   end
 
+  #######
+  def list_members(id) do
+    orgstruct = get_orgstruct_with_members!(id)
+    orgstruct.entity.members
+  end
 
+  def list_children(id) do
+    orgstruct = get_orgstruct!(id)
+    
+    query = from org in Orgstruct,
+     join: e in Entity, 
+      on: e.id == org.entity_id,
+      where: e.parent_id == ^orgstruct.entity_id
+
+    Repo.all(query)
+  end
+
+  #######
+  def print_org(orgstruct) do
+    IO.inspect orgstruct.name
+     IO.inspect "id: " <> Integer.to_string(orgstruct.entity_id)
+    if orgstruct.entity.parent_id, 
+      do: IO.inspect "parent: " <> Integer.to_string(orgstruct.entity.parent_id)
+    IO.puts ""
+  end
+
+  def print_nested(orgstruct) do
+    print_org(orgstruct)
+    for child <- orgstruct.children do
+      if Map.has_key?(child, :children) do
+        print_nested(child) 
+      end
+    end
+  end
+
+  #######
+  def build_nested_orgstruct(orgstruct_id) do
+    descents = list_descendants(orgstruct_id)
+    nested(descents, nil)
+  end
+
+  defp nested([], _), do: []
+
+  defp nested([head|_tail]=l, nil) do
+    Map.put(head, :children, nested(l, head.entity_id))
+  end
+
+  defp nested([_head | tail] = _l, parent_id) do
+    children = Enum.map(tail, fn x ->
+      if x.entity.parent_id == parent_id, do:
+      Map.put(x, :children, nested(tail, x.entity_id))
+    end)
+
+    children = Enum.filter(children, 
+      fn child -> child != nil end) 
+
+    children |> List.flatten
+  end
+
+
+  def list_descendants(orgstruct_id) do
+    orgstruct = get_orgstruct!(orgstruct_id)
+
+    entity_tree_initial_query = Entity
+    |> where([e], e.id == ^orgstruct.entity_id)
+  
+    entity_tree_recursion_query = Entity
+    |> join(:inner, [e], t in "tree", on: t.id == e.parent_id)
+  
+    entity_tree_query = entity_tree_initial_query
+    |> union_all(^entity_tree_recursion_query)
+
+    Orgstruct
+    |> recursive_ctes(true)
+    |> with_cte("tree", as: ^entity_tree_query)
+    |> join(:inner, [o], t in "tree", on: t.id == o.entity_id)
+    |> Repo.all()
+    |> Repo.preload([entity: :parent])
+
+  end
+
+  #######
+  def insert_orgstruct_member(orgstruct_id, employee_id) do
+    employee_entity_id = Employees.get_employee_entity_id!(employee_id)
+    orgstruct_entity_id = get_orgstruct_entity_id!(orgstruct_id)
+    Entities.create_entity_member(%{
+      entity_id: orgstruct_entity_id,
+      member_id: employee_entity_id})
+  end
+
+
+  #######
   def subscribe do
     Phoenix.PubSub.subscribe(Qukath.PubSub, "orgstructs")
   end
