@@ -2,5 +2,5 @@
 
 <EmployeeFormBulma id={employee_form_cid()} />
 
-<EmployeeIndexEmployees employees={@employees} socket={@socket} />
+<EmployeeIndexEmployees employees={@employees} />
 

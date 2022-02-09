@@ -27,6 +27,7 @@ defmodule QukathWeb.Router do
 
 
     live "/main", MainLive.Index, :index
+    live "/example", Example
     live "/orgstructs/display", OrgstructLive.Display, :index
     live "/orgstructs/new", OrgstructLive.Index, :new
     # live "/orgstructs/:orgstruct_id/new", OrgstructLive.Index, :new

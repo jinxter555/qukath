@@ -5,8 +5,9 @@ defmodule QukathWeb.EmployeeLive.EmployeeIndexEmployees do
 
   alias Surface.Components.Link
 
+
   prop employees, :list, required: true
-  prop socket, :any, required: true
+  prop employee_attach, :fun, required: true
 
 
   defp hide_deleted(employee, css_class) do
@@ -15,6 +16,22 @@ defmodule QukathWeb.EmployeeLive.EmployeeIndexEmployees do
     else
       css_class
     end
+  end
+
+  defp func_attach(assigns) do
+    if assigns.func do
+       (assigns.func).(assigns)
+    else
+       edit_delete(assigns)
+    end
+
+  end
+
+  def edit_delete(assigns) do
+    ~F"""
+    <Link label="Edit" to="#" click="employee_form" values={employee_id: @employee_id, action: :edit, cid: employee_form_cid()} />
+    <Link label="Delete" to="#" click="employee_form" values={employee_id: @employee_id, action: :delete} />
+    """
   end
 
 

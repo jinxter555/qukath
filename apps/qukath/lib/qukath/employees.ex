@@ -6,6 +6,8 @@ defmodule Qukath.Employees do
   import Ecto.Query, warn: false
   alias Qukath.Repo
   alias Qukath.Entities
+  alias Qukath.Entities.Entity
+  alias Qukath.Entities.EntityMember
 
   alias Qukath.Orgstructs
   alias Qukath.Organizations.Employee
@@ -62,10 +64,10 @@ defmodule Qukath.Employees do
       join: em in EntityMember,
       on: em.member_id == emp.entity_id,
       where: em.entity_id == ^orgstruct.entity_id,
-    select: {emp, em.id}
+    # select: {emp, em.id}
+    select: emp
 
     Repo.all(query)
-    
   end
 
   @doc """

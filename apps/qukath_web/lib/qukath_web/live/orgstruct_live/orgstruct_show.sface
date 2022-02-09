@@ -1,38 +1,38 @@
 <OrgstructFormBulma id={orgstruct_form_cid()} />
 <EmployeeFormBulma id={employee_form_cid()} />
 
-
-<NestedOrgstruct nested_orgstruct={@nested_orgstruct} />
-<br/>
-
-<div class="container">
-    <div id="orgstructs" phx-update="append">
-    <div id={"orgstruct-#{@orgstruct.id}"}>
-
-      <Link label={@orgstruct.name} to="#" click="select_orgstruct" values={selected_orgstruct_id: @orgstruct.id}/>
-
-      <Link label="Edit" to="#" click="orgstruct_form" 
-      values={orgstruct_id: @orgstruct.id, action: :edit,  cid: orgstruct_form_cid()} />
-
-      <Link label="New Company" to="#" click="orgstruct_form" 
-      values={orgstruct_id: @orgstruct.id, action: :new, type: :company,  cid: orgstruct_form_cid()} />
-
-      <Link label="New Department" to="#" click="orgstruct_form" 
-      values={orgstruct_id: @selected_orgstruct.id, action: :new, type: :department, cid: orgstruct_form_cid()} />
-
-      <Link label="New Team" to="#" click="orgstruct_form" 
-      values={orgstruct_id: @selected_orgstruct.id, action: :new, type: :team, cid: orgstruct_form_cid()} />
-
-      <Link label="New Employee" to="#" click="employee_form" values={orgstruct_id: @orgstruct.id, action: :new, cid: employee_form_cid()} class="button"/>
-      <LiveRedirect label="List Employees" to={Routes.employee_employee_index_path(@socket, :list, @orgstruct)}/>
-
-
-    </div>
-    </div>
-
+<div id="orgstructs" phx-update="append">
+  <div id={"orgstruct-#{@orgstruct.id}"}>
+    <Link label={@orgstruct.name} to="#" click="select_orgstruct" values={selected_orgstruct_id: @orgstruct.id}/> 
+    <Link label="Edit" to="#" click="orgstruct_form" values={orgstruct_id: @orgstruct.id, action: :edit,  cid: orgstruct_form_cid()} /> 
+    <Link label="New Company" to="#" click="orgstruct_form" values={orgstruct_id: @orgstruct.id, action: :new, type: :company,  cid: orgstruct_form_cid()} />
+    <Link label="New Department" to="#" click="orgstruct_form" values={orgstruct_id: @selected_orgstruct.id, action: :new, type: :department, cid: orgstruct_form_cid()} /> 
+    <Link label="New Team" to="#" click="orgstruct_form" values={orgstruct_id: @selected_orgstruct.id, action: :new, type: :team, cid: orgstruct_form_cid()} />
+    <Link label="New Employee" to="#" click="employee_form" values={orgstruct_id: @orgstruct.id, action: :new, cid: employee_form_cid()} />
+    <LiveRedirect label="List Employees" to={Routes.employee_employee_index_path(@socket, :list, @orgstruct)}/>
+  </div>
 </div>
 
 <div>
 current selected orgstruct:
 {@selected_orgstruct.name}
+</div> <br/>
+
+<div class="columns ">
+   <div class="column">
+     1<NestedOrgstruct nested_orgstruct={@nested_orgstruct} />
+   </div>
+
+   <div class="column ">
+     2:employees
+      <EmployeeIndexEmployees employees={@employees} employee_attach={&add_emp_to_org/1} />
+   </div>
+
+   <div class="column ">
+     3:sub-org members
+     <EmployeeIndexEmployees employees={@members} employee_attach={&remove_emp_to_org/1} />
+   </div>
+   <div class="column ">
+   </div>
 </div>
+

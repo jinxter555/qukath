@@ -201,6 +201,13 @@ defmodule Qukath.Entities do
     Repo.delete(entity_member)
   end
 
+
+  def get_entity_member!(entity_id, member_id) do
+    query = from em in EntityMember, where: em.entity_id == ^entity_id
+    and em.member_id == ^member_id, select: em
+    Repo.all(query)
+  end
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking entity_member changes.
 

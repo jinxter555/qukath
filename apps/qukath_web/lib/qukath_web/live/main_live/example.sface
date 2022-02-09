@@ -1,0 +1,16 @@
+<div class="columns">
+  <div class="column">
+    First column
+    {Faker.Lorem.paragraphs(20)}
+  </div>
+  <div class="column">
+    Second column
+    {Faker.Lorem.paragraphs(20)}
+  </div>
+  <div class="column">
+    Third column
+  </div>
+  <div class="column">
+    Fourth column
+  </div>
+</div>

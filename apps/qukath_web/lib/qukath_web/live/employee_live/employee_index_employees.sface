@@ -11,8 +11,7 @@
       <div id={"employee-#{employee.id}"}
            class={hide_deleted(employee, "container")}>
              {employee.name}
-             <Link label="Edit" to="#" click="employee_form" values={employee_id: employee.id, action: :edit, cid: employee_form_cid()} />
-             <Link label="Delete" to="#" click="employee_form" values={employee_id: employee.id, action: :delete} />
+             <.func_attach employee_id={employee.id} func={@employee_attach}/>
         </div>
       {/for}
     </div>
