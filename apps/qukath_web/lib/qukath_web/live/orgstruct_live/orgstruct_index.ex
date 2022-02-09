@@ -3,7 +3,6 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
 
   alias Qukath.Orgstructs
   alias QukathWeb.OrgstructLive.OrgstructFormBulma
-  alias QukathWeb.OrgstructLive.OrgstructItem
   alias Surface.Components.Link
 
   alias QukathWeb.OrgstructLive.OrgstructIndexOrgstructs
@@ -16,10 +15,7 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
 
     {:ok,
       socket
-      |> assign(:show_orgstructs, true)
-      |> assign(:show_item, false)
-      |> assign(:orgstruct, nil)
-      |> assign(:nested_orgstruct, nil)
+      |> assign(:show_index_orgstructs, true)
       |> assign(:orgstructs, list_orgstructs()),
       temporary_assigns: [orgstructs: []]
     }
@@ -32,27 +28,10 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
   end
 
   @impl true
-  def handle_event("orgstruct_item", params, socket) do
-    IO.puts "show_orgstruct_item"
-    IO.inspect params
-    orgstruct = Orgstructs.get_orgstruct!(params["orgstruct-id"])
-    nested_orgstruct = Orgstructs.build_nested_orgstruct(orgstruct.id)
-
+  def handle_event("show_index_orgstructs", _params, socket) do
     {:noreply, 
       socket
-      |> assign(:orgstruct, orgstruct)
-      |> assign(:show_item, true)
-      |> assign(:nested_orgstruct, nested_orgstruct)
-      |> assign(:show_orgstructs, false)
-      }
-  end
-
-
-  @impl true
-  def handle_event("show_orgstructs", _params, socket) do
-    {:noreply, 
-      socket
-      |> assign(:show_orgstructs, !socket.assigns.show_orgstructs)
+      |> assign(:show_index_orgstructs, !socket.assigns.show_index_orgstructs)
       }
   end
 

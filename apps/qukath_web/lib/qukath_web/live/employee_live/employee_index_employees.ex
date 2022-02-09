@@ -1,12 +1,13 @@
 defmodule QukathWeb.EmployeeLive.EmployeeIndexEmployees do
   use Surface.Component
+
+  import QukathWeb.EmployeeLive.EmployeeIndex, only: [employee_form_cid: 0]
+
   alias Surface.Components.Link
+
   prop employees, :list, required: true
   prop socket, :any, required: true
 
-  alias QukathWeb.EmployeeLive.EmployeeIndex
-  #alias Surface.Components.LiveRedirect
-  #alias QukathWeb.Router.Helpers, as: Routes                                                                                                                                                                 
 
   defp hide_deleted(employee, css_class) do
     if employee.__meta__.state == :deleted do
@@ -15,11 +16,6 @@ defmodule QukathWeb.EmployeeLive.EmployeeIndexEmployees do
       css_class
     end
   end
-
- def employee_form_cid() do
-    EmployeeIndex.employee_form_cid()
- end
-
 
 
 end

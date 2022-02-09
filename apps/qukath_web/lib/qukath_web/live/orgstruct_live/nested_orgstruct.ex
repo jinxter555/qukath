@@ -1,7 +1,7 @@
 defmodule QukathWeb.OrgstructLive.NestedOrgstruct do
   use Surface.Component
 
-  # alias Surface.Components.Link
+  alias Surface.Components.Link
   alias QukathWeb.OrgstructLive.NestedOrgstruct 
 
   prop nested_orgstruct, :any, required: true
@@ -21,7 +21,7 @@ defmodule QukathWeb.OrgstructLive.NestedOrgstruct do
 
   defp print_orgstruct(assigns) do
     ~F"""
-      {@orgstruct.name}
+      <Link label={@orgstruct.name} to="#" click="select_orgstruct" values={selected_orgstruct_id: @orgstruct.id}/>
       {@orgstruct.entity_id}
       {@orgstruct.entity.parent_id}
       <br/>
