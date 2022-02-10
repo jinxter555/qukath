@@ -22,8 +22,6 @@ defmodule QukathWeb.OrgstructLive.NestedOrgstruct do
   defp print_orgstruct(assigns) do
     ~F"""
       <Link label={@orgstruct.name} to="#" click="select_orgstruct" values={selected_orgstruct_id: @orgstruct.id}/>
-      {@orgstruct.entity_id}
-      {@orgstruct.entity.parent_id}
       <br/>
     """
   end

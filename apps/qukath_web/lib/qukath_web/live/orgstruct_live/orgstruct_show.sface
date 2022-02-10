@@ -3,7 +3,7 @@
 
 <div id="orgstructs" phx-update="append">
   <div id={"orgstruct-#{@orgstruct.id}"}>
-    <Link label={@orgstruct.name} to="#" click="select_orgstruct" values={selected_orgstruct_id: @orgstruct.id}/> 
+    <Link label={@orgstruct.name} to="#" click="select_orgstruct" values={selected_orgstruct_id: @orgstruct.id}/> <br/>
     <Link label="Edit" to="#" click="orgstruct_form" values={orgstruct_id: @orgstruct.id, action: :edit,  cid: orgstruct_form_cid()} /> 
     <Link label="New Company" to="#" click="orgstruct_form" values={orgstruct_id: @orgstruct.id, action: :new, type: :company,  cid: orgstruct_form_cid()} />
     <Link label="New Department" to="#" click="orgstruct_form" values={orgstruct_id: @selected_orgstruct.id, action: :new, type: :department, cid: orgstruct_form_cid()} /> 
@@ -14,12 +14,11 @@
 </div>
 
 <div>
-current selected orgstruct:
-{@selected_orgstruct.name}
+orgstruct: {@selected_orgstruct.name}
 </div> <br/>
 
 <div class="columns ">
-   <div class="column">
+   <div class="column is-one-fifth">
      <NestedOrgstruct nested_orgstruct={@nested_orgstruct} />
    </div>
 
@@ -31,8 +30,6 @@ current selected orgstruct:
      <EmployeeIndexEmployees employees={@members} employee_attach={&remove_emp_to_org/1} update_mode={@update_mode} update_id="member" />
    </div>
 
-   <div class="column ">
-   </div>
 </div>
 
 
