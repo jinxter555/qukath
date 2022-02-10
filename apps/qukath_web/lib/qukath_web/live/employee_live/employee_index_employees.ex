@@ -8,6 +8,8 @@ defmodule QukathWeb.EmployeeLive.EmployeeIndexEmployees do
 
   prop employees, :list, required: true
   prop employee_attach, :fun, required: true
+  prop update_mode, :string, default: "append"
+  prop update_id, :string, default: "employees"
 
 
   defp hide_deleted(employee, css_class) do
@@ -29,8 +31,9 @@ defmodule QukathWeb.EmployeeLive.EmployeeIndexEmployees do
 
   def edit_delete(assigns) do
     ~F"""
-    <Link label="Edit" to="#" click="employee_form" values={employee_id: @employee_id, action: :edit, cid: employee_form_cid()} />
-    <Link label="Delete" to="#" click="employee_form" values={employee_id: @employee_id, action: :delete} />
+    {@employee.name}
+    <Link label="Edit" to="#" click="employee_form" values={employee_id: @employee.id, action: :edit, cid: employee_form_cid()} />
+    <Link label="Delete" to="#" click="employee_form" values={employee_id: @employee.id, action: :delete} />
     """
   end
 

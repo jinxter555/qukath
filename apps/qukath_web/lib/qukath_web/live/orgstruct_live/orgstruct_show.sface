@@ -20,19 +20,19 @@ current selected orgstruct:
 
 <div class="columns ">
    <div class="column">
-     1<NestedOrgstruct nested_orgstruct={@nested_orgstruct} />
+     <NestedOrgstruct nested_orgstruct={@nested_orgstruct} />
    </div>
 
    <div class="column ">
-     2:employees
-      <EmployeeIndexEmployees employees={@employees} employee_attach={&add_emp_to_org/1} />
+     <EmployeeIndexEmployees employees={@employees} employee_attach={&add_emp_to_org/1} update_mode="append" update_id="employee"/>
    </div>
 
    <div class="column ">
-     3:sub-org members
-     <EmployeeIndexEmployees employees={@members} employee_attach={&remove_emp_to_org/1} />
+     <EmployeeIndexEmployees employees={@members} employee_attach={&remove_emp_to_org/1} update_mode={@update_mode} update_id="member" />
    </div>
+
    <div class="column ">
    </div>
 </div>
+
 

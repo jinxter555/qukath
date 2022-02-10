@@ -18,6 +18,10 @@
 //
 //     import "some-package"
 //
+import Alpine from 'alpinejs'
+window.Alpine = Alpine
+ 
+
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
@@ -44,3 +48,5 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
+
+Alpine.start()

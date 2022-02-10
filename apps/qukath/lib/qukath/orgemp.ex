@@ -30,7 +30,16 @@ defmodule Qukath.Orgemp do
     add_employee_to_orgstruct(
       params["employee-id"], 
       socket.assigns.selected_orgstruct.id)
+  end
 
+  def employee_orgstruct_action("remove", params, socket) do
+    employee = Employees.get_employee!(params["employee-id"])
+    em = Entities.get_entity_member!(socket.assigns.selected_orgstruct.entity_id, employee.entity_id)
+         |> hd
+    IO.puts "employee_orgstruct_action remove"
+    IO.inspect params
+    IO.inspect em
+    Entities.delete_entity_member(em)
   end
 
 end

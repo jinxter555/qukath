@@ -1,20 +1,9 @@
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <div id="employees" phx-update="append">
-      {#for employee <- @employees }
-      <div id={"employee-#{employee.id}"}
-           class={hide_deleted(employee, "container")}>
-             {employee.name}
-             <.func_attach employee_id={employee.id} func={@employee_attach}/>
-        </div>
-      {/for}
+<div id={@update_id<>"s"} phx-update={@update_mode}>
+  {#for employee <- @employees }
+  <div id={@update_id <> "-" <> "#{employee.id}"}
+       class={hide_deleted(employee, "container")}>
+         <.func_attach employee={employee} func={@employee_attach}/>
     </div>
-  </tbody>
-</table>
+  {/for}
+</div>
 
