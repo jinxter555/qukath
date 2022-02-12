@@ -9,7 +9,8 @@
     <Link label="New Department" to="#" click="orgstruct_form" values={orgstruct_id: @selected_orgstruct.id, action: :new, type: :department, cid: orgstruct_form_cid()} /> 
     <Link label="New Team" to="#" click="orgstruct_form" values={orgstruct_id: @selected_orgstruct.id, action: :new, type: :team, cid: orgstruct_form_cid()} />
     <Link label="New Employee" to="#" click="employee_form" values={orgstruct_id: @orgstruct.id, action: :new, cid: employee_form_cid()} />
-    <LiveRedirect label="List Employees" to={Routes.employee_employee_index_path(@socket, :list, @orgstruct)}/>
+    <LiveRedirect label="Employees" to={Routes.employee_employee_index_path(@socket, :list, @orgstruct)}/>
+    <LiveRedirect label="Todos" to={Routes.todo_todo_index_path(@socket, :list, @orgstruct)}/>
   </div>
 </div>
 
@@ -26,7 +27,7 @@ orgstruct: {@selected_orgstruct.name}
      <EmployeeIndexEmployees employees={@employees} employee_attach={&add_emp_to_org/1} update_mode="append" update_id="employee"/>
    </div>
 
-   <div class="column ">
+   <div class={"column " <> @hide_members_component}>
      <EmployeeIndexEmployees employees={@members} employee_attach={&remove_emp_to_org/1} update_mode={@update_mode} update_id="member" />
    </div>
 

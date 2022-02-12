@@ -1,8 +1,10 @@
-defmodule QukathWeb.EmployeeLive.EmployeeFormBulma do
+defmodule QukathWeb.EmployeeLive.EmployeeFormBulma2 do
   use Surface.LiveComponent
 
 
+  alias Qukath.Orgstructs
   alias Qukath.Employees
+  alias Qukath.Organizations.Orgstruct
   alias Qukath.Organizations.Employee
 
   alias Surface.Components.Form
@@ -82,20 +84,22 @@ defmodule QukathWeb.EmployeeLive.EmployeeFormBulma do
         changeset = Employees.change_employee(%Employee{})
         {:noreply, socket 
           |> put_flash(:info, "employee delete succeffuly") 
-          |> assign(:changeset, changeset) }
+          |> assign(:changeset, changeset)
+        }
       error -> 
         changeset = Employees.change_employee(%Employee{})
         {:noreply, socket 
           |> put_flash(:info, "employee delete error: #{error}") 
-          |> assign(:changeset, changeset) }
+          |> assign(:changeset, changeset)
+        }
       end
   end
 
   @impl true
-  def handle_event("validate", %{"employee" => params}, socket) do
+  def handle_event("validate", %{"employee" => employee_params}, socket) do
     changeset = 
       socket.assigns.changeset.data
-      |> Employees.change_employee(params)
+      |> Employees.change_employee(employee_params)
       |> Map.put(:action, :validate)
     {:noreply, socket |> assign(:changeset, changeset)}
   end
@@ -106,15 +110,17 @@ defmodule QukathWeb.EmployeeLive.EmployeeFormBulma do
   end
 
   @impl true
-  def handle_event("save", %{"employee" => params}, socket) do
-    save_employee(socket, params["action"], params)
-    #{:noreply, assign(socket, show: false)}
+  def handle_event("save", %{"employee" => employee_params}, socket) do
+    IO.puts "employee save"
+    IO.inspect employee_params
+    {:noreply, assign(socket, show: false)}
+    save_employee(socket, employee_params["action"], employee_params)
   end
 
-  defp save_employee(socket, "edit", params) do
+  defp save_employee(socket, "edit", employee_params) do
     Employees.update_employee(
       socket.assigns.employee,
-      params) 
+      employee_params) 
     |> case do
       {:ok, _employee} ->
         {:noreply, socket
@@ -123,14 +129,20 @@ defmodule QukathWeb.EmployeeLive.EmployeeFormBulma do
     end
   end
 
-  defp save_employee(socket, "new", params) do
-    case Employees.create_employee(params) do
+  defp save_employee(socket, "new", employee_params) do
+    IO.puts "save new"
+    IO.inspect employee_params
+
+    case Employees.create_employee(employee_params) do
       {:ok, _orgstruct} ->
         {:noreply, socket
           |> assign(show: false)
-          |> put_flash(:info, "employee created succeffuly") }
+          |> put_flash(:info, "employee created succeffuly") 
+        }
       {:error, %Employee{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
   end
+
+
 end

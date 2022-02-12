@@ -1,4 +1,4 @@
-defmodule QukathWeb.OrgstructLive.OrgstructFormBulma do
+defmodule QukathWeb.OrgstructLive.OrgstructFormBulma2 do
   use Surface.LiveComponent
 
 

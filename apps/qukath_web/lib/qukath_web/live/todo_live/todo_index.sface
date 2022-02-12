@@ -1,0 +1,8 @@
+<Link label="New Todo" to="#" click="todo_form" 
+                              values={orgstruct_id: @orgstruct_id, action: :new,
+                              type: :task, state: 42, cid: todo_form_cid()} class="button"/>
+
+<TodoFormBulma id={todo_form_cid()} />
+
+<TodoIndexTodos todos={@todos} />
+

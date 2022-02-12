@@ -22,6 +22,18 @@ defmodule Qukath.Work do
     Repo.all(Todo) # |> Repo.preload([:assignto_entity])
   end
 
+  def list_todos(%{"orgstruct_id" => orgstruct_id}), do:
+      list_todos(orgstruct_id: orgstruct_id)
+
+  def list_todos(orgstruct_id: orgstruct_id) do
+    query = from t in Todo,
+      where: t.orgstruct_id == ^orgstruct_id,
+      select: t
+    Repo.all(query)
+  end
+
+
+
   @doc """
   Gets a single todo.
 
@@ -59,7 +71,9 @@ defmodule Qukath.Work do
         |> Repo.insert()
       end
     end) |> case do
-      {:ok, result} -> result
+      {:ok, result} -> 
+        broadcast(result, :todo_created)
+        result
     end
   end
 
@@ -79,6 +93,7 @@ defmodule Qukath.Work do
     todo
     |> Todo.changeset(attrs)
     |> Repo.update()
+    |> broadcast(:todo_created)
   end
 
   @doc """
@@ -100,7 +115,9 @@ defmodule Qukath.Work do
       Entities.get_entity!(entity_id) |> Entities.delete_entity()
       todo_changeset
     end) |> case do
-      {:ok,  result} -> result
+      {:ok,  result} -> 
+        broadcast(result, :todo_deleted)
+        result
     end
   end
 
@@ -116,5 +133,19 @@ defmodule Qukath.Work do
   def change_todo(%Todo{} = todo, attrs \\ %{}) do
     Todo.changeset(todo, attrs)
   end
+
+
+  ###
+  def subscribe do
+    Phoenix.PubSub.subscribe(Qukath.PubSub, "todos")
+  end
+
+  defp broadcast({:error, _reason} = error, _event), do: error
+  defp broadcast({:ok, todo}, event) do
+    # IO.puts "broadcast"
+    Phoenix.PubSub.broadcast(Qukath.PubSub, "todos", {event, todo})
+    {:ok, todo}
+  end
+
 
 end

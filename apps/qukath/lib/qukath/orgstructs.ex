@@ -11,7 +11,7 @@ defmodule Qukath.Orgstructs do
   alias Qukath.Accounts
 
 
-  alias Qukath.Entities.EntityMember
+  # alias Qukath.Entities.EntityMember
   alias Qukath.Entities.Entity
 
 
@@ -27,6 +27,18 @@ defmodule Qukath.Orgstructs do
   """
   def list_orgstructs do
     Repo.all(Orgstruct)
+  end
+
+  def list_orgstructs("company"),
+    do: list_orgstructs(type: "company")
+
+  def list_orgstructs("corporate_group"),
+    do: list_orgstructs(type: "corporate_group")
+
+  def list_orgstructs(type: type) do
+    query = from org in Orgstruct,
+      where: org.type == ^type
+    Repo.all(query)
   end
 
   @doc """
@@ -249,6 +261,9 @@ defmodule Qukath.Orgstructs do
     children |> List.flatten
   end
 
+  def list_descendants(orgstruct_id, :ids) do
+    list_descendants(orgstruct_id) |> Enum.map(&(&1.id))
+  end
 
   def list_descendants(orgstruct_id) do
     orgstruct = get_orgstruct!(orgstruct_id)

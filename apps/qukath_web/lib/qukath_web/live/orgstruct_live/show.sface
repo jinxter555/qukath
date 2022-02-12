@@ -1,0 +1,5 @@
+{@orgstruct.name} : {@orgstruct.type} <br/>
+{newlinks(assigns)}
+<OrgstructFormBulma id={orgstruct_form_cid()} />
+<NestedOrgstruct nested_orgstruct={@nested_orgstruct} socket={@socket} />
+

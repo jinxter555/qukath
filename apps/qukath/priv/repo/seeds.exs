@@ -23,3 +23,13 @@ insert_list(10, :employee,  %{orgstruct_id: orgstruct1.id})
 insert_list(10, :employee,  %{orgstruct_id: orgstruct2.id})
 insert_list(10, :employee,  %{orgstruct_id: orgstruct3.id})
 
+
+for i <- 1..10 do
+  Enum.each([orgstruct1, orgstruct2, orgstruct3], fn c -> 
+    Qukath.Work.create_todo(%{owner_entity_id: nil,
+      description: Faker.Lorem.sentence(),
+      orgstruct_id: c.id,
+      state: 42,
+      type: :task})
+  end)
+end

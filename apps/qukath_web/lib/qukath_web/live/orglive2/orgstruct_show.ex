@@ -3,6 +3,7 @@ defmodule QukathWeb.OrgstructLive.OrgstructShow do
 
   alias Surface.Components.Link
   alias Surface.Components.LiveRedirect
+  alias SurfaceBulma.Form.{HiddenInput}
 
   alias Qukath.Orgstructs
   alias Qukath.Employees
@@ -14,6 +15,7 @@ defmodule QukathWeb.OrgstructLive.OrgstructShow do
 
   alias QukathWeb.EmployeeLive.EmployeeFormBulma
   alias QukathWeb.EmployeeLive.EmployeeIndexEmployees
+
 
   import QukathWeb.OrgstructLive.OrgstructIndex, only: [orgstruct_form_cid: 0]
   import QukathWeb.EmployeeLive.EmployeeIndex, only: [employee_form_cid: 0]
@@ -28,7 +30,8 @@ defmodule QukathWeb.OrgstructLive.OrgstructShow do
       |> assign(:selected_orgstruct, nil)
       |> assign(:employees, [])
       |> assign(:members, [])
-      |> assign(:update_mode, nil)
+      |> assign(:hide_members_component, "")
+      |> assign(:update_mode, "replace")
       |> assign(:orgstruct, nil) , temporary_assigns: [members: []]
     }
   end
@@ -60,11 +63,13 @@ defmodule QukathWeb.OrgstructLive.OrgstructShow do
     selected_orgstruct = Orgstructs.get_orgstruct!(params["selected-orgstruct-id"])
     employees = Employees.list_employees(%{"orgstruct_id" => socket.assigns.orgstruct.id})
     members = Employees.list_employee_members(%{"orgstruct_id" => selected_orgstruct.id})
+    hide_members_component = if members == [], do: "is-hidden", else: ""
 
     {:noreply, 
       socket
       |> assign(:employees, employees)
       |> assign(:members, members)
+      |> assign(:hide_members_component, hide_members_component)
       |> assign(:update_mode, "replace")
       |> assign(:selected_orgstruct, selected_orgstruct)
     }
@@ -94,6 +99,17 @@ defmodule QukathWeb.OrgstructLive.OrgstructShow do
     {@employee.name}
     <Link label="Remove" to="#" click="orgstruct_employee" values={employee_id: @employee.id, action: :remove} />
     """
+  end
+
+  defp hide_empty("replace", []) do
+    IO.puts "empty replace"
+    "is-hidden"
+
+  end
+  defp hide_empty(m, l) do
+    IO.inspect m
+    IO.inspect length(l)
+    ""
   end
 
 end

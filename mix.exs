@@ -39,7 +39,8 @@ defmodule Qukath.Umbrella.MixProject do
   defp aliases do
     [
       # run `mix setup` in all child apps
-      setup: ["cmd mix setup"]
+      setup: ["cmd mix setup"],
+      "phx.routes": "phx.routes QukathWeb.Router"
     ]
   end
 end

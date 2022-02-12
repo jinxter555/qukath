@@ -210,10 +210,10 @@ defmodule Qukath.Employees do
   end
 
   defp broadcast({:error, _reason} = error, _event), do: error
-  defp broadcast({:ok, orgstruct}, event) do
+  defp broadcast({:ok, employee}, event) do
     # IO.puts "broadcast"
-    Phoenix.PubSub.broadcast(Qukath.PubSub, "employees", {event, orgstruct})
-    {:ok, orgstruct}
+    Phoenix.PubSub.broadcast(Qukath.PubSub, "employees", {event, employee})
+    {:ok, employee}
   end
 
 end

@@ -1,29 +1,26 @@
-defmodule QukathWeb.EmployeeLive.EmployeeFormBulma do
+defmodule QukathWeb.TodoLive.TodoFormBulma do
   use Surface.LiveComponent
 
 
-  alias Qukath.Employees
-  alias Qukath.Organizations.Employee
+  alias Qukath.Work
+  alias Qukath.Work.Todo
 
   alias Surface.Components.Form
   alias SurfaceBulma.Form.{TextInput, HiddenInput, Submit}
   alias SurfaceBulma.Modal.Card                                                                    
   alias SurfaceBulma.Modal.{Card, Header, Footer}
 
-
   data show, :boolean, default: false
   data action, :any, default: nil
   data changeset, :any
 
-
   @impl true
   def mount(socket) do
-    changeset = Employees.change_employee(%Employee{})
+    changeset = Work.change_todo(%Todo{})
     {:ok, socket
     |> assign(:changeset, changeset)
     }
   end
-
   
   def render(assigns) do
     ~F"""
@@ -32,12 +29,14 @@ defmodule QukathWeb.EmployeeLive.EmployeeFormBulma do
         headertext
         </Header>
 
-        <Form for={@changeset} change="validate" as={:employee} :let={form: f} submit="save">
+        <Form for={@changeset} change="validate" as={:todo} :let={form: f} submit="save">
           <div class="control">
-            <TextInput label="Name" field={:name} form={f}/>
+            <TextInput label="description" field={:description} form={f}/>
           </div>
           <HiddenInput field={:action} value={@action} form={f} />
           <HiddenInput field={:orgstruct_id} form={f} />
+          <HiddenInput field={:type} form={f} />
+          <HiddenInput field={:state} form={f} />
           <Submit type="Submit"> Save </Submit>
         </Form>
 
@@ -48,9 +47,12 @@ defmodule QukathWeb.EmployeeLive.EmployeeFormBulma do
   end
 
 
-  def apply_action("new", params, _parent_socket) do
-    changeset = Employees.change_employee(%Employee{
+  def apply_action("new", params, parent_socket) do
+    changeset = Work.change_todo(%Todo{
       orgstruct_id: params["orgstruct-id"],
+      type: params["type"],
+      state: params["state"],
+      owner_entity_id: parent_socket.assigns.employee_entity_id,
     })
 
     send_update(__MODULE__,
@@ -61,41 +63,41 @@ defmodule QukathWeb.EmployeeLive.EmployeeFormBulma do
   end
 
   def apply_action("edit", params, _parent_socket) do
-    IO.puts "bulma form edit"
-    IO.inspect params
-    employee = Employees.get_employee!(params["employee-id"]) 
-    changeset =  Employees.change_employee(employee)
+    todo = Work.get_todo!(params["todo-id"]) 
+    changeset =  Work.change_todo(todo)
 
     send_update(__MODULE__,
       id: params["cid"],
       action: params["action"],
       changeset: changeset,
-      employee: employee,
+      todo: todo,
       show: true)
   end
 
   def apply_action("delete", params, socket) do
-    Employees.get_employee!(params["employee-id"]) 
-    |> Employees.delete_employee()
+    Work.get_todo!(params["todo-id"]) 
+    |> Work.delete_todo()
     |> case do
       {:ok, _changeset} ->
-        changeset = Employees.change_employee(%Employee{})
+        changeset = Work.change_todo(%Todo{})
         {:noreply, socket 
-          |> put_flash(:info, "employee delete succeffuly") 
-          |> assign(:changeset, changeset) }
+          |> put_flash(:info, "Todo delete succeffuly") 
+          |> assign(:changeset, changeset)
+        }
       error -> 
-        changeset = Employees.change_employee(%Employee{})
+        changeset = Work.change_todo(%Todo{})
         {:noreply, socket 
-          |> put_flash(:info, "employee delete error: #{error}") 
-          |> assign(:changeset, changeset) }
+          |> put_flash(:info, "todo delete error: #{error}") 
+          |> assign(:changeset, changeset)
+        }
       end
   end
 
   @impl true
-  def handle_event("validate", %{"employee" => params}, socket) do
+  def handle_event("validate", %{"todo" => params}, socket) do
     changeset = 
       socket.assigns.changeset.data
-      |> Employees.change_employee(params)
+      |> Work.change_todo(params)
       |> Map.put(:action, :validate)
     {:noreply, socket |> assign(:changeset, changeset)}
   end
@@ -106,31 +108,33 @@ defmodule QukathWeb.EmployeeLive.EmployeeFormBulma do
   end
 
   @impl true
-  def handle_event("save", %{"employee" => params}, socket) do
-    save_employee(socket, params["action"], params)
-    #{:noreply, assign(socket, show: false)}
+  def handle_event("save", %{"todo" => params}, socket) do
+    {:noreply, assign(socket, show: false)}
+    save_todo(socket, params["action"], params)
   end
 
-  defp save_employee(socket, "edit", params) do
-    Employees.update_employee(
-      socket.assigns.employee,
+  defp save_todo(socket, "edit", params) do
+    Work.update_todo(
+      socket.assigns.todo,
       params) 
     |> case do
-      {:ok, _employee} ->
+      {:ok, _todo} ->
         {:noreply, socket
         |> assign(show: false)
         }
     end
   end
 
-  defp save_employee(socket, "new", params) do
-    case Employees.create_employee(params) do
+  defp save_todo(socket, "new", params) do
+    case Work.create_todo(params) do
       {:ok, _orgstruct} ->
         {:noreply, socket
           |> assign(show: false)
-          |> put_flash(:info, "employee created succeffuly") }
-      {:error, %Employee{} = changeset} ->
+          |> put_flash(:info, "todo created succeffuly") 
+        }
+      {:error, %Todo{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
   end
+
 end

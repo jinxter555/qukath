@@ -20,8 +20,8 @@ defmodule Qukath.Work.Todo do
   @doc false
   def changeset(todo, attrs) do
     todo
-    |> cast(attrs, [:type, :state, :description])
-    |> validate_required([:type, :state, :description])
+    |> cast(attrs, [:type, :state, :description, :orgstruct_id])
+    |> validate_required([:type, :state, :description, :orgstruct_id])
     |> cast_assoc(:entity)
     |> cast_assoc(:owner_entity)
     |> cast_assoc(:assignto_entity)

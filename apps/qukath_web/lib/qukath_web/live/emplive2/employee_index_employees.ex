@@ -7,7 +7,8 @@ defmodule QukathWeb.EmployeeLive.EmployeeIndexEmployees do
 
 
   prop employees, :list, required: true
-  prop employee_attach, :fun, required: true
+  # prop employee_attach, :fun, required: true
+  prop employee_attach, :fun, default: nil
   prop update_mode, :string, default: "append"
   prop update_id, :string, default: "employees"
 

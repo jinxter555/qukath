@@ -21,6 +21,19 @@ defmodule QukathWeb.OrgstructLive.OrgstructIndex do
     }
   end
 
+
+  #@impl true
+  #def handle_params(params, _url, socket) do
+  #  {:noreply,
+  #    apply_action(socket, socket.assigns.live_action, params)
+  #  }
+  #end
+
+
+  #defp apply_action(socket, :index, _params) do    
+  #  socket    
+  #end
+
   @impl true
   def handle_event("orgstruct_form", params, socket) do
     OrgstructFormBulma.apply_action(params["action"], params, socket)

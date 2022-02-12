@@ -27,18 +27,17 @@ defmodule QukathWeb.Router do
 
 
     live "/main", MainLive.Index, :index
-    live "/example", Example
-    live "/orgstructs/display", OrgstructLive.Display, :index
-    live "/orgstructs/new", OrgstructLive.Index, :new
-    # live "/orgstructs/:orgstruct_id/new", OrgstructLive.Index, :new
-    live "/orgstructs/:id/edit", OrgstructLive.Index, :edit
-    live "/orgstructs/:id", OrgstructLive.OrgstructShow, :show
-    live "/orgstructs/:id/show/edit", OrgstructLive.Show, :edit
+    live "/orgstructs", OrgstructLive.Index, :index
+    live "/orgstructs/:type/type", OrgstructLive.Index, :index_type
+    live "/orgstructs/:id", OrgstructLive.Show, :show
 
-    live "/employees", EmployeeLive.EmployeeIndex, :index        
-    live "/employees/:orgstruct_id/new", EmployeeLive.EmployeeIndex, :new
-    live "/employees/:orgstruct_id/list", EmployeeLive.EmployeeIndex, :list
-    live "/employees/:id/edit", EmployeeLive.EmployeeIndex, :edit  
+    live "/employees", EmployeeLive.Index, :index        
+    live "/employees/:orgstruct_id/orgstruct", EmployeeLive.Index, :orgstruct
+    live "/employees/:id", EmployeeLive.Show, :show
+
+    live "/todos", TodoLive.TodoIndex, :index
+    live "/todos/:orgstruct_id/new", TodoLive.TodoIndex, :new
+    live "/todos/:orgstruct_id/list", TodoLive.TodoIndex, :list
 
 
   end
