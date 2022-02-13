@@ -3,7 +3,8 @@ defmodule QukathWeb.OrgstructLive.Show do
   use Surface.LiveView
 
   #import QukathWeb.ExtraHelper, only: [hide_deleted: 2]
-  alias Surface.Components.{Link}
+  alias Surface.Components.{Link} #, LiveRedirect}
+  #alias QukathWeb.Router.Helpers, as: Routes
 
   import QukathWeb.OrgstructLive.Index, only: [orgstruct_form_cid: 0]
 
@@ -70,11 +71,20 @@ defmodule QukathWeb.OrgstructLive.Show do
       type: :team,
       cid: orgstruct_form_cid()} class="button"/><br>
 
+      {#match _}
     {/case}
     """
   end
 
   defp page_title(:show), do: "Show orgstruct"
   defp page_title(:edit), do: "Edit orgstruct"
+
+
+  def mydisplay(assigns) do
+    ~F"""
+    {@orgstruct.name} : 
+    {@orgstruct.type} <br>
+    """
+  end
 
 end

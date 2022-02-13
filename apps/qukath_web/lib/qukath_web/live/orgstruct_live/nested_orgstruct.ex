@@ -7,26 +7,35 @@ defmodule QukathWeb.OrgstructLive.NestedOrgstruct do
 
   prop socket, :any, required: true
   prop nested_orgstruct, :any, required: true
-  slot default
+  prop orgfunc, :fun, default: nil
+
+  defp func_attach(assigns) do
+    if assigns.func do
+       (assigns.func).(assigns)
+    else
+       print_orgstruct(assigns)
+    end
+  end
+
 
   def render(assigns) do
     ~F"""
     {#if @nested_orgstruct }
       {#for child <- @nested_orgstruct.children }
-        <.print_orgstruct orgstruct={child} socket={@socket}/>
+        <.func_attach orgstruct={child} socket={@socket} func={@orgfunc}/>
         {#if Map.has_key?(child, :children) }
-          <NestedOrgstruct nested_orgstruct={child} socket={@socket}/>
+          <NestedOrgstruct nested_orgstruct={child} socket={@socket} orgfunc={@orgfunc}/>
         {/if}
       {/for}
     {/if}
     """
   end
 
-  defp print_orgstruct(assigns) do
+  def print_orgstruct(assigns) do
     ~F"""
-      <LiveRedirect label={@orgstruct.name} to={Routes.orgstruct_show_path(@socket, :show, @orgstruct)}/> :
+          <LiveRedirect label={@orgstruct.name}
+            to={Routes.orgstruct_show_path(@socket, :show, @orgstruct)}/> :
           {@orgstruct.type} <br>
     """
   end
-
 end

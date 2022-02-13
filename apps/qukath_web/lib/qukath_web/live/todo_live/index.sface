@@ -1,0 +1,16 @@
+{#if @orgstruct}
+<Link label="New Task" to="#" click="todo_form" 
+values={orgstruct_id: @orgstruct.id, action: :new,
+type: :task, state: 42, cid: todo_form_cid()} class="button"/>
+{/if}
+
+<TodoFormBulma id={todo_form_cid()} />
+
+<div id="todos" phx-update="append">
+  {#for todo <- @todos }
+  <div id={"todo-#{todo.id}"} class={hide_deleted(todo, "container")}>
+    <LiveRedirect label={todo.description} to={Routes.todo_show_path(@socket, :show, todo)} />
+    <Link label="Delete" to="#" click="todo_form" values={todo_id: todo.id, action: :delete} />
+  </div>
+  {/for}
+</div>

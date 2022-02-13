@@ -1,3 +1,19 @@
+
+<Numeric numbers={[1,2,3,4,5,"a", "b"]} :let={num: v}>
+{v} <br/>
+</Numeric>
+
+
+<Rating :let={value: value, max: max} id="rating_2">
+  {#for i <- 1..max}
+    <span class={:icon, "has-text-warning": i <= value}>
+      <i class="fas fa-star" />
+    </span>
+    {/for}<br>
+  max: {max}
+</Rating>
+
+
 <div class="columns">
   <div class="column">
     First column
