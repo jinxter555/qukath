@@ -7,6 +7,7 @@ defmodule QukathWeb.OrgstructLive.NestedOrgstruct do
 
   prop socket, :any, required: true
   prop nested_orgstruct, :any, required: true
+  prop parent_orgstruct, :any, required: true
   prop orgfunc, :fun, default: nil
 
   defp func_attach(assigns) do
@@ -22,9 +23,9 @@ defmodule QukathWeb.OrgstructLive.NestedOrgstruct do
     ~F"""
     {#if @nested_orgstruct }
       {#for child <- @nested_orgstruct.children }
-        <.func_attach orgstruct={child} socket={@socket} func={@orgfunc}/>
+        <.func_attach orgstruct={child} socket={@socket} func={@orgfunc} parent_orgstruct={@parent_orgstruct}/>
         {#if Map.has_key?(child, :children) }
-          <NestedOrgstruct nested_orgstruct={child} socket={@socket} orgfunc={@orgfunc}/>
+          <NestedOrgstruct nested_orgstruct={child} socket={@socket} orgfunc={@orgfunc} parent_orgstruct={@parent_orgstruct}/>
         {/if}
       {/for}
     {/if}
@@ -33,9 +34,12 @@ defmodule QukathWeb.OrgstructLive.NestedOrgstruct do
 
   def print_orgstruct(assigns) do
     ~F"""
-          <LiveRedirect label={@orgstruct.name}
-            to={Routes.orgstruct_show_path(@socket, :show, @orgstruct)}/> :
-          {@orgstruct.type} <br>
+      <LiveRedirect label={@orgstruct.name}
+      to={Routes.orgstruct_show_path(@socket, :show, @orgstruct)}/> : {@orgstruct.type} 
+      <LiveRedirect label="Members"
+      to={Routes.employee_members_path(@socket, :members, @parent_orgstruct, @orgstruct)}/>  <br>
     """
   end
+
+
 end

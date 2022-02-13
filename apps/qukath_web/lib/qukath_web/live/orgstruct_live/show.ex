@@ -3,8 +3,8 @@ defmodule QukathWeb.OrgstructLive.Show do
   use Surface.LiveView
 
   #import QukathWeb.ExtraHelper, only: [hide_deleted: 2]
-  alias Surface.Components.{Link} #, LiveRedirect}
-  #alias QukathWeb.Router.Helpers, as: Routes
+  alias Surface.Components.{Link , LiveRedirect}
+  alias QukathWeb.Router.Helpers, as: Routes
 
   import QukathWeb.OrgstructLive.Index, only: [orgstruct_form_cid: 0]
 

@@ -1,7 +1,15 @@
 <Link label={@orgstruct.name} to="#" click="orgstruct_form" values={orgstruct_id: @orgstruct.id, action: :edit,  cid: orgstruct_form_cid()} />
-: {@orgstruct.type} <br/>
-
+: {@orgstruct.type}
+<LiveRedirect label="Employees" to={Routes.employee_index_path(@socket, :orgstruct, @orgstruct)}/>
+<br>
 {newlinks(assigns)}
+
 <OrgstructFormBulma id={orgstruct_form_cid()} />
-<NestedOrgstruct nested_orgstruct={@nested_orgstruct} socket={@socket} orgfunc={nil}/>
+
+<NestedOrgstruct 
+  nested_orgstruct={@nested_orgstruct} 
+  socket={@socket} 
+  orgfunc={nil} 
+  parent_orgstruct={@orgstruct}/>
+
 
