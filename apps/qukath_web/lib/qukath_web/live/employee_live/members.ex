@@ -37,8 +37,13 @@ defmodule QukathWeb.EmployeeLive.Members do
   defp apply_action(socket, :add_members, 
     %{"src_orgstruct_id" => src_orgstruct_id,
       "tgt_orgstruct_id" => tgt_orgstruct_id} = _params ) do
-    members_src = Employees.list_employees(orgstruct_id: src_orgstruct_id)
     members_tgt = Employees.list_employee_members(orgstruct_id:  tgt_orgstruct_id)
+    members_src = Employees.list_employees(
+      orgstruct_id: src_orgstruct_id,
+      except: members_tgt |>   Enum.map(&(&1.id))
+    )
+
+    # need filter
 
     socket
     |> assign(:members_src, members_src)
@@ -50,11 +55,53 @@ defmodule QukathWeb.EmployeeLive.Members do
 
   @impl true
   def handle_event("orgstruct_employee", params, socket) do
-    IO.puts "params"
-    IO.inspect params
+    
+    {members_src, members_tgt} = members_action(params["action"], socket, params["employee_id"])
     Orgemp.employee_orgstruct_action(params["action"], params, socket)
-    {:noreply, socket}
+
+    #IO.puts "members_src"
+    #IO.inspect Enum.map( members_src, fn x -> x.id end)
+    #IO.puts "members_tgt"
+    #IO.inspect Enum.map( members_tgt, fn x -> x.id end)
+
+    {:noreply, 
+      socket
+      |>assign(:members_src, members_src)
+      |>assign(:members_tgt, members_tgt)
+    }
   end
+
+
+  defp members_action("add", socket, employee_id) do
+    members_src = socket.assigns.members_src
+    members_tgt = socket.assigns.members_tgt
+
+    added_member = Enum.find(members_src, fn m ->
+      m.id == employee_id
+    end)
+
+    {Enum.filter(members_src, fn m ->
+      m.id != employee_id
+    end),
+    List.flatten([members_tgt , added_member]) }
+
+  end
+
+  defp members_action("remove", socket, employee_id) do
+    members_src = socket.assigns.members_src
+    members_tgt = socket.assigns.members_tgt
+
+    removed_member = Enum.find(members_tgt, fn m ->
+      m.id == employee_id
+    end)
+
+    {List.flatten([members_src , removed_member]),
+    Enum.filter(members_tgt, fn m ->
+      m.id != employee_id
+    end)}
+
+  end
+  
   
 
 end

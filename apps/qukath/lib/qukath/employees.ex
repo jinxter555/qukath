@@ -45,6 +45,18 @@ defmodule Qukath.Employees do
     Repo.all(query)
   end
 
+  def list_employees(orgstruct_id: orgstruct_id, except: except) do
+    query = from emp in Employee,
+      where: emp.orgstruct_id == ^orgstruct_id
+      and emp.id not in ^except,
+      select: emp
+    Repo.all(query)
+  end
+
+  
+  @doc """
+  Returns the list of employees based on orgstruct_id.
+
   
   @doc """
   Returns the list of employees based on orgstruct_id.
