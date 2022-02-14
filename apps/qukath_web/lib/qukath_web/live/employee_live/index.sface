@@ -12,3 +12,8 @@ values={orgstruct_id: @orgstruct.id, action: :new, cid: employee_form_cid()} cla
   <Link label="Delete" to="#" click="employee_form" values={employee_id: employee.id, action: :delete} />
 </EmployeeIndexEmployees>
 
+{#if @employee_page}
+{#for n <- 1..@employee_page.total_pages}
+<LiveRedirect label={n} to={Routes.employee_index_path(@socket, :index, page: n)}/>
+{/for}
+{/if}

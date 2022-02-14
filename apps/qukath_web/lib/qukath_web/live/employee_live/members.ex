@@ -55,14 +55,8 @@ defmodule QukathWeb.EmployeeLive.Members do
 
   @impl true
   def handle_event("orgstruct_employee", params, socket) do
-    
     {members_src, members_tgt} = members_action(params["action"], socket, params["employee_id"])
     Orgemp.employee_orgstruct_action(params["action"], params, socket)
-
-    #IO.puts "members_src"
-    #IO.inspect Enum.map( members_src, fn x -> x.id end)
-    #IO.puts "members_tgt"
-    #IO.inspect Enum.map( members_tgt, fn x -> x.id end)
 
     {:noreply, 
       socket

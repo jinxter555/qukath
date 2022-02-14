@@ -45,7 +45,7 @@ defmodule Qukath.MixProject do
       {:ecto_enum, "~> 1.4"},
       {:ex_machina, "~> 2.7.0"},
       {:faker, "~> 0.17.0"},
-
+      {:scrivener_ecto, git: "https://github.com/drewolson/scrivener_ecto", branch: "master"},
     ]
   end
 

@@ -9,7 +9,7 @@ defmodule QukathWeb.EmployeeLive.Index do
 
   alias QukathWeb.Router.Helpers, as: Routes
 
-  import QukathWeb.ExtraHelper, only: [hide_deleted: 2]
+  #import QukathWeb.ExtraHelper, only: [hide_deleted: 2]
 
   on_mount QukathWeb.AuthUser
 
@@ -19,6 +19,7 @@ defmodule QukathWeb.EmployeeLive.Index do
     {:ok,
       socket
       |> assign(:orgstruct, nil)
+      |> assign(:employee_page, nil)
       |> assign(:employees, []),
       temporary_assigns: [employees: []]
     }
@@ -30,6 +31,9 @@ defmodule QukathWeb.EmployeeLive.Index do
       apply_action(socket, socket.assigns.live_action, params)
     }
   end
+
+  defp apply_action(socket, :orgstruct, params), do:
+    apply_action(socket, :index, params) 
   
   defp apply_action(socket, :index, %{"orgstruct_id" => orgstruct_id} = params) do
     orgstruct = Orgstructs.get_orgstruct!(orgstruct_id)
@@ -39,14 +43,21 @@ defmodule QukathWeb.EmployeeLive.Index do
     |> assign(:page_title, "listing employees for #{orgstruct.name}")
   end
 
-  defp apply_action(socket, :orgstruct, params), do:
-    apply_action(socket, :index, params) 
+
+  defp apply_action(socket, :index, %{"page" => _} = params) do
+    employee_page = Employees.list_employees(params)
+    socket
+    |> assign(:employees, employee_page.entries)
+    |> assign(:page_title, "listing employees by page")
+    |> assign(:employee_page, employee_page)
+  end
 
   defp apply_action(socket, :index, _params) do
     socket
     |> assign(:employees, Employees.list_employees())
     |> assign(:page_title, "listing all employees")
   end
+
 
   @impl true
   def handle_event("employee_form", params, socket) do

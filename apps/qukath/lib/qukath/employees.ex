@@ -6,7 +6,7 @@ defmodule Qukath.Employees do
   import Ecto.Query, warn: false
   alias Qukath.Repo
   alias Qukath.Entities
-  alias Qukath.Entities.Entity
+  #alias Qukath.Entities.Entity
   alias Qukath.Entities.EntityMember
 
   alias Qukath.Orgstructs
@@ -23,6 +23,15 @@ defmodule Qukath.Employees do
   """
   def list_employees do
     Repo.all(Employee)
+  end
+
+  def list_employees(%{"page" => page, "orgstruct_id" => orgstruct_id} = _params) do
+    list_employees(orgstruct_id: orgstruct_id, page: page)
+  end
+
+  def list_employees(%{"page" => _page} = params) do
+    Employee
+    |> Repo.paginate(params)
   end
 
   
@@ -45,6 +54,16 @@ defmodule Qukath.Employees do
     Repo.all(query)
   end
 
+  #########
+
+  def list_employees(orgstruct_id: orgstruct_id, page: page) do
+    query = from emp in Employee,
+      where: emp.orgstruct_id == ^orgstruct_id,
+      select: emp
+    query |> Repo.paginate(page: page)
+  end
+
+  #########
   def list_employees(orgstruct_id: orgstruct_id, except: except) do
     query = from emp in Employee,
       where: emp.orgstruct_id == ^orgstruct_id
