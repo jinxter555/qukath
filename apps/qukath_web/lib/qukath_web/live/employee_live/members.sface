@@ -1,1 +1,27 @@
-hello,world
+<div class="columns ">
+   <div class="column is-one-fifth">
+   </div>
+
+   <div class="column">
+     <EmployeeIndexEmployees employees={@members_src} update_id="members_src" :let={employee: employee, item_id: item_id}>
+       {employee.name}
+       <button phx-click={JS.hide(to: "#" <> item_id) |> JS.push("orgstruct_employee", value: %{employee_id: employee.id, action: :add})}>
+         Add
+       </button>
+
+     </EmployeeIndexEmployees>
+   </div>
+
+   <div class={"column"}>
+     <EmployeeIndexEmployees employees={@members_tgt} update_id="members_tgt" :let={employee: employee, item_id: item_id}>
+       {employee.name}
+       <Link label="Remove" to="#" click="orgstruct_employee" values={employee_id: employee.id, action: :remove} />
+       <button phx-click={JS.hide(to: "#" <> item_id) |> JS.push("orgstruct_employee", value: %{employee_id: employee.id, action: :remove})}>
+         Remove
+       </button>
+     </EmployeeIndexEmployees>
+   </div>
+
+</div>
+
+

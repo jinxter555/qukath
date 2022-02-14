@@ -1,4 +1,15 @@
 
+<button phx-click={JS.show(to: "#item")}>
+  show!
+</button>
+<button phx-click={JS.hide(to: "#item")}>
+  Shake!
+</button>
+
+<div id="item">
+My Item
+
+
 <Numeric numbers={[1,2,3,4,5,"a", "b"]} :let={num: v}>
 {v} <br/>
 </Numeric>
@@ -13,20 +24,4 @@
   max: {max}
 </Rating>
 
-
-<div class="columns">
-  <div class="column">
-    First column
-    {Faker.Lorem.paragraphs(20)}
-  </div>
-  <div class="column">
-    Second column
-    {Faker.Lorem.paragraphs(20)}
-  </div>
-  <div class="column">
-    Third column
-  </div>
-  <div class="column">
-    Fourth column
-  </div>
 </div>

@@ -1,13 +1,19 @@
 defmodule QukathWeb.MainLive.Index do
   use Surface.LiveView
 
-  alias QukathWeb.OrgstructLive.OrgstructIndex
+  alias QukathWeb.Router.Helpers, as: Routes
+  alias Surface.Components.{Link, LiveRedirect}
+
+  alias Qukath.Orgstructs
 
   on_mount QukathWeb.AuthUser
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket }
+    {:ok, 
+      socket 
+      |> assign(:orgstruct, Orgstructs.get_orgstruct!(1))
+    }
   end
 
 end

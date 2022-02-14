@@ -33,15 +33,24 @@ defmodule QukathWeb.Router do
     live "/orgstructs/:id", OrgstructLive.Show, :show
     live "/orgstructs/:type/type", OrgstructLive.Index, :index_type
 
+    live "/orgstructs/:orgstruct_id/employees", EmployeeLive.Index, :orgstruct
+    live "/orgstructs/:orgstruct_id/todos", TodoLive.Index, :orgstruct
+
+    live "/orgstructs/:src_orgstruct_id/:tgt_orgstruct_id/members", EmployeeLive.Members, :add_members
+
     live "/employees", EmployeeLive.Index, :index        
     live "/employees/:id", EmployeeLive.Show, :show
-    live "/employees/:orgstruct_id/orgstruct", EmployeeLive.Index, :orgstruct
-    live "/employees/:src_orgstruct_id/:tgt_orgstruct_id/employees", EmployeeLive.Employees, :employees # company employees to department,team.. members
-    live "/employees/:src_orgstruct_id/:tgt_orgstruct_id/members", EmployeeLive.Members, :members  # department members to team
+
+    #live "/employees/:orgstruct_id/orgstruct", EmployeeLive.Index, :orgstruct
+
+    #live "/employees/:src_orgstruct_id/:tgt_orgstruct_id/employees", EmployeeLive.Employees, :employees # company employees to department,team.. members
+    #live "/employees/:src_orgstruct_id/:tgt_orgstruct_id/members", EmployeeLive.Members, :members  # department members to team
 
     live "/todos", TodoLive.Index, :index
     live "/todos/:id", TodoLive.Show, :show
-    live "/todos/:orgstruct_id/orgstruct", TodoLive.Index, :orgstruct
+
+    #live "/todos/:orgstruct_id/orgstruct", TodoLive.Index, :orgstruct
+
 
   end
 

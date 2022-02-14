@@ -1,4 +1,8 @@
     
-<OrgstructIndex  id="oid01"/>
+<Link
+  label="Company 1"
+  to={Routes.orgstruct_show_path(@socket, :show, 1, v1: 1, v2: 4)}
+/>
+
 
 

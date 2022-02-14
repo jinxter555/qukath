@@ -4,6 +4,7 @@ defmodule QukathWeb.EmployeeLive.Index do
   alias Qukath.Employees
   alias Qukath.Orgstructs
   alias QukathWeb.EmployeeLive.EmployeeFormBulma
+  alias QukathWeb.EmployeeLive.EmployeeIndexEmployees
   alias Surface.Components.{Link, LiveRedirect}
 
   alias QukathWeb.Router.Helpers, as: Routes

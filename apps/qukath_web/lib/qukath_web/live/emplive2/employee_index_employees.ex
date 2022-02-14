@@ -1,4 +1,4 @@
-defmodule QukathWeb.EmployeeLive.EmployeeIndexEmployees do
+defmodule QukathWeb.EmployeeLive.EmployeeIndexEmployees2 do
   use Surface.Component
 
   import QukathWeb.EmployeeLive.EmployeeIndex, only: [employee_form_cid: 0]

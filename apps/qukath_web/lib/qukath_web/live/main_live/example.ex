@@ -3,4 +3,8 @@ defmodule QukathWeb.Example do
   alias QukathWeb.Numeric
 
 
+  alias Phoenix.LiveView.JS
+
+
+
 end

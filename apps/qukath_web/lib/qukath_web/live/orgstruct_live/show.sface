@@ -1,6 +1,7 @@
 <Link label={@orgstruct.name} to="#" click="orgstruct_form" values={orgstruct_id: @orgstruct.id, action: :edit,  cid: orgstruct_form_cid()} />
 : {@orgstruct.type}
 <LiveRedirect label="Employees" to={Routes.employee_index_path(@socket, :orgstruct, @orgstruct)}/>
+<LiveRedirect label="Todos" to={Routes.todo_index_path(@socket, :orgstruct, @orgstruct)}/>
 <br>
 {newlinks(assigns)}
 
