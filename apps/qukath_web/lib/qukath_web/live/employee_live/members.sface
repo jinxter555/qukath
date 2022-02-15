@@ -3,12 +3,17 @@
    </div>
 
    <div class="column">
+     {#if @page} page:
+       {#for n <- 1..@page.total_pages}
+       <Link label={n} to="#" click="next_member_src_page" values={page: n} />
+       {/for}
+     {/if}
+
      <EmployeeIndexEmployees employees={@members_src} update_mode="replace" update_id="members_src" :let={employee: employee, item_id: item_id}>
        {employee.name}
        <button phx-click={JS.hide(to: "#" <> item_id) |> JS.push("orgstruct_employee", value: %{employee_id: employee.id, action: :add})}>
          Add
        </button>
-
      </EmployeeIndexEmployees>
    </div>
 

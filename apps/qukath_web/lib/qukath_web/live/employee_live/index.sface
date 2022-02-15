@@ -13,7 +13,11 @@ values={orgstruct_id: @orgstruct.id, action: :new, cid: employee_form_cid()} cla
 </EmployeeIndexEmployees>
 
 {#if @employee_page}
-{#for n <- 1..@employee_page.total_pages}
-<LiveRedirect label={n} to={Routes.employee_index_path(@socket, :index, page: n)}/>
-{/for}
+  {#for n <- 1..@employee_page.total_pages}
+    {#if @orgstruct}
+      <LiveRedirect label={n} to={Routes.employee_index_path(@socket, :orgstruct, @orgstruct, page: n)}/>
+    {#else}
+      <LiveRedirect label={n} to={Routes.employee_index_path(@socket, :index, page: n)}/>
+    {/if}
+  {/for}
 {/if}

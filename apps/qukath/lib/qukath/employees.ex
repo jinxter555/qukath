@@ -25,52 +25,43 @@ defmodule Qukath.Employees do
     Repo.all(Employee)
   end
 
-  def list_employees(%{"page" => page, "orgstruct_id" => orgstruct_id} = _params) do
-    list_employees(orgstruct_id: orgstruct_id, page: page)
+  #########
+  def list_employees(%{"orgstruct_id" =>  orgstruct_id, "except" => except} = params) do
+    IO.inspect "except"
+    IO.inspect except
+
+    query = from emp in Employee,
+      where: emp.orgstruct_id == ^orgstruct_id
+      and emp.id not in ^except,
+      select: emp
+    if params["page"], do: query |> Repo.paginate(params),
+    else: Repo.all(query)
   end
 
+  #########
+  def list_employees(%{"orgstruct_id" => orgstruct_id} = params) do
+    query = from emp in Employee,
+      where: emp.orgstruct_id == ^orgstruct_id,
+      select: emp
+
+    if params["page"], do: query |> Repo.paginate(params),
+    else: Repo.all(query)
+  end
+
+  #def list_employees(%{"orgstruct_id" => orgstruct_id}) do
+  #  query = from emp in Employee,
+  #    where: emp.orgstruct_id == ^orgstruct_id,
+  #    select: emp
+  #  Repo.all(query)
+  #end
+
+  #########
   def list_employees(%{"page" => _page} = params) do
     Employee
     |> Repo.paginate(params)
   end
 
   
-  @doc """
-  Returns the list of employees.
-
-  ## Examples
-
-      iex> list_employees(:orgstruct_id: orgstruct_id)
-      [%Employee{}, ...]
-
-  """
-  def list_employees(%{"orgstruct_id" => orgstruct_id}), do:
-      list_employees(orgstruct_id: orgstruct_id)
-
-  def list_employees(orgstruct_id: orgstruct_id) do
-    query = from emp in Employee,
-      where: emp.orgstruct_id == ^orgstruct_id,
-      select: emp
-    Repo.all(query)
-  end
-
-  #########
-
-  def list_employees(orgstruct_id: orgstruct_id, page: page) do
-    query = from emp in Employee,
-      where: emp.orgstruct_id == ^orgstruct_id,
-      select: emp
-    query |> Repo.paginate(page: page)
-  end
-
-  #########
-  def list_employees(orgstruct_id: orgstruct_id, except: except) do
-    query = from emp in Employee,
-      where: emp.orgstruct_id == ^orgstruct_id
-      and emp.id not in ^except,
-      select: emp
-    Repo.all(query)
-  end
 
   
   @doc """
@@ -85,10 +76,8 @@ defmodule Qukath.Employees do
       # [%Employee{}, ...]
 
   """
-  def list_employee_members(%{"orgstruct_id" => orgstruct_id}), do:
-      list_employee_members(orgstruct_id: orgstruct_id) 
+  def list_employee_members(%{"orgstruct_id" => orgstruct_id} = params) do
 
-  def list_employee_members(orgstruct_id: orgstruct_id) do
     orgstruct = Orgstructs.get_orgstruct!(orgstruct_id)
 
     query = from emp in Employee,
@@ -98,7 +87,8 @@ defmodule Qukath.Employees do
     # select: {emp, em.id}
     select: emp
 
-    Repo.all(query)
+    if params["page"], do: query |> Repo.paginate(params),
+    else: Repo.all(query)
   end
 
   @doc """

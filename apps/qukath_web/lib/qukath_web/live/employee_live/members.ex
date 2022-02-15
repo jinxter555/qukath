@@ -6,23 +6,25 @@ defmodule QukathWeb.EmployeeLive.Members do
   alias Qukath.Employees
   # alias Qukath.Orgstructs
   alias Qukath.Orgemp
-  alias QukathWeb.EmployeeLive.EmployeeFormBulma
+  #alias QukathWeb.EmployeeLive.EmployeeFormBulma
   alias QukathWeb.EmployeeLive.EmployeeIndexEmployees
-  alias Surface.Components.{Link, LiveRedirect}
+  alias Surface.Components.{Link }#, LiveRedirect}
 
-  alias QukathWeb.Router.Helpers, as: Routes
+  #alias QukathWeb.Router.Helpers, as: Routes
 
-  import QukathWeb.ExtraHelper, only: [hide_deleted: 2]
+  #import QukathWeb.ExtraHelper, only: [hide_deleted: 2]
 
   on_mount QukathWeb.AuthUser
+
+  @page_size 10
 
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: Employees.subscribe()
     {:ok,
       socket
-      |> assign(:orgstruct, nil)
-      |> assign(:employees, []),
+     |> assign(:page, nil),
+     # |> assign(:employees, []),
       temporary_assigns: [employees: []]
     }
   end
@@ -37,20 +39,40 @@ defmodule QukathWeb.EmployeeLive.Members do
   defp apply_action(socket, :add_members, 
     %{"src_orgstruct_id" => src_orgstruct_id,
       "tgt_orgstruct_id" => tgt_orgstruct_id} = _params ) do
-    members_tgt = Employees.list_employee_members(orgstruct_id:  tgt_orgstruct_id)
-    members_src = Employees.list_employees(
-      orgstruct_id: src_orgstruct_id,
-      except: members_tgt |>   Enum.map(&(&1.id))
-    )
 
-    # need filter
+    members_tgt = Employees.list_employee_members(%{"orgstruct_id" =>  tgt_orgstruct_id})
+    page = Employees.list_employees(%{
+      "orgstruct_id" => src_orgstruct_id,
+      "except" => members_tgt |> Enum.map(&(&1.id)),
+      "page" => 1,
+      "page_size" => @page_size,
+    })
 
     socket
-    |> assign(:members_src, members_src)
+    |> assign(:members_src, page.entries)
     |> assign(:members_tgt, members_tgt)
-    |> assign(:src_orgstruct_id, src_orgstruct_id)
-    |> assign(:tgt_orgstruct_id, tgt_orgstruct_id)
+    |> assign(:src_orgstruct_id, src_orgstruct_id) # these two are for
+    |> assign(:tgt_orgstruct_id, tgt_orgstruct_id) # Orgemp actions
+    |> assign(:page, page)
     |> assign(:page_title, "listing employees members")
+  end
+  def handle_event("next_member_src_page", params, socket) do
+    #IO.puts "next_member_src_page"
+    #IO.inspect params
+    #IO.inspect socket
+
+    members_tgt = Employees.list_employee_members(%{"orgstruct_id" => socket.assigns.tgt_orgstruct_id})
+    page = Employees.list_employees(%{
+      "orgstruct_id" => socket.assigns.src_orgstruct_id,
+      "except" => members_tgt |> Enum.map(&(&1.id)),
+      "page" => params["page"],
+      "page_size" => @page_size,
+    })
+
+    {:noreply, socket 
+      |> assign(:members_src, page.entries)
+      |> assign(:page, page)}
+
   end
 
   @impl true
@@ -65,7 +87,6 @@ defmodule QukathWeb.EmployeeLive.Members do
     }
   end
 
-
   defp members_action("add", socket, employee_id) do
     members_src = socket.assigns.members_src
     members_tgt = socket.assigns.members_tgt
@@ -78,7 +99,6 @@ defmodule QukathWeb.EmployeeLive.Members do
       m.id != employee_id
     end),
     List.flatten([members_tgt , added_member]) }
-
   end
 
   defp members_action("remove", socket, employee_id) do

@@ -35,6 +35,19 @@ defmodule QukathWeb.EmployeeLive.Index do
   defp apply_action(socket, :orgstruct, params), do:
     apply_action(socket, :index, params) 
   
+  defp apply_action(socket, :index, 
+      %{"orgstruct_id" => orgstruct_id,
+       "page" => _,} = params) do
+    employee_page = Employees.list_employees(params)
+    orgstruct = Orgstructs.get_orgstruct!(orgstruct_id)
+    socket
+    |> assign(:employees, employee_page.entries)
+    |> assign(:employee_page, employee_page)
+    |> assign(:orgstruct, orgstruct)
+    |> assign(:page_title, "listing employees for #{orgstruct.name}")
+  end
+
+
   defp apply_action(socket, :index, %{"orgstruct_id" => orgstruct_id} = params) do
     orgstruct = Orgstructs.get_orgstruct!(orgstruct_id)
     socket

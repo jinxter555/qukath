@@ -3,5 +3,5 @@ defmodule Qukath.Repo do
     otp_app: :qukath,
     adapter: Ecto.Adapters.Postgres
 
-  use Scrivener, page_size: 3
+  use Scrivener, page_size: 11
 end
