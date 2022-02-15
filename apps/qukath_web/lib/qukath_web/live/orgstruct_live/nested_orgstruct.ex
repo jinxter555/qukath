@@ -35,7 +35,7 @@ defmodule QukathWeb.OrgstructLive.NestedOrgstruct do
   def print_orgstruct(assigns) do
     ~F"""
       <LiveRedirect label={@orgstruct.name}
-      to={Routes.orgstruct_show_path(@socket, :show, @orgstruct)}/> : {@orgstruct.type} 
+      to={Routes.orgstruct_show_path(@socket, :show, @orgstruct, parent_orgstruct: @parent_orgstruct)}/> : {@orgstruct.type} 
       <LiveRedirect label="Members"
       to={Routes.employee_members_path(@socket, :add_members, @parent_orgstruct, @orgstruct)}/>  <br>
     """

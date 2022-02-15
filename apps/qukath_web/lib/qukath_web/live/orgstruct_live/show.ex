@@ -27,10 +27,12 @@ defmodule QukathWeb.OrgstructLive.Show do
   def handle_params(%{"id" => id} = _params, _url, socket) do
      orgstruct = Orgstructs.get_orgstruct!(id)
      nested_orgstruct = Orgstructs.build_nested_orgstruct(orgstruct.id)
+     listed_orgstruct = Orgstructs.list_descendants(orgstruct.id)
     {:noreply,
      socket
      |> assign(:orgstruct, orgstruct)
      |> assign(:nested_orgstruct, nested_orgstruct)
+     |> assign(:listed_orgstruct, listed_orgstruct)
      |> assign(:page_title, page_title(socket.assigns.live_action))
     }
   end

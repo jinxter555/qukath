@@ -38,7 +38,10 @@ defmodule QukathWeb.EmployeeLive.Members do
   
   defp apply_action(socket, :add_members, 
     %{"src_orgstruct_id" => src_orgstruct_id,
-      "tgt_orgstruct_id" => tgt_orgstruct_id} = _params ) do
+      "tgt_orgstruct_id" => tgt_orgstruct_id} = params ) do
+
+    IO.puts "params"
+    IO.inspect params
 
     members_tgt = Employees.list_employee_members(%{"orgstruct_id" =>  tgt_orgstruct_id})
     page = Employees.list_employees(%{
@@ -56,11 +59,32 @@ defmodule QukathWeb.EmployeeLive.Members do
     |> assign(:page, page)
     |> assign(:page_title, "listing employees members")
   end
-  def handle_event("next_member_src_page", params, socket) do
-    #IO.puts "next_member_src_page"
-    #IO.inspect params
-    #IO.inspect socket
 
+
+  defp apply_action(socket, :members_to_members, 
+    %{"src_orgstruct_id" => src_orgstruct_id,
+      "tgt_orgstruct_id" => tgt_orgstruct_id} = _params ) do
+
+    members_tgt = Employees.list_employee_members(%{"orgstruct_id" =>  tgt_orgstruct_id})
+    page = Employees.list_employee_members(%{
+      "orgstruct_id" => src_orgstruct_id,
+      "except" => members_tgt |> Enum.map(&(&1.id)),
+      "page" => 1,
+      "page_size" => @page_size,
+    })
+
+    socket
+    |> assign(:members_src, page.entries)
+    |> assign(:members_tgt, members_tgt)
+    |> assign(:src_orgstruct_id, src_orgstruct_id) # these two are for
+    |> assign(:tgt_orgstruct_id, tgt_orgstruct_id) # Orgemp actions
+    |> assign(:page, page)
+    |> assign(:page_title, "listing members members")
+  end
+
+
+
+  def handle_event("next_member_src_page", params, socket) do
     members_tgt = Employees.list_employee_members(%{"orgstruct_id" => socket.assigns.tgt_orgstruct_id})
     page = Employees.list_employees(%{
       "orgstruct_id" => socket.assigns.src_orgstruct_id,

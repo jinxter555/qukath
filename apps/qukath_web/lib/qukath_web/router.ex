@@ -37,6 +37,7 @@ defmodule QukathWeb.Router do
     live "/orgstructs/:orgstruct_id/todos", TodoLive.Index, :orgstruct
 
     live "/orgstructs/:src_orgstruct_id/:tgt_orgstruct_id/members", EmployeeLive.Members, :add_members
+    live "/orgstructs/:src_orgstruct_id/:tgt_orgstruct_id/members_to_members", EmployeeLive.Members, :members_to_members
 
     live "/employees", EmployeeLive.Index, :index        
     live "/employees/:id", EmployeeLive.Show, :show
