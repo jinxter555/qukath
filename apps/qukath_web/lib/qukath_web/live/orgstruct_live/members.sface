@@ -4,16 +4,28 @@
    </div>
 
    <div class="column">
-     <EmployeeIndexEmployees employees={@src_members} update_mode="replace" update_id="src_member" :let={employee: employee, item_id: item_id}>
+     {#if @src_page && @src_page.total_pages} page:
+       {#for n <- 1..@src_page.total_pages}
+       <Link label={n} to="#" click="next_member_src_page" values={page: n} />
+       {/for}
+     {/if}
+
+     <EmployeeIndexEmployees employees={@src_page.entries} update_mode="replace" update_id="src_member" :let={employee: employee, item_id: item_id}>
        {employee.name}
-       <button phx-click={JS.hide(to: "#" <> item_id) |> JS.push("orgstruct_employee", value: %{employee_id: employee.id, action: :remove})}>
-         Remove
+       <button phx-click={JS.hide(to: "#" <> item_id) |> JS.push("orgstruct_employee", value: %{employee_id: employee.id, action: :add})}>
+         Add
        </button>
      </EmployeeIndexEmployees>
    </div>
 
    <div class="column">
-     <EmployeeIndexEmployees employees={@tgt_members} update_mode="replace" update_id="tgt_member" :let={employee: employee, item_id: item_id}>
+     {#if @tgt_page && @tgt_page.total_pages} page:
+       {#for n <- 1..@tgt_page.total_pages}
+       <Link label={n} to="#" click="next_member_tgt_page" values={page: n} />
+       {/for}
+     {/if}
+
+     <EmployeeIndexEmployees employees={@tgt_page.entries} update_mode="replace" update_id="tgt_member" :let={employee: employee, item_id: item_id}>
        {employee.name}
        <button phx-click={JS.hide(to: "#" <> item_id) |> JS.push("orgstruct_employee", value: %{employee_id: employee.id, action: :remove})}>
          Remove
