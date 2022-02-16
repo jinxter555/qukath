@@ -222,6 +222,7 @@ defmodule Qukath.Orgstructs do
   #######
   def print_org(orgstruct) do
     IO.inspect orgstruct.name
+    IO.inspect orgstruct.id
      IO.inspect "id: " <> Integer.to_string(orgstruct.entity_id)
     if orgstruct.entity.parent_id, 
       do: IO.inspect "parent: " <> Integer.to_string(orgstruct.entity.parent_id)
@@ -236,6 +237,27 @@ defmodule Qukath.Orgstructs do
       end
     end
   end
+
+  #######
+  def get_nested_orgstruct_by_id(orgstruct, id) do
+    if orgstruct.id == id do
+      orgstruct
+    else
+      Enum.find(orgstruct.children, fn child -> child.id == id end) 
+      |> case do
+      nil -> 
+        Enum.find(orgstruct.children, fn child -> 
+          found = get_nested_orgstruct_by_id(child, id)
+          if found, do:
+            found.id  == id,
+          else:
+            false
+        end) 
+      found -> found
+      end
+    end
+  end
+
 
   #######
   def build_nested_orgstruct(orgstruct_id) do

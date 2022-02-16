@@ -9,6 +9,7 @@ defmodule QukathWeb.OrgstructLive.NestedOrgstruct do
   prop nested_orgstruct, :any, required: true
   prop parent_orgstruct, :any, required: true
   prop orgfunc, :fun, default: nil
+  prop print_parent, :boolean, default: true
 
   defp func_attach(assigns) do
     if assigns.func do
@@ -18,9 +19,12 @@ defmodule QukathWeb.OrgstructLive.NestedOrgstruct do
     end
   end
 
-
   def render(assigns) do
     ~F"""
+    {#if @nested_orgstruct.id == @parent_orgstruct.id and @print_parent }
+      <.func_attach orgstruct={@nested_orgstruct} socket={@socket} func={@orgfunc} parent_orgstruct={@parent_orgstruct}/>
+    {/if}
+
     {#if @nested_orgstruct }
       {#for child <- @nested_orgstruct.children }
         <.func_attach orgstruct={child} socket={@socket} func={@orgfunc} parent_orgstruct={@parent_orgstruct}/>
@@ -40,6 +44,5 @@ defmodule QukathWeb.OrgstructLive.NestedOrgstruct do
       to={Routes.employee_members_path(@socket, :add_members, @parent_orgstruct, @orgstruct)}/>  <br>
     """
   end
-
 
 end
