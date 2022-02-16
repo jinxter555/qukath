@@ -99,7 +99,7 @@ defmodule QukathWeb.OrgstructLive.Members do
         |>assign(:src_page, src_page)
         |>assign(:tgt_page, tgt_page) }
     else
-      {:noreply, socket}1
+      {:noreply, socket}
     end
   end
 
