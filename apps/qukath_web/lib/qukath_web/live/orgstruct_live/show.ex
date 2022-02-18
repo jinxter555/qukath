@@ -1,6 +1,6 @@
 defmodule QukathWeb.OrgstructLive.Show do
 
-  use Surface.LiveView
+  use Surface.LiveView, layout: {QukathWeb.LayoutView, "live.html"}
 
   #import QukathWeb.ExtraHelper, only: [hide_deleted: 2]
   alias Surface.Components.{Link , LiveRedirect}
@@ -31,6 +31,8 @@ defmodule QukathWeb.OrgstructLive.Show do
      listed_orgstruct = Orgstructs.list_descendants(orgstruct.id)
     {:noreply,
      socket
+     |> put_flash(:info, "hello who r u?: #{orgstruct.name}")
+     |> put_flash(:error, "what is going on: #{orgstruct.name}")
      |> assign(:orgstruct, orgstruct)
      |> assign(:nested_orgstruct, nested_orgstruct)
      |> assign(:listed_orgstruct, listed_orgstruct)
