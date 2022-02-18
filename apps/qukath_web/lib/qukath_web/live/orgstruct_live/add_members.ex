@@ -1,4 +1,4 @@
-defmodule QukathWeb.OrgstructLive.Members do
+defmodule QukathWeb.OrgstructLive.AddMembers do
   use Surface.LiveView
 
   alias Phoenix.LiveView.JS
@@ -25,6 +25,7 @@ defmodule QukathWeb.OrgstructLive.Members do
     {:ok, socket
     |> assign(:tgt_page, %Scrivener.Page{})
     |> assign(:src_page, %Scrivener.Page{})
+
     }
   end
 
@@ -40,28 +41,32 @@ defmodule QukathWeb.OrgstructLive.Members do
     src_nested_orgstruct = Orgstructs.build_nested_orgstruct(orgstruct.id)
     tgt_nested_orgstruct = Orgstructs.build_nested_orgstruct(orgstruct.id)
 
+    src_page = emp_o_mem_page(orgstruct.type, orgstruct, socket, params)
+    
     socket 
     |> assign(:orgstruct, orgstruct)
+    |> assign(:src_page, src_page)
+    |> assign(:src_orgstruct_id, orgstruct.id) # Orgemp actions
     |> assign(:src_nested_orgstruct, src_nested_orgstruct)
     |> assign(:tgt_nested_orgstruct, tgt_nested_orgstruct)
   end
 
-  defp emp_o_mem_page(:corporate_group, orgstruct, socket) do
-    emp_o_mem_page(:company, orgstruct, socket) 
+  defp emp_o_mem_page(:corporate_group, orgstruct, socket, params) do
+    emp_o_mem_page(:company, orgstruct, socket, params) 
   end
 
-  defp emp_o_mem_page(:company, orgstruct, socket) do
+  defp emp_o_mem_page(:company, orgstruct, socket, params) do
     Employees.list_employees(%{
       "orgstruct_id" => orgstruct.id,
       "except" => socket.assigns.tgt_page.entries |> Enum.map(&(&1.id)),
-      "page" => 1,
+      "page" => params["page"] || 1,
       "page_size" => @page_size,
     })
   end
 
-  defp emp_o_mem_page(_, orgstruct, _) do
+  defp emp_o_mem_page(_, orgstruct, _, params) do
     Employees.list_employee_members(%{
-      "page" => 1,
+      "page" => params["page"] || 1,
       "page_size" => @page_size,
       "orgstruct_id" => orgstruct.id})
   end
@@ -69,21 +74,50 @@ defmodule QukathWeb.OrgstructLive.Members do
   @impl true
   def handle_event("src_orgstruct", params, socket) do
     src_orgstruct = Orgstructs.get_orgstruct!(params["orgstruct-id"])
-    page = emp_o_mem_page(src_orgstruct.type, src_orgstruct, socket)
+    src_page = emp_o_mem_page(src_orgstruct.type, src_orgstruct, socket, params)
+    IO.puts "src_orgstruct"
+    IO.puts "tgt except"
+    IO.inspect socket.assigns.tgt_page.entries
+    IO.inspect src_page
     {:noreply, socket
-    |> assign(src_page: page)
+    |> assign(src_page: src_page)
+    |> assign(:src_orgstruct_id, src_orgstruct.id) # Orgemp actions
     }
   end
 
   @impl true
   def handle_event("tgt_orgstruct", params, socket) do
     tgt_orgstruct = Orgstructs.get_orgstruct!(params["orgstruct-id"])
-    page = emp_o_mem_page(tgt_orgstruct.type, tgt_orgstruct, socket)
+    src_orgstruct = Orgstructs.get_orgstruct!(socket.assigns.src_orgstruct_id)
+
+    tgt_page = emp_o_mem_page(tgt_orgstruct.type, tgt_orgstruct, socket, params)
+    src_page = emp_o_mem_page(src_orgstruct.type, src_orgstruct, socket, params) # reload src page
+
+
+    IO.puts "source page"
+    IO.inspect src_page
+
+
     {:noreply, socket
-    |> assign(tgt_page: page)
+    |> assign(tgt_page: tgt_page)
+    |> assign(src_page: src_page)
     |> assign(:tgt_orgstruct_id, tgt_orgstruct.id) # Orgemp actions
     }
   end
+
+  #####################
+  def handle_event("next_member_src_page", params, socket) do
+    src_orgstruct = Orgstructs.get_orgstruct!(socket.assigns.src_orgstruct_id)
+    page = emp_o_mem_page(src_orgstruct.type, src_orgstruct, socket, params)
+    {:noreply, socket |> assign(src_page: page) }
+  end
+
+  def handle_event("next_member_tgt_page", params, socket) do
+    tgt_orgstruct = Orgstructs.get_orgstruct!(socket.assigns.tgt_orgstruct_id)
+    page = emp_o_mem_page(tgt_orgstruct.type, tgt_orgstruct, socket, params)
+    {:noreply, socket |> assign(tgt_page: page) }
+  end
+  
   
   #####################
   @impl true

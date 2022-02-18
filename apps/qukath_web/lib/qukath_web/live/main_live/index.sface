@@ -4,5 +4,18 @@
   to={Routes.orgstruct_show_path(@socket, :show, 1, v1: 1, v2: 4)}
 />
 
+  <Card>
+      <Header>
+        A simple card component
+      </Header>
+
+      This is the same Card component but now we're using
+      <strong>typed slotables</strong> instead of <strong>templates</strong>.
+
+      <Footer>
+        <a href="#" class="card-footer-item">Footer Item 1</a>
+        <a href="#" class="card-footer-item">Footer Item 2</a>
+      </Footer>
+ </Card>
 
 

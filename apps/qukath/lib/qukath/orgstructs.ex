@@ -317,6 +317,14 @@ defmodule Qukath.Orgstructs do
       member_id: employee_entity_id})
   end
 
+  def delete_orgstruct_member(orgstruct_id, employee_id) do
+    orgstruct_entity_id = get_orgstruct_entity_id!(orgstruct_id)
+    employee_entity_id = Employees.get_employee_entity_id!(employee_id)
+    em = Entities.get_entity_member!(orgstruct_entity_id, employee_entity_id)
+
+    Entities.delete_entity_member(em)
+  end
+
 
   #######
   def subscribe do

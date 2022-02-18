@@ -11,6 +11,7 @@ defmodule QukathWeb.OrgstructLive.Show do
 
   alias Qukath.Orgstructs
   alias QukathWeb.OrgstructLive.OrgstructFormBulma
+  alias QukathWeb.OrgstructLive.MembersMembers
 
   alias QukathWeb.OrgstructLive.NestedOrgstruct
 
@@ -87,6 +88,11 @@ defmodule QukathWeb.OrgstructLive.Show do
     {@orgstruct.name} : 
     {@orgstruct.type} <br>
     """
+  end
+  defp rambo(socket, params) do
+    IO.puts "hello from rambo"
+    IO.inspect socket
+    IO.inspect params
   end
 
 end

@@ -13,4 +13,6 @@
   orgfunc={nil} 
   parent_orgstruct={@orgstruct}/>
 
-
+<div>
+  <MembersMembers orgstruct={@orgstruct} id="mm01" func={&rambo/2} />
+</div>

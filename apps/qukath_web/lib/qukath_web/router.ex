@@ -31,7 +31,10 @@ defmodule QukathWeb.Router do
 
     live "/orgstructs", OrgstructLive.Index, :index
     live "/orgstructs/:id", OrgstructLive.Show, :show
-    live "/orgstructs/:id/add_members", OrgstructLive.Members, :add_members
+    live "/orgstructs/:orgstruct_id/members_members", OrgstructLive.MembersMembers, :members
+
+    live "/orgstructs/:orgstruct_id/add_members", OrgstructLive.AddMembers, :add_members
+
     live "/orgstructs/:type/type", OrgstructLive.Index, :index_type
 
     live "/orgstructs/:orgstruct_id/employees", EmployeeLive.Index, :orgstruct

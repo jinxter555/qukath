@@ -45,12 +45,6 @@ defmodule Qukath.Employees do
     else: Repo.all(query)
   end
 
-  #def list_employees(%{"orgstruct_id" => orgstruct_id}) do
-  #  query = from emp in Employee,
-  #    where: emp.orgstruct_id == ^orgstruct_id,
-  #    select: emp
-  #  Repo.all(query)
-  #end
 
   #########
   def list_employees(%{"page" => _page} = params) do
@@ -73,14 +67,45 @@ defmodule Qukath.Employees do
       # [%Employee{}, ...]
 
   """
-  def list_employee_members(%{"orgstruct_id" => orgstruct_id, "except" => except} = params) do
+  def list_employee_members(%{"orgstruct_id" => orgstruct_id, "except_orgstruct_id" => except_orgstruct_id} = params) do
+    orgstruct = Orgstructs.get_orgstruct!(orgstruct_id)
+    except_orgstruct = Orgstructs.get_orgstruct!(except_orgstruct_id)
+
+    s_query = 
+      from emp in Employee,
+      join: em in EntityMember,
+      on: em.member_id == emp.entity_id,
+      where: em.entity_id == ^except_orgstruct.entity_id,
+      select: emp.id
+
+    query = 
+      if orgstruct.type == :corporate_group or 
+        orgstruct.type == :company do
+        from emp in Employee,
+        where: emp.orgstruct_id == ^orgstruct_id
+        and emp.id not in subquery(s_query),
+        select: emp
+      else
+        from emp in Employee,
+        join: em in EntityMember,
+        on: em.member_id == emp.entity_id,
+        where: em.entity_id == ^orgstruct.entity_id
+        and emp.id not in subquery(s_query),
+        select: emp
+      end
+
+    if params["page"], do: query |> Repo.paginate(params),
+    else: Repo.all(query)
+  end
+
+  def list_employee_members(%{"orgstruct_id" => orgstruct_id, "except_ids" => except_ids} = params) do
     orgstruct = Orgstructs.get_orgstruct!(orgstruct_id)
 
     query = from emp in Employee,
       join: em in EntityMember,
       on: em.member_id == emp.entity_id,
       where: em.entity_id == ^orgstruct.entity_id
-      and emp.id not in ^except,
+      and emp.id not in ^except_ids,
     # select: {emp, em.id}
     select: emp
 
