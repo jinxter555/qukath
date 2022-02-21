@@ -26,10 +26,10 @@ defmodule Qukath.Employees do
   end
 
   #########
-  def list_employees(%{"orgstruct_id" =>  orgstruct_id, "except" => except} = params) do
+  def list_employees(%{"orgstruct_id" =>  orgstruct_id, "except_ids" => except_ids} = params) do
     query = from emp in Employee,
       where: emp.orgstruct_id == ^orgstruct_id
-      and emp.id not in ^except,
+      and emp.id not in ^except_ids,
       select: emp
     if params["page"], do: query |> Repo.paginate(params),
     else: Repo.all(query)
@@ -51,8 +51,6 @@ defmodule Qukath.Employees do
     Employee
     |> Repo.paginate(params)
   end
-
-  
 
   
   @doc """

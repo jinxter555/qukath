@@ -31,8 +31,8 @@ defmodule QukathWeb.OrgstructLive.Show do
      listed_orgstruct = Orgstructs.list_descendants(orgstruct.id)
     {:noreply,
      socket
-     |> put_flash(:info, "hello who r u?: #{orgstruct.name}")
-     |> put_flash(:error, "what is going on: #{orgstruct.name}")
+     #|> put_flash(:info, "hello who r u?: #{orgstruct.name}")
+     #|> put_flash(:error, "what is going on: #{orgstruct.name}")
      |> assign(:orgstruct, orgstruct)
      |> assign(:nested_orgstruct, nested_orgstruct)
      |> assign(:listed_orgstruct, listed_orgstruct)

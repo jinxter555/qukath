@@ -3,6 +3,8 @@ defmodule QukathWeb.MainLive.Index do
 
   alias QukathWeb.Router.Helpers, as: Routes
   alias Surface.Components.{Link, LiveRedirect}
+  alias Phoenix.LiveView.JS
+
 
   alias Qukath.Orgstructs
 

@@ -205,7 +205,7 @@ defmodule Qukath.Entities do
   def get_entity_member!(entity_id, member_id) do
     query = from em in EntityMember, where: em.entity_id == ^entity_id
     and em.member_id == ^member_id, select: em
-    Repo.all(query)
+    Repo.all(query) |> hd
   end
 
   @doc """

@@ -1,0 +1,28 @@
+<div class="columns ">
+  <div class="column is-one-fifth">
+    <NestedOrgstruct
+        nested_orgstruct={@src_nested_orgstruct}
+        socket={@socket} orgfunc={&src_func/1}
+        parent_orgstruct={@orgstruct}
+        print_parent={true}
+        selected_orgstruct={@src_orgstruct}
+        />
+  </div>
+
+  {#if @tgt_orgstruct}
+  <div class="column">                              
+    {#if @src_orgstruct}
+    <SourceMembers orgstruct={@src_orgstruct} tgt_orgstruct={@tgt_orgstruct} id="sm01" func={&rambo/2}  />
+    {/if}
+  </div>
+
+  <div class="column">                              
+    <TargetMembers orgstruct={@tgt_orgstruct} id="tm01" func={&rambo/2}  />
+  </div>
+  {/if}
+
+  <div class="column is-one-fifth">
+    <NestedOrgstruct nested_orgstruct={@tgt_nested_orgstruct} socket={@socket} orgfunc={&tgt_func/1} parent_orgstruct={@orgstruct} print_parent={false} selected_orgstruct={@tgt_orgstruct}/>
+  </div>
+
+</div>

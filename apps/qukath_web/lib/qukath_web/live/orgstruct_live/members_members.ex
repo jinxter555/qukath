@@ -1,95 +1,104 @@
 defmodule QukathWeb.OrgstructLive.MembersMembers do
-  use Surface.LiveComponent
 
-  #alias Phoenix.LiveView.JS
-
-  alias Qukath.Employees
-  #alias Qukath.Orgstructs
-  #alias Qukath.Orgemp
-  #alias QukathWeb.EmployeeLive.EmployeeFormBulma
-  alias QukathWeb.EmployeeLive.EmployeeIndexEmployees
-  alias Surface.Components.{Link} # ,LiveRedirect}
-  #alias QukathWeb.OrgstructLive.NestedOrgstruct
-
-  #alias QukathWeb.Router.Helpers, as: Routes
+  use Surface.LiveView, layout: {QukathWeb.LayoutView, "live.html"}
 
   #import QukathWeb.ExtraHelper, only: [hide_deleted: 2]
-  #alias SurfaceBulma.Button
-  @page_size 3
-
-  prop orgstruct, :any, default: nil 
-  prop func, :fun, default: nil 
-  data page, :any, default: nil
+  alias Surface.Components.{Link }#, LiveRedirect}
+  #alias QukathWeb.Router.Helpers, as: Routes
 
 
 
-  def render(assigns) do
+  alias Qukath.Orgstructs
+  # alias Qukath.Organizations.Orgstruct
+  alias QukathWeb.OrgstructLive.SourceMembers
+  alias QukathWeb.OrgstructLive.TargetMembers
+
+  alias QukathWeb.OrgstructLive.NestedOrgstruct
+
+  on_mount QukathWeb.AuthUser
+
+  @impl true
+  def mount(_params, _session, socket) do
+    if connected?(socket), do: Orgstructs.subscribe("orgstruct_members")
+    {:ok, socket 
+    }
+  end
+
+  @impl true
+  def handle_params(%{"orgstruct_id" => orgstruct_id} = _params, _url, socket) do
+     orgstruct = Orgstructs.get_orgstruct!(orgstruct_id)
+     src_nested_orgstruct = Orgstructs.build_nested_orgstruct(orgstruct.id)
+    {:noreply,
+     socket
+     |> assign(:orgstruct, orgstruct)
+     |> assign(:src_orgstruct, orgstruct)
+     |> assign(:tgt_orgstruct, nil)
+     |> assign(:src_nested_orgstruct, src_nested_orgstruct)
+     |> assign(:tgt_nested_orgstruct, src_nested_orgstruct)
+     |> assign(:page_title, page_title(socket.assigns.live_action))
+    }
+  end
+  
+  @impl true
+  def handle_event("src_orgstruct", params, socket) do
+    src_orgstruct = Orgstructs.get_orgstruct!(params["orgstruct-id"])
+    {:noreply, socket
+    |> assign(src_orgstruct: src_orgstruct)
+    }
+  end
+
+  @impl true
+  def handle_event("tgt_orgstruct", params, socket) do
+    tgt_orgstruct = Orgstructs.get_orgstruct!(params["orgstruct-id"])
+    {:noreply, socket
+    |> assign(tgt_orgstruct: tgt_orgstruct)
+    }
+  end
+
+  @impl true
+  def handle_info({:orgstruct_member_inserted, em}, socket) do
+    #IO.puts "orgstruct_member_inserted"
+    #IO.inspect em
+    send_update SourceMembers, id: "sm01", em: em
+    send_update TargetMembers, id: "tm01", em: em
+
+    {:noreply, socket}
+  end
+  
+  @impl true                                                                                                                                                                                                
+  def handle_info({:orgstruct_member_deleted, em}, socket) do                                                                                                                                        
+    # IO.puts "orgstruct_member_deleted"
+    # IO.inspect em
+    send_update SourceMembers, id: "sm01", em: em
+    send_update TargetMembers, id: "tm02", em: em
+     {:noreply, socket }                                                                                                                                                                                     
+  end                                                                                                                                                                                                       
+
+  defp page_title(:members), do: "member action in orgstruct"
+
+  defp rambo(_socket, _params) do
+   # IO.puts "hello from rambo"
+   # IO.inspect socket
+   # IO.inspect params
+  end
+  
+  def src_func(assigns) do
     ~F"""
-    <div>
-      {#if @page && @page.total_pages} page:
-        {#for n <- 1..@page.total_pages}
-          <Link label={n} to="#" click="member_page" values={page: n} />
-        {/for}
-      {/if}
-
-     <EmployeeIndexEmployees employees={@page.entries} update_mode="replace" update_id="member" :let={employee: employee}>
-       <Link label={employee.name} to="#" click="orgstruct_employee" values={employee_id: employee.id} />
-     </EmployeeIndexEmployees>
-
-    </div>
+    <Link label={@orgstruct.name} to="#" click="src_orgstruct"
+      values={ orgstruct_id: @orgstruct.id}
+      class={@orgstruct.id == @selected_orgstruct.id && "has-text-primary"}/> <br/>
     """
   end
 
-  #####################
-  @impl true
-  def mount(socket) do
-    {:ok, socket
-    |> assign(:page, %Scrivener.Page{})
-    }
-  end
-
-  def update(assigns, socket) do
-    socket = %{socket | assigns: Map.merge(socket.assigns, assigns)}
-    page = emp_o_mem_page(assigns.orgstruct.type, assigns.orgstruct, socket, %{})
-    {:ok, socket
-    |> assign(:page, page)
-    }
-  end
-
-  #####################
-  @impl true
-  def handle_event("member_page", params, socket) do
-    orgstruct = socket.assigns.orgstruct
-    page = emp_o_mem_page(orgstruct.type, orgstruct, socket, params)
-    {:noreply, socket |> assign(page: page) }
-  end
-
-  @impl true
-  def handle_event("orgstruct_employee", params, socket) do
-    if socket.assigns.func do
-       (socket.assigns.func).(socket, params)
-    end
-    {:noreply, socket }
-  end
-
-  #####################
-  defp emp_o_mem_page(:corporate_group, orgstruct, socket, params) do
-    emp_o_mem_page(:company, orgstruct, socket, params) 
-  end
-
-  defp emp_o_mem_page(:company, orgstruct, _socket, params) do
-    Employees.list_employees(%{
-      "orgstruct_id" => orgstruct.id,
-      "page" => params["page"] || 1,
-      "page_size" => @page_size,
-    })
-  end
-
-  defp emp_o_mem_page(_, orgstruct, _socket, params) do
-    Employees.list_employee_members(%{
-      "page" => params["page"] || 1,
-      "page_size" => @page_size,
-      "orgstruct_id" => orgstruct.id})
+  def tgt_func(assigns) do
+    ~F"""
+    {#if @selected_orgstruct}
+      <Link label={@orgstruct.name} to="#" click="tgt_orgstruct" values={orgstruct_id: @orgstruct.id}
+        class={@orgstruct.id == @selected_orgstruct.id && "has-text-primary-light"}/> <br/>
+    {#else}
+      <Link label={@orgstruct.name} to="#" click="tgt_orgstruct" values={orgstruct_id: @orgstruct.id}/><br/>
+    {/if}
+    """
   end
 
 end

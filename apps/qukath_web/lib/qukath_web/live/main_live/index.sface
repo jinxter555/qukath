@@ -4,6 +4,15 @@
   to={Routes.orgstruct_show_path(@socket, :show, 1, v1: 1, v2: 4)}
 />
 
+<button phx-click={JS.hide(to: "#item2")}>
+  hide!
+</button>
+
+<button phx-click={JS.show(to: "#item1")}>
+  hide fancy!
+</button>
+<div id="item">My Item</div>
+
   <Card>
       <Header>
         A simple card component

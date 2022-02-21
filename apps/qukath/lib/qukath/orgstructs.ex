@@ -99,7 +99,7 @@ defmodule Qukath.Orgstructs do
       end
     end) |> case do
       {:ok,  result} -> 
-        broadcast(result, :orgstruct_created)
+        broadcast(result, :orgstruct_created, "orgstructs")
         result
     end
   end
@@ -129,7 +129,7 @@ defmodule Qukath.Orgstructs do
       end
     end) |> case do
       {:ok, result} -> 
-        broadcast(result, :orgstruct_created)
+        broadcast(result, :orgstruct_created, "orgstructs")
         result
     end
   end
@@ -161,7 +161,7 @@ defmodule Qukath.Orgstructs do
     orgstruct
     |> Orgstruct.changeset(attrs)
     |> Repo.update()
-    |> broadcast(:orgstruct_updated)
+    |> broadcast(:orgstruct_updated, "orgstructs")
   end
 
   @doc """
@@ -184,7 +184,7 @@ defmodule Qukath.Orgstructs do
       orgstruct_changeset
     end) |> case do
       {:ok,  result} -> 
-        broadcast(result, :orgstruct_deleted)
+        broadcast(result, :orgstruct_deleted, "orgstructs")
         result
     end
   end
@@ -315,14 +315,17 @@ defmodule Qukath.Orgstructs do
     Entities.create_entity_member(%{
       entity_id: orgstruct_entity_id,
       member_id: employee_entity_id})
+    |> broadcast(:orgstruct_member_inserted, "orgstruct_members")
   end
 
   def delete_orgstruct_member(orgstruct_id, employee_id) do
     orgstruct_entity_id = get_orgstruct_entity_id!(orgstruct_id)
     employee_entity_id = Employees.get_employee_entity_id!(employee_id)
     em = Entities.get_entity_member!(orgstruct_entity_id, employee_entity_id)
-
+    #IO.puts  "delete_orgstruct_member"
+    #IO.inspect em
     Entities.delete_entity_member(em)
+    |> broadcast(:orgstruct_member_deleted, "orgstruct_members")
   end
 
 
@@ -331,11 +334,22 @@ defmodule Qukath.Orgstructs do
     Phoenix.PubSub.subscribe(Qukath.PubSub, "orgstructs")
   end
 
-  defp broadcast({:error, _reason} = error, _event), do: error
-  defp broadcast({:ok, orgstruct}, event) do
+  def subscribe("orgstruct_members") do
+    Phoenix.PubSub.subscribe(Qukath.PubSub, "orgstruct_members")
+  end
+
+  defp broadcast({:error, _reason} = error, _event, _), do: error
+  defp broadcast({:ok, orgstruct}, event, "orgstructs") do
     # IO.puts "broadcast"
     Phoenix.PubSub.broadcast(Qukath.PubSub, "orgstructs", {event, orgstruct})
     {:ok, orgstruct}
   end
+
+  defp broadcast({:ok, em}, event, "orgstruct_members") do
+    # IO.puts "broadcast"
+    Phoenix.PubSub.broadcast(Qukath.PubSub, "orgstruct_members", {event, em})
+    {:ok, em}
+  end
+
 
 end

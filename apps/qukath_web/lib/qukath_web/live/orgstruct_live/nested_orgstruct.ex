@@ -8,6 +8,8 @@ defmodule QukathWeb.OrgstructLive.NestedOrgstruct do
   prop socket, :any, required: true
   prop nested_orgstruct, :any, required: true
   prop parent_orgstruct, :any, required: true
+  prop selected_orgstruct, :any, default: nil
+  #prop selected_orgstruct, :any, required: true
   prop orgfunc, :fun, default: nil
   prop print_parent, :boolean, default: true
 
@@ -22,14 +24,14 @@ defmodule QukathWeb.OrgstructLive.NestedOrgstruct do
   def render(assigns) do
     ~F"""
     {#if @nested_orgstruct.id == @parent_orgstruct.id and @print_parent }
-      <.func_attach orgstruct={@nested_orgstruct} socket={@socket} func={@orgfunc} parent_orgstruct={@parent_orgstruct}/>
+      <.func_attach orgstruct={@nested_orgstruct} socket={@socket} func={@orgfunc} parent_orgstruct={@parent_orgstruct} selected_orgstruct={@selected_orgstruct}/>
     {/if}
 
     {#if @nested_orgstruct }
       {#for child <- @nested_orgstruct.children }
-        <.func_attach orgstruct={child} socket={@socket} func={@orgfunc} parent_orgstruct={@parent_orgstruct}/>
+        <.func_attach orgstruct={child} socket={@socket} func={@orgfunc} parent_orgstruct={@parent_orgstruct} selected_orgstruct={@selected_orgstruct}/>
         {#if Map.has_key?(child, :children) }
-          <NestedOrgstruct nested_orgstruct={child} socket={@socket} orgfunc={@orgfunc} parent_orgstruct={@parent_orgstruct}/>
+          <NestedOrgstruct nested_orgstruct={child} socket={@socket} orgfunc={@orgfunc} parent_orgstruct={@parent_orgstruct} selected_orgstruct={@selected_orgstruct}/>
         {/if}
       {/for}
     {/if}
