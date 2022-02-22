@@ -149,4 +149,168 @@ defmodule Qukath.WorkTest do
 
 
 
+
+  describe "todo_states" do
+    alias Qukath.Work.TodoState
+
+    import Qukath.WorkFixtures
+
+    @invalid_attrs %{state: nil}
+
+    test "list_todo_states/0 returns all todo_states" do
+      todo_state = todo_state_fixture()
+      assert Work.list_todo_states() == [todo_state]
+    end
+
+    test "get_todo_state!/1 returns the todo_state with given id" do
+      todo_state = todo_state_fixture()
+      assert Work.get_todo_state!(todo_state.id) == todo_state
+    end
+
+    test "create_todo_state/1 with valid data creates a todo_state" do
+      valid_attrs = %{state: 42}
+
+      assert {:ok, %TodoState{} = todo_state} = Work.create_todo_state(valid_attrs)
+      assert todo_state.state == 42
+    end
+
+    test "create_todo_state/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Work.create_todo_state(@invalid_attrs)
+    end
+
+    test "update_todo_state/2 with valid data updates the todo_state" do
+      todo_state = todo_state_fixture()
+      update_attrs = %{state: 43}
+
+      assert {:ok, %TodoState{} = todo_state} = Work.update_todo_state(todo_state, update_attrs)
+      assert todo_state.state == 43
+    end
+
+    test "update_todo_state/2 with invalid data returns error changeset" do
+      todo_state = todo_state_fixture()
+      assert {:error, %Ecto.Changeset{}} = Work.update_todo_state(todo_state, @invalid_attrs)
+      assert todo_state == Work.get_todo_state!(todo_state.id)
+    end
+
+    test "delete_todo_state/1 deletes the todo_state" do
+      todo_state = todo_state_fixture()
+      assert {:ok, %TodoState{}} = Work.delete_todo_state(todo_state)
+      assert_raise Ecto.NoResultsError, fn -> Work.get_todo_state!(todo_state.id) end
+    end
+
+    test "change_todo_state/1 returns a todo_state changeset" do
+      todo_state = todo_state_fixture()
+      assert %Ecto.Changeset{} = Work.change_todo_state(todo_state)
+    end
+  end
+
+  describe "todo_sholders" do
+    alias Qukath.Work.TodoSholder
+
+    import Qukath.WorkFixtures
+
+    @invalid_attrs %{}
+
+    test "list_todo_sholders/0 returns all todo_sholders" do
+      todo_sholder = todo_sholder_fixture()
+      assert Work.list_todo_sholders() == [todo_sholder]
+    end
+
+    test "get_todo_sholder!/1 returns the todo_sholder with given id" do
+      todo_sholder = todo_sholder_fixture()
+      assert Work.get_todo_sholder!(todo_sholder.id) == todo_sholder
+    end
+
+    test "create_todo_sholder/1 with valid data creates a todo_sholder" do
+      valid_attrs = %{}
+
+      assert {:ok, %TodoSholder{} = todo_sholder} = Work.create_todo_sholder(valid_attrs)
+    end
+
+    test "create_todo_sholder/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Work.create_todo_sholder(@invalid_attrs)
+    end
+
+    test "update_todo_sholder/2 with valid data updates the todo_sholder" do
+      todo_sholder = todo_sholder_fixture()
+      update_attrs = %{}
+
+      assert {:ok, %TodoSholder{} = todo_sholder} = Work.update_todo_sholder(todo_sholder, update_attrs)
+    end
+
+    test "update_todo_sholder/2 with invalid data returns error changeset" do
+      todo_sholder = todo_sholder_fixture()
+      assert {:error, %Ecto.Changeset{}} = Work.update_todo_sholder(todo_sholder, @invalid_attrs)
+      assert todo_sholder == Work.get_todo_sholder!(todo_sholder.id)
+    end
+
+    test "delete_todo_sholder/1 deletes the todo_sholder" do
+      todo_sholder = todo_sholder_fixture()
+      assert {:ok, %TodoSholder{}} = Work.delete_todo_sholder(todo_sholder)
+      assert_raise Ecto.NoResultsError, fn -> Work.get_todo_sholder!(todo_sholder.id) end
+    end
+
+    test "change_todo_sholder/1 returns a todo_sholder changeset" do
+      todo_sholder = todo_sholder_fixture()
+      assert %Ecto.Changeset{} = Work.change_todo_sholder(todo_sholder)
+    end
+  end
+
+  describe "todo_infos" do
+    alias Qukath.Work.TodoInfo
+
+    import Qukath.WorkFixtures
+
+    @invalid_attrs %{dependency: nil, description: nil, name: nil}
+
+    test "list_todo_infos/0 returns all todo_infos" do
+      todo_info = todo_info_fixture()
+      assert Work.list_todo_infos() == [todo_info]
+    end
+
+    test "get_todo_info!/1 returns the todo_info with given id" do
+      todo_info = todo_info_fixture()
+      assert Work.get_todo_info!(todo_info.id) == todo_info
+    end
+
+    test "create_todo_info/1 with valid data creates a todo_info" do
+      valid_attrs = %{dependency: "some dependency", description: "some description", name: "some name"}
+
+      assert {:ok, %TodoInfo{} = todo_info} = Work.create_todo_info(valid_attrs)
+      assert todo_info.dependency == "some dependency"
+      assert todo_info.description == "some description"
+      assert todo_info.name == "some name"
+    end
+
+    test "create_todo_info/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Work.create_todo_info(@invalid_attrs)
+    end
+
+    test "update_todo_info/2 with valid data updates the todo_info" do
+      todo_info = todo_info_fixture()
+      update_attrs = %{dependency: "some updated dependency", description: "some updated description", name: "some updated name"}
+
+      assert {:ok, %TodoInfo{} = todo_info} = Work.update_todo_info(todo_info, update_attrs)
+      assert todo_info.dependency == "some updated dependency"
+      assert todo_info.description == "some updated description"
+      assert todo_info.name == "some updated name"
+    end
+
+    test "update_todo_info/2 with invalid data returns error changeset" do
+      todo_info = todo_info_fixture()
+      assert {:error, %Ecto.Changeset{}} = Work.update_todo_info(todo_info, @invalid_attrs)
+      assert todo_info == Work.get_todo_info!(todo_info.id)
+    end
+
+    test "delete_todo_info/1 deletes the todo_info" do
+      todo_info = todo_info_fixture()
+      assert {:ok, %TodoInfo{}} = Work.delete_todo_info(todo_info)
+      assert_raise Ecto.NoResultsError, fn -> Work.get_todo_info!(todo_info.id) end
+    end
+
+    test "change_todo_info/1 returns a todo_info changeset" do
+      todo_info = todo_info_fixture()
+      assert %Ecto.Changeset{} = Work.change_todo_info(todo_info)
+    end
+  end
 end

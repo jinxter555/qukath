@@ -30,9 +30,6 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
         </Header>
 
         <Form for={@changeset} change="validate" as={:todo} :let={form: f} submit="save">
-          <div class="control">
-            <TextInput label="description" field={:description} form={f}/>
-          </div>
           <HiddenInput field={:action} value={@action} form={f} />
           <HiddenInput field={:orgstruct_id} form={f} />
           <HiddenInput field={:type} form={f} />
@@ -52,7 +49,6 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
       orgstruct_id: params["orgstruct-id"],
       type: params["type"],
       state: params["state"],
-      owner_entity_id: parent_socket.assigns.employee_entity_id,
     })
 
     send_update(__MODULE__,

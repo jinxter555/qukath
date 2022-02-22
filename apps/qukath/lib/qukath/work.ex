@@ -147,5 +147,89 @@ defmodule Qukath.Work do
     {:ok, todo}
   end
 
+  ###########
+  alias Qukath.Work.TodoState
 
+  def list_todo_states do
+    Repo.all(TodoState)
+  end
+
+  def get_todo_state!(id), do: Repo.get!(TodoState, id)
+
+  def create_todo_state(attrs \\ %{}) do
+    %TodoState{}
+    |> TodoState.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_todo_state(%TodoState{} = todo_state, attrs) do
+    todo_state
+    |> TodoState.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_todo_state(%TodoState{} = todo_state) do
+    Repo.delete(todo_state)
+  end
+
+  def change_todo_state(%TodoState{} = todo_state, attrs \\ %{}) do
+    TodoState.changeset(todo_state, attrs)
+  end
+  #####################
+
+
+  alias Qukath.Work.TodoSholder
+
+  def list_todo_sholders do
+    Repo.all(TodoSholder)
+  end
+
+  def get_todo_sholder!(id), do: Repo.get!(TodoSholder, id)
+
+  def create_todo_sholder(attrs \\ %{}) do
+    %TodoSholder{}
+    |> TodoSholder.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_todo_sholder(%TodoSholder{} = todo_sholder, attrs) do
+    todo_sholder
+    |> TodoSholder.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_todo_sholder(%TodoSholder{} = todo_sholder) do
+    Repo.delete(todo_sholder)
+  end
+
+  def change_todo_sholder(%TodoSholder{} = todo_sholder, attrs \\ %{}) do
+    TodoSholder.changeset(todo_sholder, attrs)
+  end
+
+  #####################
+  alias Qukath.Work.TodoInfo
+
+  def list_todo_infos do
+    Repo.all(TodoInfo)
+  end
+
+  def get_todo_info!(id), do: Repo.get!(TodoInfo, id)
+
+  def create_todo_info(attrs \\ %{}) do
+    %TodoInfo{}
+    |> TodoInfo.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_todo_info(%TodoInfo{} = todo_info, attrs) do
+    todo_info
+    |> TodoInfo.changeset(attrs)
+    |> Repo.update()
+  end
+  def delete_todo_info(%TodoInfo{} = todo_info) do
+    Repo.delete(todo_info)
+  end
+  def change_todo_info(%TodoInfo{} = todo_info, attrs \\ %{}) do
+    TodoInfo.changeset(todo_info, attrs)
+  end
 end

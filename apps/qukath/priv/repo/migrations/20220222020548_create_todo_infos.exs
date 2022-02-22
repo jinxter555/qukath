@@ -1,0 +1,16 @@
+defmodule Qukath.Repo.Migrations.CreateTodoInfos do
+  use Ecto.Migration
+
+  def change do
+    create table(:todo_infos) do
+      add :name, :string
+      add :description, :string
+      add :dependency, :string
+      add :todo_id, references(:todos, on_delete: :nothing)
+
+      timestamps()
+    end
+
+    create index(:todo_infos, [:todo_id])
+  end
+end

@@ -122,7 +122,7 @@ defmodule Qukath.Orgstructs do
 
            {:ok, orgstruct} <- create_orgstruct(orgstruct_entity.id, attrs),
            {:ok, _} <- Employees.create_employee(leader_entity.id, 
-             %{user_id: user.id, name: username, orgstruct_id: orgstruct.id}) do
+             %{"user_id" => user.id, "name" => username, "orgstruct_id" => orgstruct.id}) do
         {:ok, orgstruct}
       else
         error -> error
@@ -136,7 +136,7 @@ defmodule Qukath.Orgstructs do
 
   defp create_orgstruct_entity(attrs) do
     parent_entity_id = 
-      if attrs["orgstruct_id"] != "" do 
+      if Map.has_key?(attrs, "orgstruct_id") do
         get_orgstruct_entity_id!(attrs["orgstruct_id"])
       else 
         nil
@@ -322,8 +322,6 @@ defmodule Qukath.Orgstructs do
     orgstruct_entity_id = get_orgstruct_entity_id!(orgstruct_id)
     employee_entity_id = Employees.get_employee_entity_id!(employee_id)
     em = Entities.get_entity_member!(orgstruct_entity_id, employee_entity_id)
-    #IO.puts  "delete_orgstruct_member"
-    #IO.inspect em
     Entities.delete_entity_member(em)
     |> broadcast(:orgstruct_member_deleted, "orgstruct_members")
   end
@@ -350,6 +348,5 @@ defmodule Qukath.Orgstructs do
     Phoenix.PubSub.broadcast(Qukath.PubSub, "orgstruct_members", {event, em})
     {:ok, em}
   end
-
 
 end

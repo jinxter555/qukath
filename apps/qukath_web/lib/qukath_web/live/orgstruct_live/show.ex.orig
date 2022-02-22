@@ -10,6 +10,9 @@ defmodule QukathWeb.OrgstructLive.Show do
 
   alias Qukath.Orgstructs
   alias QukathWeb.OrgstructLive.OrgstructFormBulma
+  alias QukathWeb.OrgstructLive.MembersMembers
+
+  alias QukathWeb.OrgstructLive.NestedOrgstruct
 
   on_mount QukathWeb.AuthUser
 
@@ -23,11 +26,15 @@ defmodule QukathWeb.OrgstructLive.Show do
   @impl true
   def handle_params(%{"id" => id} = _params, _url, socket) do
      orgstruct = Orgstructs.get_orgstruct!(id)
+     nested_orgstruct = Orgstructs.build_nested_orgstruct(orgstruct.id)
+     listed_orgstruct = Orgstructs.list_descendants(orgstruct.id)
     {:noreply,
      socket
      #|> put_flash(:info, "hello who r u?: #{orgstruct.name}")
      #|> put_flash(:error, "what is going on: #{orgstruct.name}")
      |> assign(:orgstruct, orgstruct)
+     |> assign(:nested_orgstruct, nested_orgstruct)
+     |> assign(:listed_orgstruct, listed_orgstruct)
      |> assign(:page_title, page_title(socket.assigns.live_action))
     }
   end
@@ -76,5 +83,17 @@ defmodule QukathWeb.OrgstructLive.Show do
   defp page_title(:show), do: "Show orgstruct"
   defp page_title(:edit), do: "Edit orgstruct"
 
+
+  def mydisplay(assigns) do
+    ~F"""
+    {@orgstruct.name} : 
+    {@orgstruct.type} <br>
+    """
+  end
+  defp rambo(socket, params) do
+    IO.puts "hello from rambo"
+    IO.inspect socket
+    IO.inspect params
+  end
 
 end

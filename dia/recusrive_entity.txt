@@ -1,0 +1,28 @@
+role:
+orgstruct_id: to denormalize database to work with multiple companies
+etc: admin_role, add employee, update employee, verify employee
+
+
+role_skill
+
+skill:
+name: making pizza
+action: cook
+resource: pizza
+
+
+role_play
+---
+resturant owner:
+chef, cook, waiter, bartender
+
+
+entit_x_role
+etc: employee_table , employee_entity_id: role, admin_role, programming_role
+etc: org_team_table , employee_entity_id: role, admin_role, programming_role
+etc: org_department_table , employee_entity_id: role, admin_role, programming_role
+
+
+
+
+

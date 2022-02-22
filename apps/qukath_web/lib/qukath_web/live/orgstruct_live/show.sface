@@ -7,12 +7,3 @@
 
 <OrgstructFormBulma id={orgstruct_form_cid()} />
 
-<NestedOrgstruct 
-  nested_orgstruct={@nested_orgstruct} 
-  socket={@socket} 
-  orgfunc={nil} 
-  parent_orgstruct={@orgstruct}/>
-
-<div>
-  <MembersMembers orgstruct={@orgstruct} id="mm01" func={&rambo/2} />
-</div>
