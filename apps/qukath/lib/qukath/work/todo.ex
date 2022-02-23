@@ -6,11 +6,15 @@ defmodule Qukath.Work.Todo do
   alias Qukath.Work.{TodoInfo, TodoSholder, TodoState}
 
   schema "todos" do
-    field :description, :string
-    field :state, Ecto.Enum, values: [default: 42, notstarted: 100, done: 101, started: 102, stopped: 103, aborted: 104, paused: 105]
     field :type, Ecto.Enum, values: [task: 100, list: 101, project: 102, program: 103]
+
+    field :description, :string,  virtual: true
+    field :name, :string,  virtual: true
+
+
     belongs_to :entity, Entity
     belongs_to :orgstruct, Orgstruct
+
     has_many :todo_infos, TodoInfo
     has_many :todo_states, TodoState
     has_many :todo_sholders, TodoSholder
@@ -22,8 +26,8 @@ defmodule Qukath.Work.Todo do
   @doc false
   def changeset(todo, attrs) do
     todo
-    |> cast(attrs, [:type, :state, :orgstruct_id])
-    |> validate_required([:type, :state,  :orgstruct_id])
+    |> cast(attrs, [:type, :orgstruct_id, :description, :name])
+    |> validate_required([:type, :orgstruct_id, :description])
     |> cast_assoc(:entity)
     |> cast_assoc(:orgstruct)
   end

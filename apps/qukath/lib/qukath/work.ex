@@ -6,18 +6,14 @@ defmodule Qukath.Work do
   import Ecto.Query, warn: false
   alias Qukath.Repo
 
-  alias Qukath.Work.Todo
+  alias Qukath.Work.{Todo, TodoInfo}
   alias Qukath.Entities
 
-  @doc """
-  Returns the list of todos.
-
-  ## Examples
-
-      iex> list_todos()
-      [%Todo{}, ...]
-
-  """
+  ##############
+  @todo_info_preload_order todo_infos: from(ti in TodoInfo, order_by: [desc: ti.updated_at])
+  # @todo_info_preload_order todo_infos: from(ti in TodoInfo, order_by: [asc: ti.updated_at])
+  ##############
+  #
   def list_todos do
     Repo.all(Todo) # |> Repo.preload([:assignto_entity])
   end
@@ -29,26 +25,30 @@ defmodule Qukath.Work do
     query = from t in Todo,
       where: t.orgstruct_id == ^orgstruct_id,
       select: t
-    Repo.all(query)
+    Repo.all(query) |>Repo.preload([@todo_info_preload_order])
   end
 
+  ##############
+  def get_todo!(id) do
+    t = Repo.get!(Todo, id) 
+    |> Repo.preload([
+      @todo_info_preload_order
+    ]) 
+    |> todo_info_merge()
+    IO.inspect t
+    t
+  end
 
+  def todo_info_merge(todo) do
+    Map.merge(todo, hd(todo.todo_infos) , fn k, v1, v2 ->
+      case k do
+        :description -> v2
+        :name -> v2
+        _ -> v1
+      end
+    end)
+  end
 
-  @doc """
-  Gets a single todo.
-
-  Raises `Ecto.NoResultsError` if the Todo does not exist.
-
-  ## Examples
-
-      iex> get_todo!(123)
-      %Todo{}
-
-      iex> get_todo!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_todo!(id), do: Repo.get!(Todo, id)
 
   @doc """
   Creates a todo.
@@ -65,10 +65,11 @@ defmodule Qukath.Work do
   """
   def create_todo(attrs \\ %{}) do
     Repo.transaction(fn ->
-      with {:ok, entity} <- Entities.create_entity(%{type: :todo}) do
-        %Todo{entity: entity}
-        |> Todo.changeset(attrs)
-        |> Repo.insert()
+      with {:ok, entity} <- Entities.create_entity(%{type: :todo}),
+           {:ok, todo} <- %Todo{entity: entity} |> Todo.changeset(attrs) |> Repo.insert(),
+           {:ok, _todo_info} <- create_todo_info(todo, attrs)
+      do
+        {:ok, todo}
       end
     end) |> case do
       {:ok, result} -> 
@@ -90,10 +91,17 @@ defmodule Qukath.Work do
 
   """
   def update_todo(%Todo{} = todo, attrs) do
-    todo
-    |> Todo.changeset(attrs)
-    |> Repo.update()
-    |> broadcast(:todo_created)
+    Repo.transaction(fn ->
+      with {:ok, todo} <- Todo.changeset(todo, attrs) |> Repo.update(),
+           {:ok, _todo_info} <- todo.todo_infos |> hd |>  update_todo_info(attrs)
+      do
+        {:ok, todo}
+      end
+    end) |> case do
+      {:ok, result} ->
+        broadcast(result, :todo_updated)
+        result
+    end
   end
 
   @doc """
@@ -215,8 +223,8 @@ defmodule Qukath.Work do
 
   def get_todo_info!(id), do: Repo.get!(TodoInfo, id)
 
-  def create_todo_info(attrs \\ %{}) do
-    %TodoInfo{}
+  def create_todo_info(todo, attrs \\ %{}) do
+    %TodoInfo{todo_id: todo.id}
     |> TodoInfo.changeset(attrs)
     |> Repo.insert()
   end

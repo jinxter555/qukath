@@ -2,10 +2,10 @@ defmodule QukathWeb.TodoLive.Show do
   use Surface.LiveView
 
   alias Qukath.Work
-  alias Qukath.Orgstructs
+  #alias Qukath.Orgstructs
   alias QukathWeb.TodoLive.TodoFormBulma
   alias Surface.Components.Link
-  import QukathWeb.TodoLive.Index, only: [todo_form_cid: 0]
+  import QukathWeb.TodoLive.Index, only: [todo_form_cid: 0, merge_info: 1]
 
   #import QukathWeb.ExtraHelper, only: [hide_deleted: 2]
 
@@ -19,10 +19,13 @@ defmodule QukathWeb.TodoLive.Show do
 
   @impl true
   def handle_params(%{"id" => id} = _params, _url, socket) do
+     todo = Work.get_todo!(id)
+    IO.puts "from handle todo"
+    IO.inspect todo
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:todo, Work.get_todo!(id))
+     |> assign(:todo, todo)
     }
   end
 

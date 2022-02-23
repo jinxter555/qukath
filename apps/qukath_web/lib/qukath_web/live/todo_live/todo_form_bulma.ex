@@ -3,9 +3,10 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
 
 
   alias Qukath.Work
-  alias Qukath.Work.Todo
+  alias Qukath.Work.{Todo, TodoInfo}
 
   alias Surface.Components.Form
+  #alias SurfaceBulma.Form.{HiddenInput, Submit}
   alias SurfaceBulma.Form.{TextInput, HiddenInput, Submit}
   alias SurfaceBulma.Modal.Card                                                                    
   alias SurfaceBulma.Modal.{Card, Header, Footer}
@@ -13,12 +14,15 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
   data show, :boolean, default: false
   data action, :any, default: nil
   data changeset, :any
+  data info_changeset, :any
 
   @impl true
   def mount(socket) do
     changeset = Work.change_todo(%Todo{})
+    info_changeset = Work.change_todo_info(%TodoInfo{})
     {:ok, socket
     |> assign(:changeset, changeset)
+    |> assign(:info_changeset, info_changeset)
     }
   end
   
@@ -30,10 +34,13 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
         </Header>
 
         <Form for={@changeset} change="validate" as={:todo} :let={form: f} submit="save">
+          <TextInput label="Description" field={:description} placeholder="Todo description" form={f}/>
+          <TextInput label="Name" field={:name} placeholder="Todo name" form={f}/>
+
           <HiddenInput field={:action} value={@action} form={f} />
           <HiddenInput field={:orgstruct_id} form={f} />
           <HiddenInput field={:type} form={f} />
-          <HiddenInput field={:state} form={f} />
+
           <Submit type="Submit"> Save </Submit>
         </Form>
 
@@ -44,17 +51,18 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
   end
 
 
-  def apply_action("new", params, parent_socket) do
+  def apply_action("new", params, _parent_socket) do
     changeset = Work.change_todo(%Todo{
       orgstruct_id: params["orgstruct-id"],
       type: params["type"],
-      state: params["state"],
     })
+    info_changeset = Work.change_todo_info(%TodoInfo{})
 
     send_update(__MODULE__,
       id: params["cid"],
       action: :new,
       changeset: changeset,
+      info_changeset: info_changeset,
       show: true)
   end
 
@@ -105,7 +113,7 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
 
   @impl true
   def handle_event("save", %{"todo" => params}, socket) do
-    {:noreply, assign(socket, show: false)}
+    #{:noreply, assign(socket, show: false)}
     save_todo(socket, params["action"], params)
   end
 

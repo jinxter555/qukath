@@ -76,10 +76,14 @@ defmodule QukathWeb.TodoLive.Index do
     end)}
   end
 
-
   def todo_form_cid() do
     "tfb01"
   end
+
+  def merge_info(todo) do
+    Work.todo_info_merge(todo)
+  end
+
 
 end
 

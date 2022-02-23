@@ -15,6 +15,6 @@ defmodule Qukath.Work.TodoInfo do
   def changeset(todo_info, attrs) do
     todo_info
     |> cast(attrs, [:name, :description, :dependency])
-    |> validate_required([:name, :description, :dependency])
+    |> validate_required([:description])
   end
 end
