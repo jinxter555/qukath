@@ -81,7 +81,7 @@ defmodule QukathWeb.TodoLive.Index do
   end
 
   def merge_info(todo) do
-    Work.todo_info_merge(todo)
+    Work.merge(todo, :todo_infos)
   end
 
 

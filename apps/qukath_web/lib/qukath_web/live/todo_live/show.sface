@@ -1,4 +1,5 @@
 <TodoFormBulma id={todo_form_cid()} />
 <Link label= {@todo.description}
 to="#" click="todo_form" values={todo_id: @todo.id, action: :edit, cid: todo_form_cid()} />
+{@todo.name}
 

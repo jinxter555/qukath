@@ -6,16 +6,17 @@ defmodule Qukath.Work do
   import Ecto.Query, warn: false
   alias Qukath.Repo
 
-  alias Qukath.Work.{Todo, TodoInfo}
+  alias Qukath.Work.{Todo, TodoInfo, TodoState, TodoSholder}
   alias Qukath.Entities
 
   ##############
   @todo_info_preload_order todo_infos: from(ti in TodoInfo, order_by: [desc: ti.updated_at])
-  # @todo_info_preload_order todo_infos: from(ti in TodoInfo, order_by: [asc: ti.updated_at])
+  @todo_state_preload_order todo_states: from(tst in TodoState, order_by: [desc: tst.updated_at])
+  @todo_sholder_preload_order todo_sholders: from(tsh in TodoSholder, order_by: [desc: tsh.updated_at])
   ##############
   #
   def list_todos do
-    Repo.all(Todo) # |> Repo.preload([:assignto_entity])
+    Repo.all(Todo) 
   end
 
   def list_todos(%{"orgstruct_id" => orgstruct_id}), do:
@@ -25,49 +26,54 @@ defmodule Qukath.Work do
     query = from t in Todo,
       where: t.orgstruct_id == ^orgstruct_id,
       select: t
-    Repo.all(query) |>Repo.preload([@todo_info_preload_order])
+    Repo.all(query) 
+    |> Repo.preload([
+      @todo_info_preload_order,
+      @todo_state_preload_order,
+      @todo_sholder_preload_order])
   end
 
   ##############
   def get_todo!(id) do
-    t = Repo.get!(Todo, id) 
+    Repo.get!(Todo, id) 
     |> Repo.preload([
-      @todo_info_preload_order
-    ]) 
-    |> todo_info_merge()
-    IO.inspect t
-    t
+      @todo_info_preload_order,
+      @todo_state_preload_order,
+      @todo_sholder_preload_order]) 
+    |> merge(:todo_infos)
+    |> merge(:todo_states)
   end
 
-  def todo_info_merge(todo) do
-    Map.merge(todo, hd(todo.todo_infos) , fn k, v1, v2 ->
+  ## 
+  ## merge todo nested child schemas into todo
+  ##
+  def merge(todo, child) when is_atom(child) do
+    merge(todo, Map.get(todo, child))
+  end
+
+  def merge(todo, []), do: todo
+  def merge(todo, [child | _l]), do: merge(todo, child)
+
+  def merge(todo, child) do
+    Map.merge(todo, child , fn k, v1, v2 ->
       case k do
-        :description -> v2
-        :name -> v2
-        _ -> v1
+        kk when kk in [
+          :__meta__, :__struct__, :id, :type,
+          :orgstruct_id, :updated_at , :inserted_at, :entity_id]
+          -> v1
+        _ -> v2
       end
     end)
   end
 
-
-  @doc """
-  Creates a todo.
-
-  ## Examples
-  # create_todo(%{owner_entity_id: owner_entity_id, description: String.t(), type: [:task|:list|:project], ...}) 
-
-      iex> create_todo(%{field: value})
-      {:ok, %Todo{}}
-
-      iex> create_todo(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
+  ##############
   def create_todo(attrs \\ %{}) do
     Repo.transaction(fn ->
       with {:ok, entity} <- Entities.create_entity(%{type: :todo}),
            {:ok, todo} <- %Todo{entity: entity} |> Todo.changeset(attrs) |> Repo.insert(),
-           {:ok, _todo_info} <- create_todo_info(todo, attrs)
+           {:ok, _todo_info} <- create_todo_info(todo, attrs),
+           {:ok, _todo_state} <- create_todo_state(todo, attrs),
+           {:ok, _todo_sholder} <- create_todo_sholder(todo, attrs)
       do
         {:ok, todo}
       end
@@ -93,9 +99,9 @@ defmodule Qukath.Work do
   def update_todo(%Todo{} = todo, attrs) do
     Repo.transaction(fn ->
       with {:ok, todo} <- Todo.changeset(todo, attrs) |> Repo.update(),
-           {:ok, _todo_info} <- todo.todo_infos |> hd |>  update_todo_info(attrs)
+           {:ok, todo_info} <- todo.todo_infos |> hd |>  update_todo_info(attrs)
       do
-        {:ok, todo}
+        {:ok, {todo, todo_info}}
       end
     end) |> case do
       {:ok, result} ->
@@ -142,19 +148,6 @@ defmodule Qukath.Work do
     Todo.changeset(todo, attrs)
   end
 
-
-  ###
-  def subscribe do
-    Phoenix.PubSub.subscribe(Qukath.PubSub, "todos")
-  end
-
-  defp broadcast({:error, _reason} = error, _event), do: error
-  defp broadcast({:ok, todo}, event) do
-    # IO.puts "broadcast"
-    Phoenix.PubSub.broadcast(Qukath.PubSub, "todos", {event, todo})
-    {:ok, todo}
-  end
-
   ###########
   alias Qukath.Work.TodoState
 
@@ -164,8 +157,8 @@ defmodule Qukath.Work do
 
   def get_todo_state!(id), do: Repo.get!(TodoState, id)
 
-  def create_todo_state(attrs \\ %{}) do
-    %TodoState{}
+  def create_todo_state(todo, attrs \\ %{}) do
+    %TodoState{todo_id: todo.id}
     |> TodoState.changeset(attrs)
     |> Repo.insert()
   end
@@ -194,8 +187,8 @@ defmodule Qukath.Work do
 
   def get_todo_sholder!(id), do: Repo.get!(TodoSholder, id)
 
-  def create_todo_sholder(attrs \\ %{}) do
-    %TodoSholder{}
+  def create_todo_sholder(todo, attrs \\ %{}) do
+    %TodoSholder{todo_id: todo.id}
     |> TodoSholder.changeset(attrs)
     |> Repo.insert()
   end
@@ -240,4 +233,17 @@ defmodule Qukath.Work do
   def change_todo_info(%TodoInfo{} = todo_info, attrs \\ %{}) do
     TodoInfo.changeset(todo_info, attrs)
   end
+
+  #########################
+  def subscribe do
+    Phoenix.PubSub.subscribe(Qukath.PubSub, "todos")
+  end
+
+  defp broadcast({:error, _reason} = error, _event), do: error
+  defp broadcast({:ok, todo}, event) do
+    # IO.puts "broadcast"
+    Phoenix.PubSub.broadcast(Qukath.PubSub, "todos", {event, todo})
+    {:ok, todo}
+  end
+
 end
