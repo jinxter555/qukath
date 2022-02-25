@@ -5,6 +5,7 @@ defmodule QukathWeb.TodoLive.Show do
   #alias Qukath.Orgstructs
   alias QukathWeb.TodoLive.TodoFormBulma
   alias Surface.Components.Link
+  alias SurfaceBulma.Dropdown
   import QukathWeb.TodoLive.Index, only: [todo_form_cid: 0]
 
   #import QukathWeb.ExtraHelper, only: [hide_deleted: 2]
@@ -14,7 +15,9 @@ defmodule QukathWeb.TodoLive.Show do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: Work.subscribe()
-    {:ok, socket }
+    {:ok, socket
+     |> assign(:show_dropdown, false)
+    }
   end
 
   @impl true
@@ -33,6 +36,20 @@ defmodule QukathWeb.TodoLive.Show do
     IO.inspect params
     TodoFormBulma.apply_action(params["action"], params, socket)
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("todo_state", params, socket) do
+    send_update(SurfaceBulma.Dropdown, id: "statedd01", active: false, open: false)
+    todo = Work.get_todo!(params["todo-id"])
+    {:ok, _ts} = Work.create_todo_state(todo, params) 
+    todo = Work.get_todo!(params["todo-id"])
+
+    {:noreply, 
+      socket 
+      |> assign(todo: todo) 
+      #|> assign(show_dropdown: false) 
+    }
   end
 
 
@@ -58,5 +75,14 @@ defmodule QukathWeb.TodoLive.Show do
 
   defp page_title(:show), do: "Show todo"
   defp page_title(:edit), do: "Edit todo"
+
+  defp states() do
+    Ecto.Enum.mappings(Qukath.Work.TodoState, :state)
+  end
+
+  defp active_state(state1, state2) do
+    if state1 == state2, do: " is-active",
+    else: ""
+  end
 
 end

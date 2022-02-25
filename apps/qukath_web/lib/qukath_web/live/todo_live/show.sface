@@ -1,5 +1,19 @@
 <TodoFormBulma id={todo_form_cid()} />
-<Link label= {@todo.description}
-to="#" click="todo_form" values={todo_id: @todo.id, action: :edit, cid: todo_form_cid()} />
-{@todo.name}
+<Link label={@todo.description}
+      to="#" click="todo_form" 
+      values={todo_id: @todo.id, action: :edit, cid: todo_form_cid()}/>
 
+<Dropdown active={false} id="statedd01">
+  <:trigger>{@todo.state}</:trigger>
+  <div class="dropdown-menu" id="dropdown-menu" role="menu">
+    <div class="dropdown-content">
+      {#for {state, _v} <- states()}
+        <Link label={state} to="#" click="todo_state"
+            values={todo_id: @todo.id, state: state, action: :edit}
+            class={"dropdown-item" <> active_state(state, @todo.state)} />
+      {/for}
+    </div>
+  </div>
+</Dropdown>
+
+{@todo.name}

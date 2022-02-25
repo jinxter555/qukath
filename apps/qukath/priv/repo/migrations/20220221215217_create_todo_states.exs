@@ -4,7 +4,8 @@ defmodule Qukath.Repo.Migrations.CreateTodoStates do
   def change do
     create table(:todo_states) do
       add :state, :integer
-      add :todo_id, references(:todos, on_delete: :nothing)
+      add :approved, :integer
+      add :todo_id, references(:todos, on_delete: :delete_all)
 
       timestamps()
     end

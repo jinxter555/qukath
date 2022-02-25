@@ -3,7 +3,8 @@ defmodule Qukath.Work.TodoState do
   import Ecto.Changeset
 
   schema "todo_states" do
-    field :state, Ecto.Enum, values: [done_appoved: 100, done: 101, notstated: 102, started: 103, stopped: 104, aborted: 105, paused: 106]
+    field :state, Ecto.Enum, values: [done: 100, notstarted: 101, started: 102, stopped: 103, aborted: 104, paused: 105], default: :notstarted
+    field :approved, Ecto.Enum, values: [yes: 100, no: 101, wait: 103, rejected: 104], default: :wait
     field :todo_id, :id
 
     timestamps()

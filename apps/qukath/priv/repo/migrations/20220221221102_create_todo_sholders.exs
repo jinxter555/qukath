@@ -3,7 +3,7 @@ defmodule Qukath.Repo.Migrations.CreateTodoSholders do
 
   def change do
     create table(:todo_sholders) do
-      add :todo_id, references(:todos, on_delete: :nothing)
+      add :todo_id, references(:todos, on_delete: :delete_all)
       add :owner_entity_id, references(:entities, on_delete: :nothing)
       add :assignto_entity_id, references(:entities, on_delete: :nothing)
       add :assignby_entity_id, references(:entities, on_delete: :nothing)

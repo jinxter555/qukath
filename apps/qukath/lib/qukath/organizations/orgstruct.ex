@@ -7,7 +7,7 @@ defmodule Qukath.Organizations.Orgstruct do
 
   schema "orgstructs" do
     field :name, :string
-    field :type, Ecto.Enum, values: [corporate_group: 100, company: 101, department: 102, team: 103, league: 104]
+    field :type, Ecto.Enum, values: [corporate_group: 100, company: 101, department: 102, team: 103, league: 104, external: 200]
 
     #field :leader_entity_id, :id
     #field :entity_id, :id
