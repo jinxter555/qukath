@@ -73,14 +73,19 @@ defmodule Qukath.Work do
            {:ok, todo} <- %Todo{entity: entity} |> Todo.changeset(attrs) |> Repo.insert(),
            {:ok, _todo_info} <- create_todo_info(todo, attrs),
            {:ok, _todo_state} <- create_todo_state(todo, attrs),
-           {:ok, _todo_sholder} <- create_todo_sholder(todo, attrs)
+           {:ok, _todo_sholder} <- create_todo_sholder(todo, attrs["sholder"] )
       do
         {:ok, todo}
+      else
+        {:error, err} -> Repo.rollback(err)
       end
     end) |> case do
       {:ok, result} -> 
         broadcast(result, :todo_created)
         result
+      err -> 
+        IO.puts "err:"
+        IO.inspect err
     end
   end
 
@@ -187,7 +192,17 @@ defmodule Qukath.Work do
 
   def get_todo_sholder!(id), do: Repo.get!(TodoSholder, id)
 
-  def create_todo_sholder(todo, attrs \\ %{}) do
+  def create_todo_sholder(todo), do: create_todo_sholder(todo, %{})
+
+  def create_todo_sholder(todo, attrs ) when is_list(attrs) do
+    result = Enum.map(attrs, fn x -> 
+      create_todo_sholder(todo, x)
+    end) 
+    List.keyfind(result, :error, 0) || {:ok, result} # no errors return ok and list
+  end
+
+  def create_todo_sholder(todo, attrs) when is_map(attrs) do
+    IO.puts "create_todo_sholder in  map"
     %TodoSholder{todo_id: todo.id}
     |> TodoSholder.changeset(attrs)
     |> Repo.insert()

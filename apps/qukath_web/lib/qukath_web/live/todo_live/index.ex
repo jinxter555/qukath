@@ -1,5 +1,5 @@
 defmodule QukathWeb.TodoLive.Index do
-  use Surface.LiveView
+  use Surface.LiveView, layout: {QukathWeb.LayoutView, "live.html"}
 
   alias Qukath.Work
   alias Qukath.Orgstructs

@@ -6,7 +6,7 @@ defmodule Qukath.Work.TodoInfo do
     field :dependency, :string
     field :description, :string
     field :name, :string
-    # field :required_approval, :boolean , default: false
+    field :required_approval, :boolean , default: false
     field :todo_id, :id
 
     timestamps()

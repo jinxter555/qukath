@@ -15,6 +15,8 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
   data action, :any, default: nil
   data changeset, :any
   data info_changeset, :any
+  data employee_entity_id, :any, default: nil
+  prop parent_assigns, :any, default: nil
 
   @impl true
   def mount(socket) do
@@ -39,6 +41,7 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
 
           <HiddenInput field={:action} value={@action} form={f} />
           <HiddenInput field={:orgstruct_id} form={f} />
+          <HiddenInput field={:employee_entity_id} value={@employee_entity_id} form={f} />
           <HiddenInput field={:type} form={f} />
 
           <Submit type="Submit"> Save </Submit>
@@ -61,6 +64,7 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
     send_update(__MODULE__,
       id: params["cid"],
       action: :new,
+      employee_entity_id: params["employee-entity-id"],
       changeset: changeset,
       info_changeset: info_changeset,
       show: true)
@@ -130,7 +134,9 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
   end
 
   defp save_todo(socket, "new", params) do
-    case Work.create_todo(params) do
+    params_with_sholders(params)
+    |> Work.create_todo() 
+    |> case do
       {:ok, _orgstruct} ->
         {:noreply, socket
           |> assign(show: false)
@@ -138,7 +144,22 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
         }
       {:error, %Todo{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
+      {:error, changeset} ->
+        {:noreply, assign(socket, changeset: changeset)}
     end
+  end
+
+  defp params_with_sholders(params) do
+    Map.merge(params, %{"sholder" => [
+      %{"type" => "owner",
+        "entity_id" => params["employee_entity_id"]},
+      %{"type" => "createdby",
+        "entity_id" => params["employee_entity_id"]},
+      %{"type" => "assignedby",
+        "entity_id" => params["employee_entity_id"]},
+      %{"type" => "assignedto",
+        "entity_id" => params["employee_entity_id"]},
+    ]})
   end
 
 end

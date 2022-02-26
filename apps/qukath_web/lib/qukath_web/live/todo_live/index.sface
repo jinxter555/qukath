@@ -1,10 +1,12 @@
 {#if @orgstruct}
-<Link label="New Task" to="#" click="todo_form" 
-values={orgstruct_id: @orgstruct.id, action: :new,
-type: :task, cid: todo_form_cid()} class="button"/>
+<Link
+    label="New Task" to="#" click="todo_form" 
+    values={orgstruct_id: @orgstruct.id,
+    action: :new, type: :task, cid: todo_form_cid(),
+    employee_entity_id: @employee_entity_id} class="button"/>
 {/if}
 
-<TodoFormBulma id={todo_form_cid()} />
+<TodoFormBulma id={todo_form_cid()} parent_assigns={assigns} /> 
 
 <div id="todos" phx-update="append">
   {#for todo <- @todos }
