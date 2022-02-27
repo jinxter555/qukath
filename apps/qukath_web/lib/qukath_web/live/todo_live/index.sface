@@ -3,6 +3,7 @@
     label="New Task" to="#" click="todo_form" 
     values={orgstruct_id: @orgstruct.id,
     action: :new, type: :task, cid: todo_form_cid(),
+    target_employee_entity_id: @target_employee_entity_id,
     employee_entity_id: @employee_entity_id} class="button"/>
 {/if}
 

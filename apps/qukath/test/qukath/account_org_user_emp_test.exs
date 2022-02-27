@@ -30,9 +30,9 @@ defmodule AccountOrgTest do
       assert emp.name == employee.name
       assert emp.entity.type == :employee
       assert emp.user.email == employee.user.email
-      org_type = Enum.random([:corporate_group, :company, :department])
+      #org_type = Enum.random([:corporate_group, :company, :department])
 
-      IO.inspect employee
+      #IO.inspect employee
 
 
       #{:ok, o} = Orgstructs.create_orgstruct(%{

@@ -17,6 +17,7 @@ defmodule QukathWeb.TodoLive.Index do
     {:ok,
       socket
       |> assign(:orgstruct, nil)
+      |> assign(:target_employee_entity_id, socket.assigns.employee_entity_id)
       |> assign(:todos, []),
       temporary_assigns: [todos: []]
     }

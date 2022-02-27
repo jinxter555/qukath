@@ -16,6 +16,7 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
   data changeset, :any
   data info_changeset, :any
   data employee_entity_id, :any, default: nil
+  data target_employee_entity_id, :any, default: nil
   prop parent_assigns, :any, default: nil
 
   @impl true
@@ -32,7 +33,7 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
     ~F"""
       <Card show={@show} close_event="modal_close" show_close_button={true}>
         <Header>
-        headertext
+        Todo
         </Header>
 
         <Form for={@changeset} change="validate" as={:todo} :let={form: f} submit="save">
@@ -42,6 +43,7 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
           <HiddenInput field={:action} value={@action} form={f} />
           <HiddenInput field={:orgstruct_id} form={f} />
           <HiddenInput field={:employee_entity_id} value={@employee_entity_id} form={f} />
+          <HiddenInput field={:target_employee_entity_id} value={@target_employee_entity_id} form={f} />
           <HiddenInput field={:type} form={f} />
 
           <Submit type="Submit"> Save </Submit>
@@ -65,6 +67,7 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
       id: params["cid"],
       action: :new,
       employee_entity_id: params["employee-entity-id"],
+      target_employee_entity_id: params["target-employee-entity-id"],
       changeset: changeset,
       info_changeset: info_changeset,
       show: true)
@@ -152,13 +155,13 @@ defmodule QukathWeb.TodoLive.TodoFormBulma do
   defp params_with_sholders(params) do
     Map.merge(params, %{"sholder" => [
       %{"type" => "owner",
-        "entity_id" => params["employee_entity_id"]},
+        "entity_id" => params["target_employee_entity_id"]},
       %{"type" => "createdby",
         "entity_id" => params["employee_entity_id"]},
       %{"type" => "assignedby",
         "entity_id" => params["employee_entity_id"]},
       %{"type" => "assignedto",
-        "entity_id" => params["employee_entity_id"]},
+        "entity_id" => params["target_employee_entity_id"]},
     ]})
   end
 

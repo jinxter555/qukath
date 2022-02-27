@@ -208,6 +208,15 @@ defmodule Qukath.Work do
     |> Repo.insert()
   end
 
+  def create_todo_sholder(todo, attrs)  do
+    IO.puts "create_todo_sholder"
+    IO.puts "no match"
+    IO.puts "----"
+    IO.inspect attrs
+    IO.puts "----"
+  end
+
+
   def update_todo_sholder(%TodoSholder{} = todo_sholder, attrs) do
     todo_sholder
     |> TodoSholder.changeset(attrs)

@@ -11,7 +11,7 @@ defmodule Qukath.OrganizationsTest do
 
     import Qukath.OrganizationsFixtures
 
-    @invalid_attrs %{name: nil, orgstruct_id: nil}
+    @invalid_attrs %{"name" => nil, "orgstruct_id" => nil}
 
     # @tag :skip
     test "list_employees/0 returns all employees" do
@@ -33,12 +33,12 @@ defmodule Qukath.OrganizationsTest do
     test "create_employee/1 with valid data creates a employee" do
       orgstruct = orgstruct_fixture(:orgstruct)
       valid_attrs = %{
-        name: Faker.Person.name(),
-        orgstruct_id: orgstruct.id,
+        "name" => Faker.Person.name(),
+        "orgstruct_id" => orgstruct.id,
       }
 
       assert {:ok, %Employee{} = employee} = Employees.create_employee(valid_attrs)  
-      assert employee.name == valid_attrs.name
+      assert employee.name == valid_attrs["name"]
 
     end
 
@@ -81,14 +81,14 @@ defmodule Qukath.OrganizationsTest do
     end
   end
 
-  # @tag :skip
+   # @tag :skip
   describe "orgstructs" do
     alias Qukath.Orgstructs
     alias Qukath.Organizations.Orgstruct
 
     import Qukath.OrganizationsFixtures
 
-    @invalid_attrs %{name: nil, type: nil, leader_entity_id: nil}
+    @invalid_attrs %{"name" => nil, "type" => nil, "leader_entity_id" => nil}
 
     # @tag :skip
     test "list_orgstructs/0 returns all orgstructs" do
@@ -106,7 +106,7 @@ defmodule Qukath.OrganizationsTest do
     # @tag :skip
     test "create_orgstruct/1 with valid data creates a orgstruct" do
       leader = employee_fixture()
-      valid_attrs = %{name: "some name", type: :team, leader_entity_id: leader.entity_id}
+      valid_attrs = %{"name" => "some name", "type" => :team, "leader_entity_id" => leader.entity_id}
 
       assert {:ok, %Orgstruct{} = orgstruct} = Orgstructs.create_orgstruct(valid_attrs)
       assert orgstruct.name == "some name"
@@ -117,17 +117,13 @@ defmodule Qukath.OrganizationsTest do
     test "create_orgstruct_init/2 with user arg " do
       user = insert(:user)
 
-      valid_attrs = %{name: "some name", type: :team}
+      valid_attrs = %{"name" => "some name", "type" => :team}
 
       assert {:ok, %Orgstruct{} = orgstruct} = Orgstructs.create_orgstruct_init(user.id, valid_attrs, "bob's world")
       # employee = Employees.get_employee_by_user_id!(user.id) |> hd
 
       employee = Employees.get_employee_by_user_orgstruct_ids!(user.id, orgstruct.id)|> hd
       
-      #IO.inspect orgstruct
-      #IO.inspect user
-      #IO.inspect employee
-
       assert orgstruct.name == "some name"
       assert orgstruct.type == :team
       assert orgstruct.leader_entity_id == employee.entity_id
@@ -142,7 +138,7 @@ defmodule Qukath.OrganizationsTest do
     test "update_orgstruct/2 with valid data updates the orgstruct" do
       orgstruct = orgstruct_fixture()
       leader = employee_fixture()
-      update_attrs = %{name: "some updated name", type: :company, leader_entity_id: leader.entity_id}
+      update_attrs = %{"name" => "some updated name", "type" => :company, "leader_entity_id" => leader.entity_id}
 
       assert {:ok, %Orgstruct{} = orgstruct} = Orgstructs.update_orgstruct(orgstruct, update_attrs)
       assert orgstruct.name == "some updated name"

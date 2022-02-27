@@ -13,13 +13,18 @@ defmodule Qukath.WorkFixtures do
   """
   def todo_fixture(attrs \\ %{}) do
     employee = insert(:employee)
+    orgstruct =  insert(:orgstruct)
+
     {:ok, todo} =
       attrs
       |> Enum.into(%{
-        owner_entity_id: employee.entity.id,
-        description: "make coffee in the morning",
-        state: 42,
-        type: :task
+        "orgstruct_id" => orgstruct.id,
+        "description" => "make coffee in the morning",
+        "name" => "morning wakeup",
+        "state" => :notstarted,
+        "type" => :task,
+        # "sholder" => [entity: employee.entity, type: :owner],
+        "sholder" => [],
       })
       |> Work.create_todo()
     todo # |> Map.drop([:entity, :owner_entity])
@@ -32,7 +37,7 @@ defmodule Qukath.WorkFixtures do
     {:ok, todo_state} =
       attrs
       |> Enum.into(%{
-        state: 42
+        state: :notstarted
       })
       |> Qukath.Work.create_todo_state()
 
@@ -43,10 +48,13 @@ defmodule Qukath.WorkFixtures do
   Generate a todo_sholder.
   """
   def todo_sholder_fixture(attrs \\ %{}) do
+    employee = insert(:employee)
     {:ok, todo_sholder} =
       attrs
       |> Enum.into(%{
-
+        type: :owner,
+        entity: employee.entity,
+        approved: :yes
       })
       |> Qukath.Work.create_todo_sholder()
 

@@ -1,0 +1,14 @@
+name: {@employee.name}
+
+
+{#if @employee}
+<Link
+    label="New Task" to="#" click="todo_form" 
+    values={orgstruct_id: @employee.orgstruct_id,
+    action: :new, type: :task, cid: todo_form_cid(),
+    target_employee_entity_id: @employee.entity_id,
+    employee_entity_id: @employee_entity_id} class="button"/>
+{/if}
+
+<TodoFormBulma id={todo_form_cid()} parent_assigns={assigns} /> 
+
