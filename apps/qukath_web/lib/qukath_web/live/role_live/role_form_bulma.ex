@@ -1,45 +1,41 @@
-defmodule QukathWeb.EmployeeLive.EmployeeFormBulma2 do
+defmodule QukathWeb.RoleLive.RoleFormBulma do
   use Surface.LiveComponent
 
 
-  alias Qukath.Orgstructs
-  alias Qukath.Employees
-  alias Qukath.Organizations.Orgstruct
-  alias Qukath.Organizations.Employee
+  alias Qukath.Roles
+  alias Qukath.Roles.{Role}
 
   alias Surface.Components.Form
+  #alias SurfaceBulma.Form.{HiddenInput, Submit}
   alias SurfaceBulma.Form.{TextInput, HiddenInput, Submit}
   alias SurfaceBulma.Modal.Card                                                                    
   alias SurfaceBulma.Modal.{Card, Header, Footer}
-
 
   data show, :boolean, default: false
   data action, :any, default: nil
   data changeset, :any
 
-
   @impl true
   def mount(socket) do
-    changeset = Employees.change_employee(%Employee{})
+    changeset = Roles.change_role(%Role{})
     {:ok, socket
     |> assign(:changeset, changeset)
     }
   end
-
   
   def render(assigns) do
     ~F"""
       <Card show={@show} close_event="modal_close" show_close_button={true}>
         <Header>
-        headertext
+        Role
         </Header>
 
-        <Form for={@changeset} change="validate" as={:employee} :let={form: f} submit="save">
-          <div class="control">
-            <TextInput label="Name" field={:name} form={f}/>
-          </div>
+        <Form for={@changeset} change="validate" as={:role} :let={form: f} submit="save">
+          <TextInput label="Name" field={:name} placeholder="role name" form={f}/>
+
           <HiddenInput field={:action} value={@action} form={f} />
           <HiddenInput field={:orgstruct_id} form={f} />
+
           <Submit type="Submit"> Save </Submit>
         </Form>
 
@@ -51,7 +47,7 @@ defmodule QukathWeb.EmployeeLive.EmployeeFormBulma2 do
 
 
   def apply_action("new", params, _parent_socket) do
-    changeset = Employees.change_employee(%Employee{
+    changeset = Roles.change_role(%Role{
       orgstruct_id: params["orgstruct-id"],
     })
 
@@ -63,43 +59,41 @@ defmodule QukathWeb.EmployeeLive.EmployeeFormBulma2 do
   end
 
   def apply_action("edit", params, _parent_socket) do
-    IO.puts "bulma form edit"
-    IO.inspect params
-    employee = Employees.get_employee!(params["employee-id"]) 
-    changeset =  Employees.change_employee(employee)
+    role = Roles.get_role!(params["role-id"]) 
+    changeset =  Roles.change_role(role)
 
     send_update(__MODULE__,
       id: params["cid"],
       action: params["action"],
       changeset: changeset,
-      employee: employee,
+      role: role,
       show: true)
   end
 
   def apply_action("delete", params, socket) do
-    Employees.get_employee!(params["employee-id"]) 
-    |> Employees.delete_employee()
+    Roles.get_role!(params["role-id"]) 
+    |> Roles.delete_role()
     |> case do
       {:ok, _changeset} ->
-        changeset = Employees.change_employee(%Employee{})
+        changeset = Roles.change_role(%Role{})
         {:noreply, socket 
-          |> put_flash(:info, "employee delete succeffuly") 
+          |> put_flash(:info, "Role delete succeffuly") 
           |> assign(:changeset, changeset)
         }
       error -> 
-        changeset = Employees.change_employee(%Employee{})
+        changeset = Roles.change_role(%Role{})
         {:noreply, socket 
-          |> put_flash(:info, "employee delete error: #{error}") 
+          |> put_flash(:info, "role delete error: #{error}") 
           |> assign(:changeset, changeset)
         }
       end
   end
 
   @impl true
-  def handle_event("validate", %{"employee" => employee_params}, socket) do
+  def handle_event("validate", %{"role" => params}, socket) do
     changeset = 
       socket.assigns.changeset.data
-      |> Employees.change_employee(employee_params)
+      |> Roles.change_role(params)
       |> Map.put(:action, :validate)
     {:noreply, socket |> assign(:changeset, changeset)}
   end
@@ -110,39 +104,37 @@ defmodule QukathWeb.EmployeeLive.EmployeeFormBulma2 do
   end
 
   @impl true
-  def handle_event("save", %{"employee" => employee_params}, socket) do
-    IO.puts "employee save"
-    IO.inspect employee_params
-    {:noreply, assign(socket, show: false)}
-    save_employee(socket, employee_params["action"], employee_params)
+  def handle_event("save", %{"role" => params}, socket) do
+    save_role(socket, params["action"], params)
   end
 
-  defp save_employee(socket, "edit", employee_params) do
-    Employees.update_employee(
-      socket.assigns.employee,
-      employee_params) 
+  defp save_role(socket, "edit", params) do
+    Roles.update_role(
+      socket.assigns.role,
+      params) 
     |> case do
-      {:ok, _employee} ->
+      {:ok, _role} ->
         {:noreply, socket
         |> assign(show: false)
         }
     end
   end
 
-  defp save_employee(socket, "new", employee_params) do
-    IO.puts "save new"
-    IO.inspect employee_params
-
-    case Employees.create_employee(employee_params) do
-      {:ok, _orgstruct} ->
+  defp save_role(socket, "new", params) do
+    Roles.create_role(params) 
+    |> case do
+      {:ok, _role} ->
         {:noreply, socket
           |> assign(show: false)
-          |> put_flash(:info, "employee created succeffuly") 
+          |> put_flash(:info, "role created succeffuly") 
         }
-      {:error, %Employee{} = changeset} ->
+      {:error, %Role{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset)}
+      {:error, changeset} ->
+        IO.inspect %Role{}
+        IO.inspect changeset
         {:noreply, assign(socket, changeset: changeset)}
     end
   end
-
 
 end

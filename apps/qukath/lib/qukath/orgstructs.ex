@@ -90,7 +90,7 @@ defmodule Qukath.Orgstructs do
   """
   def create_orgstruct(attrs \\ %{}) do
     Repo.transaction(fn ->
-      with {:ok, orgstruct_entity} <- create_orgstruct_entity(attrs),
+      with {:ok, orgstruct_entity} <- create_orgstruct_entity(attrs), # create nested structure
            {:ok, orgstruct} <- create_orgstruct(orgstruct_entity.id, attrs) do
 
         {:ok, orgstruct}

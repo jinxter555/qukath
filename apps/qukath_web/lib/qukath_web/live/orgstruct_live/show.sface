@@ -2,6 +2,8 @@
 : {@orgstruct.type}
 <LiveRedirect label="Employees" to={Routes.employee_index_path(@socket, :orgstruct, @orgstruct)}/>
 <LiveRedirect label="Todos" to={Routes.todo_index_path(@socket, :orgstruct, @orgstruct)}/>
+<LiveRedirect label="Roles" to={Routes.role_index_path(@socket, :orgstruct, @orgstruct)}/>
+<LiveRedirect label="Members" to={Routes.orgstruct_members_members_path(@socket, :members, @orgstruct)}/>
 <br>
 {newlinks(assigns)}
 

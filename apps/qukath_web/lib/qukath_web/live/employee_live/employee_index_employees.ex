@@ -1,7 +1,7 @@
 defmodule QukathWeb.EmployeeLive.EmployeeIndexEmployees do
   use Surface.Component
 
-  import QukathWeb.EmployeeLive.EmployeeIndex, only: [employee_form_cid: 0]
+  import QukathWeb.EmployeeLive.Index, only: [employee_form_cid: 0]
 
   alias Surface.Components.Link
 

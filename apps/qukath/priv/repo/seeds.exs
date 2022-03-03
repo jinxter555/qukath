@@ -16,6 +16,11 @@ import Qukath.Factory
 {:ok, orgstruct2} = Orgstructs.create_orgstruct_init(u2.id, %{"name" => "my com 2", "type" => "company"}, "u 2")
 {:ok, orgstruct3} = Orgstructs.create_orgstruct_init(u3.id, %{"name" => "her compan 3", "type" => "company"}, "u 3")
 
+insert_list(10, :role,  %{orgstruct_id: orgstruct1.id})
+insert(:role,  %{orgstruct_id: orgstruct1.id, name: "employee"})
+insert_list(10, :role,  %{orgstruct_id: orgstruct2.id})
+insert(:role,  %{orgstruct_id: orgstruct2.id, name: "employee"})
+
 employee1 = Employees.get_employees_by_user_id!(u1.id) |> Repo.preload([:entity]) |> hd
 insert_list(10, :orgstruct, %{leader_entity_id: employee1.entity.id})
 

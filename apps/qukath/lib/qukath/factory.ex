@@ -8,6 +8,8 @@ defmodule Qukath.Factory do
   alias Qukath.Accounts.User
   alias Qukath.Organizations.Employee
   alias Qukath.Organizations.Orgstruct
+  alias Qukath.Roles.Role
+
 
   def user_factory do
     email = sequence(:email, &"email-#{&1}@example.com")
@@ -63,13 +65,19 @@ defmodule Qukath.Factory do
     }
   end
 
-
   def employee_factory do
     # name = sequence(:name, &"email-#{&1}@example.com")         
     %Employee {
       name: Faker.Person.name(),
       user: build(:user),
       entity: build(:entity, %{type: :employee}),
+    }
+  end
+
+  def role_factory do
+    %Role {
+      name: Faker.Person.title(),
+      entity: build(:entity, %{type: :role}),
     }
   end
 end
