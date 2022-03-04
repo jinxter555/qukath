@@ -5,7 +5,7 @@ defmodule Qukath.EmployeeRole do
 
   import Ecto.Query, warn: false
   alias Qukath.Repo
-
+  alias Qukath.Entities
   alias Qukath.Roles.EmployeeRole
 
   @doc """
@@ -21,84 +21,72 @@ defmodule Qukath.EmployeeRole do
     Repo.all(EmployeeRole)
   end
 
-  @doc """
-  Gets a single employee_role.
+  def list_employee_roles(%{"employee_id" => employee_id}),  do:
+    list_employee_roles(employee_id: employee_id)
 
-  Raises `Ecto.NoResultsError` if the Employee role does not exist.
-
-  ## Examples
-
-      iex> get_employee_role!(123)
-      %EmployeeRole{}
-
-      iex> get_employee_role!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_employee_role!(id), do: Repo.get!(EmployeeRole, id)
-
-  @doc """
-  Creates a employee_role.
-
-  ## Examples
-
-      iex> create_employee_role(%{field: value})
-      {:ok, %EmployeeRole{}}
-
-      iex> create_employee_role(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_employee_role(attrs \\ %{}) do
-    %EmployeeRole{}
-    |> EmployeeRole.changeset(attrs)
-    |> Repo.insert()
+  def list_employee_roles(employee_id: employee_id) do
+    query = from er in EmployeeRole,
+      where: er.employee_id == ^employee_id
+    Repo.all(query)
   end
 
-  @doc """
-  Updates a employee_role.
+  def get_employee_role!(id), do: Repo.get!(EmployeeRole, id)
 
-  ## Examples
 
-      iex> update_employee_role(employee_role, %{field: new_value})
-      {:ok, %EmployeeRole{}}
+  ################################
 
-      iex> update_employee_role(employee_role, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
+  def create_employee_role(attrs \\ %{}) do
+    Repo.transaction(fn ->
+      with {:ok, entity} <- Entities.create_entity(%{type: :employee_role}),
+           {:ok, employee_role} <- 
+             %EmployeeRole{entity: entity} |> EmployeeRole.changeset(attrs) |> Repo.insert()
+      do
+        {:ok, employee_role}
+      else
+        {:error, err} ->
+          Repo.rollback(err)
+      end
+    end) |> case do
+      {:ok, result} -> 
+        broadcast(result, :employee_role_created)
+        result
+    end
+  end
 
-  """
   def update_employee_role(%EmployeeRole{} = employee_role, attrs) do
     employee_role
     |> EmployeeRole.changeset(attrs)
     |> Repo.update()
+    |> broadcast(:employee_role_updated)
   end
 
-  @doc """
-  Deletes a employee_role.
-
-  ## Examples
-
-      iex> delete_employee_role(employee_role)
-      {:ok, %EmployeeRole{}}
-
-      iex> delete_employee_role(employee_role)
-      {:error, %Ecto.Changeset{}}
-
-  """
   def delete_employee_role(%EmployeeRole{} = employee_role) do
-    Repo.delete(employee_role)
+    Repo.transaction(fn ->
+      entity_id = employee_role.entity_id
+      employee_role_changeset = Repo.delete(employee_role)
+      Entities.get_entity!(entity_id) |> Entities.delete_entity()
+      employee_role_changeset
+    end) |> case do
+      {:ok, result} ->
+        broadcast(result, :employee_role_deleted)
+        result
+    end
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking employee_role changes.
-
-  ## Examples
-
-      iex> change_employee_role(employee_role)
-      %Ecto.Changeset{data: %EmployeeRole{}}
-
-  """
   def change_employee_role(%EmployeeRole{} = employee_role, attrs \\ %{}) do
     EmployeeRole.changeset(employee_role, attrs)
+  end
+
+  ################################
+            
+  #########################
+  def subscribe do
+    Phoenix.PubSub.subscribe(Qukath.PubSub, "employee_roles")
+  end
+        
+  defp broadcast({:error, _reason} = error, _event), do: error
+  defp broadcast({:ok, employee_role}, event) do
+    Phoenix.PubSub.broadcast(Qukath.PubSub, "employee_roles", {event, employee_role})
+    {:ok, employee_role}
   end
 end

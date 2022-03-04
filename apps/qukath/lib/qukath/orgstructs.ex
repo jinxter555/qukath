@@ -6,6 +6,7 @@ defmodule Qukath.Orgstructs do
 
   alias Qukath.Repo
   alias Qukath.Organizations.Orgstruct
+  alias Qukath.Organizations.Employee
   alias Qukath.Employees
   alias Qukath.Entities
   alias Qukath.Accounts
@@ -39,6 +40,10 @@ defmodule Qukath.Orgstructs do
     query = from org in Orgstruct,
       where: org.type == ^type
     Repo.all(query)
+  end
+
+  def list_nested_orgstructs_by_employee(%Employee{} = employee) do
+    list_descendants(employee.orgstruct_id)
   end
 
   @doc """

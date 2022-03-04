@@ -8,7 +8,7 @@ defmodule Qukath.Entities.Entity do
   schema "entities" do
     # field :parent_id, :integer, null: true
     belongs_to :parent, Entity
-    field :type,  Ecto.Enum, values: [employee: 100, org: 101, todo: 102, role: 103]
+    field :type,  Ecto.Enum, values: [employee: 100, org: 101, todo: 102, role: 103, employee_role: 104]
     has_many :members, EntityMember
 
     timestamps()

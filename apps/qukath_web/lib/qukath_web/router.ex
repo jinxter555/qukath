@@ -47,6 +47,7 @@ defmodule QukathWeb.Router do
     live "/employees", EmployeeLive.Index, :index        
     live "/employees/:id", EmployeeLive.Show, :show
     live "/employees/:employee_id/todos", EmptdLive.Index, :index
+    live "/employees/:employee_id/roles", EmployeeRolesLive.Index, :index
 
     live "/roles/:id", RoleLive.Show, :show
 
