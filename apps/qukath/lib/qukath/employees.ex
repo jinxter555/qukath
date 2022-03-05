@@ -179,25 +179,26 @@ defmodule Qukath.Employees do
   """
   def create_employee(attrs \\ %{}) do
     Repo.transaction(fn ->
-      with {:ok, employee_entity} <- Entities.create_entity(%{type: :employee}),
-           {:ok, employee} <-  create_employee(employee_entity.id, attrs)  do
+      with {:ok, entity} <- Entities.create_entity(%{type: :employee}),
+           {:ok, employee} <- create_employee(%Employee{entity: entity}, attrs)
+      do
         {:ok, employee}
       else 
-        err -> err
+        {:error, error} -> Repo.rollback(error)
       end
     end) |> case do
       {:ok, result} ->
         broadcast(result, :employee_created)
         result
+      error -> error
     end
   end
 
-  def create_employee(entity_id, attrs) do
-    attrs = Map.put(attrs, "entity_id", entity_id)
-    %Employee{}
-    |> Employee.changeset(attrs)
-    |> Repo.insert()
+  # for create orgstruct init
+  def create_employee(%Employee{} = employee_map, attrs) do
+    employee_map |> Employee.changeset(attrs) |> Repo.insert()
   end
+
 
   @doc """
   Updates a employee.

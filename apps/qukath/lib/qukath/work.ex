@@ -77,15 +77,13 @@ defmodule Qukath.Work do
       do
         {:ok, todo}
       else
-        {:error, err} -> Repo.rollback(err)
+        {:error, error} -> Repo.rollback(error)
       end
     end) |> case do
       {:ok, result} -> 
         broadcast(result, :todo_created)
         result
-      err -> 
-        IO.puts "err:"
-        IO.inspect err
+      error -> error
     end
   end
 
@@ -107,11 +105,14 @@ defmodule Qukath.Work do
            {:ok, todo_info} <- todo.todo_infos |> hd |>  update_todo_info(attrs)
       do
         {:ok, {todo, todo_info}}
+      else
+        {:error, error} -> Repo.rollback(error)
       end
     end) |> case do
       {:ok, result} ->
         broadcast(result, :todo_updated)
         result
+      error -> error
     end
   end
 
@@ -213,6 +214,7 @@ defmodule Qukath.Work do
     IO.puts "no match"
     IO.puts "----"
     IO.inspect attrs
+    IO.inspect todo
     IO.puts "----"
   end
 

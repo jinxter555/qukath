@@ -13,7 +13,7 @@ defmodule AccountOrgTest do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Repo)
   end
 
-  @tag :skip
+  #@tag :skip
   test "test account user" do
     users = insert_list(3, :user)
     Enum.each(users, fn u ->
@@ -43,7 +43,7 @@ defmodule AccountOrgTest do
     end)
   end
 
-  @tag :skip
+  #@tag :skip
   test "test employees and test orgstruct " do
     :rand.seed(:exsss, {100, 101, 102})
 
@@ -68,7 +68,7 @@ defmodule AccountOrgTest do
     end)
   end
 
-  @tag :skip
+  #@tag :skip
   test "test orgstruct company" do
     companies = insert_list(3, :company)
     Enum.each(companies, fn c ->
@@ -79,7 +79,7 @@ defmodule AccountOrgTest do
     end)
   end
 
-  @tag :skip
+  #@tag :skip
   test "test orgstruct team" do
     team = insert(:team)
     employees = insert_list(3, :employee)

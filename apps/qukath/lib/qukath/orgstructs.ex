@@ -42,10 +42,6 @@ defmodule Qukath.Orgstructs do
     Repo.all(query)
   end
 
-  def list_nested_orgstructs_by_employee(%Employee{} = employee) do
-    list_descendants(employee.orgstruct_id)
-  end
-
   @doc """
   Gets a single orgstruct.
 
@@ -73,7 +69,7 @@ defmodule Qukath.Orgstructs do
     query = from org in Orgstruct,
       where: org.entity_id == ^parent_entity.id
 
-    hd Repo.all(query)
+    Repo.all(query) ++ [nil] |> hd
   end
 
   def get_orgstruct_with_members!(id) do
@@ -95,23 +91,23 @@ defmodule Qukath.Orgstructs do
   """
   def create_orgstruct(attrs \\ %{}) do
     Repo.transaction(fn ->
-      with {:ok, orgstruct_entity} <- create_orgstruct_entity(attrs), # create nested structure
-           {:ok, orgstruct} <- create_orgstruct(orgstruct_entity.id, attrs) do
-
+      with {:ok, entity} <- create_orgstruct_entity(attrs), # create nested structure
+           {:ok, orgstruct} <- %Orgstruct{entity: entity} |> create_orgstruct(attrs)
+      do
         {:ok, orgstruct}
       else
-        error -> error
+        {:error, error} -> Repo.rollback(error)
       end
     end) |> case do
       {:ok,  result} -> 
         broadcast(result, :orgstruct_created, "orgstructs")
         result
+      error -> error
     end
   end
 
-  def create_orgstruct(entity_id, attrs) do
-    attrs = Map.put(attrs, "entity_id", entity_id)
-    %Orgstruct{}
+  def create_orgstruct(%Orgstruct{} = orgstruct_map, attrs) do
+    orgstruct_map
     |> Orgstruct.changeset(attrs)
     |> Repo.insert()
   end
@@ -123,31 +119,38 @@ defmodule Qukath.Orgstructs do
       with {:ok, leader_entity} <- Entities.create_entity(%{type: :employee}),
            {:ok, orgstruct_entity} <- create_orgstruct_entity(attrs),
 
-           attrs <- Map.put(attrs, "leader_entity_id", leader_entity.id),
+           {:ok, orgstruct} <- 
+             %Orgstruct{entity: orgstruct_entity, leader_entity: leader_entity} 
+             |> create_orgstruct(attrs),
 
-           {:ok, orgstruct} <- create_orgstruct(orgstruct_entity.id, attrs),
-           {:ok, _} <- Employees.create_employee(leader_entity.id, 
-             %{"user_id" => user.id, "name" => username, "orgstruct_id" => orgstruct.id}) do
+           {:ok, _employee} <-
+             %Employee{entity: leader_entity}
+             |> Employees.create_employee(%{
+               "user_id" => user.id,
+               "name" => username,
+               "orgstruct_id" => orgstruct.id}) do
         {:ok, orgstruct}
       else
-        error -> error
+        {:error, error} -> Repo.rollback(error)
       end
     end) |> case do
       {:ok, result} -> 
         broadcast(result, :orgstruct_created, "orgstructs")
         result
+      error -> error
     end
   end
 
-  defp create_orgstruct_entity(attrs) do
-    parent_entity_id = 
-      if Map.has_key?(attrs, "orgstruct_id") do
-        get_orgstruct_entity_id!(attrs["orgstruct_id"])
-      else 
-        nil
-      end
+  defp create_orgstruct_entity(%{"orgstruct_id" => ""} = _attrs), do:
+    Entities.create_entity(%{type: :org, parent_id: nil})
+
+  defp create_orgstruct_entity(%{"orgstruct_id" => parent_orgstruct_id} = _attrs) do
+    parent_entity_id = get_orgstruct_entity_id!(parent_orgstruct_id)
     Entities.create_entity(%{type: :org, parent_id: parent_entity_id})
   end
+
+  defp create_orgstruct_entity(_attrs), do:
+    Entities.create_entity(%{type: :org, parent_id: nil})
 
 
   @doc """

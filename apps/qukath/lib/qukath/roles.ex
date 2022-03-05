@@ -70,15 +70,13 @@ defmodule Qukath.Roles do
       do
         {:ok, role}
       else
-        {:error, err} -> 
-          IO.puts "erro create role"
-          IO.inspect err
-          Repo.rollback(err)
+        {:error, error} -> Repo.rollback(error)
       end
     end) |> case do
       {:ok, result} ->
         broadcast(result, :role_created)
         result
+      error -> error
     end
 
   end
