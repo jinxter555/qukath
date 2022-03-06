@@ -1,4 +1,4 @@
-defmodule Qukath.EmployeeRole do
+defmodule Qukath.EmployeeRoles do
   @moduledoc """
   The EmployeeRole context.
   """
@@ -43,13 +43,14 @@ defmodule Qukath.EmployeeRole do
       do
         {:ok, employee_role}
       else
-        {:error, err} ->
-          Repo.rollback(err)
+        {:error, error} ->
+          Repo.rollback(error)
       end
     end) |> case do
       {:ok, result} -> 
         broadcast(result, :employee_role_created)
         result
+      error -> error
     end
   end
 

@@ -2,13 +2,21 @@ defmodule QukathWeb.EmployeeLive.Show do
   use Surface.LiveView
 
   alias Qukath.Employees
-  alias Qukath.Orgstructs
-  alias QukathWeb.EmployeeLive.EmployeeFormBulma
-  alias Surface.Components.Link
+  #alias Qukath.Orgstructs
+  #alias QukathWeb.EmployeeLive.EmployeeFormBulma
+  alias Surface.Components.{LiveRedirect}
+   alias QukathWeb.Router.Helpers, as: Routes
+
 
   #import QukathWeb.ExtraHelper, only: [hide_deleted: 2]
 
   on_mount QukathWeb.AuthUser
+
+  def render(assigns) do
+    ~F"""
+    {@employee.name}: <LiveRedirect label="Roles" to={Routes.employee_roles_index_path(@socket, :index, @employee)}/>
+    """
+  end
 
   @impl true
   def mount(_params, _session, socket) do
