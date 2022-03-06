@@ -27,7 +27,7 @@ defmodule Qukath.EmployeeRoles do
   def list_employee_roles(employee_id: employee_id) do
     query = from er in EmployeeRole,
       where: er.employee_id == ^employee_id
-    Repo.all(query)
+    Repo.all(query) |> Repo.preload([:role])
   end
 
   def get_employee_role!(id), do: Repo.get!(EmployeeRole, id)

@@ -42,6 +42,13 @@ defmodule QukathWeb.EmployeeRolesLive.IndexRoles do
 
       <div class="column ">
         Current Roles
+        {#for er <- @employee_roles }
+        <div id="employee-roles" phx-update="replace">
+          <div id={"employee_role-#{er.id}"}>
+            <Link label={er.role.name} to="#" click="remove_role" values={ er_id: er.id} />
+          </div>
+        </div>
+        {/for}
       </div>
 
       <div class="column is-one-fifth">
@@ -57,8 +64,8 @@ defmodule QukathWeb.EmployeeRolesLive.IndexRoles do
     employee = Employees.get_employee!(employee_id)
     orgstruct = Orgstructs.get_orgstruct!(employee.orgstruct_id)
     nested_orgstruct = Orgstructs.build_nested_orgstruct(employee.orgstruct_id)
-
     roles = Roles.list_roles(orgstruct_id: orgstruct.id)
+    employee_roles = EmployeeRoles.list_employee_roles(%{"employee_id" => employee.id})
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
@@ -67,6 +74,7 @@ defmodule QukathWeb.EmployeeRolesLive.IndexRoles do
      |> assign(:nested_orgstruct, nested_orgstruct)
      |> assign(:selected_orgstruct, %Orgstruct{})
      |> assign(:roles, roles)
+     |> assign(:employee_roles, employee_roles)
     }
   end
     
@@ -76,24 +84,33 @@ defmodule QukathWeb.EmployeeRolesLive.IndexRoles do
     roles = Roles.list_roles(orgstruct_id: orgstruct.id)
     {:noreply, socket
      |> assign(:roles, roles)
-     |> assign(selected_orgstruct: orgstruct)
+     |> assign(:selected_orgstruct, orgstruct)
     }
   end
 
   def handle_event("add_role", params, socket) do
-    IO.puts "add_role"
-    IO.inspect params
-    IO.inspect socket
     EmployeeRoles.create_employee_role(%{
       employee_id: socket.assigns.employee.id,
       role_id: params["role-id"]}) 
     |> case do
-      {:ok, _employee_role} -> {:noreply, 
-          socket |> put_flash(:info, "employee role created successfully")}
+      {:ok, er} -> {:noreply, socket
+          |> assign(:employee_roles, EmployeeRoles.list_employee_roles(%{"employee_id" => er.employee_id}))
+          |> put_flash(:info, "employee role created successfully")}
       _ -> {:noreply,
           socket |> put_flash(:error, "employee role create error")}
     end
+  end
 
+  def handle_event("remove_role", params, socket) do
+    employee_role = EmployeeRoles.get_employee_role!(params["er-id"])
+    EmployeeRoles.delete_employee_role(employee_role)
+    |> case do
+      {:ok, er} -> {:noreply, socket 
+          |> assign(:employee_roles, EmployeeRoles.list_employee_roles(%{"employee_id" => er.employee_id}))
+          |> put_flash(:info, "employee role deleted successfully")}
+      _ -> {:noreply,
+          socket |> put_flash(:error, "employee role deleted error")}
+    end
   end
 
 
