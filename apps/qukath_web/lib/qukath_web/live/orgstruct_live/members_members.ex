@@ -9,11 +9,12 @@ defmodule QukathWeb.OrgstructLive.MembersMembers do
 
 
   alias Qukath.Orgstructs
-  # alias Qukath.Organizations.Orgstruct
+  #alias Qukath.Organizations.Orgstruct
   alias QukathWeb.OrgstructLive.SourceMembers
   alias QukathWeb.OrgstructLive.TargetMembers
 
-  alias QukathWeb.OrgstructLive.NestedOrgstruct
+  alias QukathWeb.OrgstructLive.NestedOrgstructSlot
+  #alias QukathWeb.OrgstructLive.NestedOrgstruct
 
   on_mount QukathWeb.AuthUser
 
@@ -40,7 +41,7 @@ defmodule QukathWeb.OrgstructLive.MembersMembers do
   end
   
   @impl true
-  def handle_event("src_orgstruct", params, socket) do
+  def handle_event("select_src_orgstruct", params, socket) do
     src_orgstruct = Orgstructs.get_orgstruct!(params["orgstruct-id"])
     {:noreply, socket
     |> assign(src_orgstruct: src_orgstruct)
@@ -48,7 +49,7 @@ defmodule QukathWeb.OrgstructLive.MembersMembers do
   end
 
   @impl true
-  def handle_event("tgt_orgstruct", params, socket) do
+  def handle_event("select_tgt_orgstruct", params, socket) do
     tgt_orgstruct = Orgstructs.get_orgstruct!(params["orgstruct-id"])
     {:noreply, socket
     |> assign(tgt_orgstruct: tgt_orgstruct)
@@ -67,8 +68,6 @@ defmodule QukathWeb.OrgstructLive.MembersMembers do
   
   @impl true                                                                                                                                                                                                
   def handle_info({:orgstruct_member_deleted, em}, socket) do                                                                                                                                        
-    # IO.puts "orgstruct_member_deleted"
-    # IO.inspect em
     send_update SourceMembers, id: "sm01", em: em
     send_update TargetMembers, id: "tm02", em: em
      {:noreply, socket }                                                                                                                                                                                     
@@ -77,28 +76,8 @@ defmodule QukathWeb.OrgstructLive.MembersMembers do
   defp page_title(:members), do: "member action in orgstruct"
 
   defp rambo(_socket, _params) do
-   # IO.puts "hello from rambo"
-   # IO.inspect socket
-   # IO.inspect params
+    IO.puts "obmar"
   end
   
-  def src_func(assigns) do
-    ~F"""
-    <Link label={@orgstruct.name} to="#" click="src_orgstruct"
-      values={ orgstruct_id: @orgstruct.id}
-      class={@orgstruct.id == @selected_orgstruct.id && "has-text-primary"}/> <br/>
-    """
-  end
-
-  def tgt_func(assigns) do
-    ~F"""
-    {#if @selected_orgstruct}
-      <Link label={@orgstruct.name} to="#" click="tgt_orgstruct" values={orgstruct_id: @orgstruct.id}
-        class={@orgstruct.id == @selected_orgstruct.id && "has-text-primary-light"}/> <br/>
-    {#else}
-      <Link label={@orgstruct.name} to="#" click="tgt_orgstruct" values={orgstruct_id: @orgstruct.id}/><br/>
-    {/if}
-    """
-  end
 
 end

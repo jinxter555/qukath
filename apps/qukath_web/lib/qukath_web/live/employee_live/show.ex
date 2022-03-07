@@ -14,7 +14,7 @@ defmodule QukathWeb.EmployeeLive.Show do
 
   def render(assigns) do
     ~F"""
-    {@employee.name}: <LiveRedirect label="Roles" to={Routes.employee_roles_index_path(@socket, :index, @employee)}/>
+    {@employee.name}: <LiveRedirect label="Roles" to={Routes.employee_roles_index_roles_path(@socket, :index, @employee)}/>
     """
   end
 

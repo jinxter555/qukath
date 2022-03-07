@@ -6,9 +6,9 @@ defmodule QukathWeb.EmployeeRolesLive.IndexRoles do
   alias Qukath.Organizations.Orgstruct
   alias Qukath.Employees
   alias Qukath.Roles
-  alias Qukath.Roles.EmployeeRole
+  #alias Qukath.Roles.EmployeeRole
   alias Qukath.EmployeeRoles
-  alias QukathWeb.OrgstructLive.NestedOrgstruct
+  alias QukathWeb.OrgstructLive.NestedOrgstructSlot
   alias Surface.Components.{Link}
 
   # alias QukathWeb.Router.Helpers, as: Routes
@@ -20,14 +20,16 @@ defmodule QukathWeb.EmployeeRolesLive.IndexRoles do
     <div class="columns ">
 
       <div class="column is-one-fifth">
-        <NestedOrgstruct
-            nested_orgstruct={@nested_orgstruct}
-            selected_orgstruct={@selected_orgstruct}
-            socket={@socket} 
-            parent_orgstruct={@orgstruct}
-            print_parent={true}
-            orgfunc={&print_orgstruct/1} />
+        <NestedOrgstructSlot nested_orgstruct={@nested_orgstruct} 
+          parent_orgstruct={@orgstruct} print_parent={true} :let={orgstruct: orgstruct_item}>
+
+          <Link label={orgstruct_item.name} to="#" 
+            click="select_orgstruct" values={orgstruct_id: orgstruct_item.id}
+            class={orgstruct_item.id == @selected_orgstruct.id && "has-text-primary"}/> <br/>
+
+        </NestedOrgstructSlot>
       </div>
+
 
       <div class="column ">
         Add roles
@@ -52,7 +54,6 @@ defmodule QukathWeb.EmployeeRolesLive.IndexRoles do
       </div>
 
       <div class="column is-one-fifth">
-        world
       </div>
     </div>
     
@@ -117,12 +118,5 @@ defmodule QukathWeb.EmployeeRolesLive.IndexRoles do
   defp page_title(:index), do: "index employee roles"
   defp page_title(:show), do: "Show employee roles"
   defp page_title(:edit), do: "Edit employee roles"
-
-  def print_orgstruct(assigns) do
-    ~F"""
-      <Link label={@orgstruct.name} to="#" click="select_orgstruct" values={ orgstruct_id: @orgstruct.id}
-      class={@orgstruct.id == @selected_orgstruct.id && "has-text-primary"}/> <br/>
-    """
-  end
 
 end

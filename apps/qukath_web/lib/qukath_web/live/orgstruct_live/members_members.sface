@@ -1,12 +1,13 @@
 <div class="columns ">
   <div class="column is-one-fifth">
-    <NestedOrgstruct
-        nested_orgstruct={@src_nested_orgstruct}
-        socket={@socket} orgfunc={&src_func/1}
-        parent_orgstruct={@orgstruct}
-        print_parent={true}
-        selected_orgstruct={@src_orgstruct}
-        />
+    <NestedOrgstructSlot
+        nested_orgstruct={@src_nested_orgstruct} parent_orgstruct={@orgstruct}
+        print_parent={true} :let={orgstruct: orgstruct_item}>
+
+        <Link label={orgstruct_item.name} to="#" click="select_src_orgstruct" values={orgstruct_id: orgstruct_item.id}
+           class={orgstruct_item.id == @src_orgstruct.id && "has-text-primary"}/> <br/>
+
+    </NestedOrgstructSlot>
   </div>
 
   {#if @tgt_orgstruct}
@@ -22,7 +23,14 @@
   {/if}
 
   <div class="column is-one-fifth">
-    <NestedOrgstruct nested_orgstruct={@tgt_nested_orgstruct} socket={@socket} orgfunc={&tgt_func/1} parent_orgstruct={@orgstruct} print_parent={false} selected_orgstruct={@tgt_orgstruct}/>
+    <NestedOrgstructSlot
+        nested_orgstruct={@tgt_nested_orgstruct} parent_orgstruct={@orgstruct}
+        print_parent={false}  :let={orgstruct: orgstruct_item} >
+
+        <Link label={orgstruct_item.name} to="#" click="select_tgt_orgstruct" values={orgstruct_id: orgstruct_item.id}
+           class={@tgt_orgstruct && orgstruct_item.id == @tgt_orgstruct.id && "has-text-primary"}/> <br/>
+
+    </NestedOrgstructSlot>
   </div>
 
 </div>

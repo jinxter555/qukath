@@ -43,7 +43,6 @@ defmodule QukathWeb.OrgstructLive.TargetMembers do
       </EmployeeIndexEmployees>
     </div>
     """
-          #JS.hide(to: "#" <> item_id) |> JS.show(to: "#" <> "source_member-" <> item_id) |>
   end
 
   #####################
@@ -63,12 +62,8 @@ defmodule QukathWeb.OrgstructLive.TargetMembers do
       socket.assigns.orgstruct.type, 
       socket.assigns.orgstruct, socket, %{})
 
-    #IO.inspect socket
-    #IO.inspect assigns
-    #IO.inspect length(page.entries)
-    #IO.puts "---------"
     {:ok, socket
-    |> assign(:page, page)
+     |> assign(:page, page)
     }
   end
 

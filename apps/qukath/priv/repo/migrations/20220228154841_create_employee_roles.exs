@@ -15,5 +15,6 @@ defmodule Qukath.Repo.Migrations.CreateEmployeeRoles do
     create index(:employee_roles, [:orgstruct_id])
     create index(:employee_roles, [:employee_id])
     create index(:employee_roles, [:role_id])
+    create unique_index(:employee_roles, [:employee_id, :role_id])
   end
 end
