@@ -44,6 +44,13 @@ defmodule Qukath.Work do
     |> merge(:todo_states)
   end
 
+
+                                                                                                                                                                                                             
+  def get_todo_by_entity_id(entity_id) do
+    query = from todo in Todo, where: todo.entity_id == ^entity_id, select: todo
+    Repo.all(query) ++ [nil] |> hd
+  end
+
   ## 
   ## merge todo nested child schemas into todo
   ##

@@ -10,6 +10,7 @@ defmodule Qukath.Entities do
   
   alias Qukath.Orgstructs
   alias Qukath.Employees
+  alias Qukath.Work
 
   @doc """
   Returns the list of entities.
@@ -45,6 +46,15 @@ defmodule Qukath.Entities do
     get_entity!(e.parent_id)
   end
 
+  ################################
+  def get_ancestor_struct(id) do 
+    nested_ancestors(id) |> List.last |>
+    case do
+      nil -> nil
+      ancestor -> get_entity_struct!(ancestor.id)
+    end
+  end
+
   def get_entity_struct!(id) do 
     e = Repo.get!(Entity, id)
     entity_struct(e.type, e.id)
@@ -53,10 +63,21 @@ defmodule Qukath.Entities do
   def entity_struct(:org, id) do
     Orgstructs.get_orgstruct_by_entity_id(id)
   end
+
   def entity_struct(:employee, id) do
     Employees.get_employee_by_entity_id(id)
   end
 
+  def entity_struct(:todo, id) do
+    Work.get_todo_by_entity_id(id)
+  end
+
+  def entity_struct(_, _) do
+    IO.puts "not found"
+    nil
+  end
+
+  ################################
   @doc """
   Creates a entity.
 

@@ -80,9 +80,12 @@ defmodule QukathWeb.TodoLive.Show do
     Ecto.Enum.mappings(Qukath.Work.TodoState, :state)
   end
 
-  defp active_state(state1, state2) do
-    if state1 == state2, do: " is-active",
-    else: ""
-  end
+  #defp active_state(state1, state2) do
+  #  if state1 == state2, do: " is-active",
+  #  else: ""
+  #end
 
+  defp active_state(state1, state2) when state1 == state2, do: " is-active"
+  defp active_state(_, _),  do: " "
 end
+
