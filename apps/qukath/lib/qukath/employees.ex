@@ -146,9 +146,9 @@ defmodule Qukath.Employees do
     employee.entity_id
   end
 
-  def get_employee_by_entity_id!(entity_id) do  
+  def get_employee_by_entity_id(entity_id) do  
     query = from emp in Employee, where: emp.entity_id == ^entity_id, select: emp
-    Repo.all(query)
+    Repo.all(query) ++ [nil] |> hd
   end
 
   def get_employees_by_user_id!(user_id) do  

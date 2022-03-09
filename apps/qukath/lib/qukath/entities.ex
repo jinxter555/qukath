@@ -7,6 +7,9 @@ defmodule Qukath.Entities do
   alias Qukath.Repo
 
   alias Qukath.Entities.Entity
+  
+  alias Qukath.Orgstructs
+  alias Qukath.Employees
 
   @doc """
   Returns the list of entities.
@@ -40,6 +43,18 @@ defmodule Qukath.Entities do
   def get_entity_parent(entity_id) do
     e = get_entity!(entity_id)
     get_entity!(e.parent_id)
+  end
+
+  def get_entity_struct!(id) do 
+    e = Repo.get!(Entity, id)
+    entity_struct(e.type, e.id)
+  end
+
+  def entity_struct(:org, id) do
+    Orgstructs.get_orgstruct_by_entity_id(id)
+  end
+  def entity_struct(:employee, id) do
+    Employees.get_employee_by_entity_id(id)
   end
 
   @doc """
@@ -222,7 +237,6 @@ defmodule Qukath.Entities do
   end
   
   def nested_children(id) do
-
     entity_tree_initial_query = Entity
     |> where([e], e.id == ^id)
   
@@ -240,6 +254,22 @@ defmodule Qukath.Entities do
     |> with_cte("tree", as: ^entity_tree_query)
     # |> join(:left, [], t in "tree", on: t.id == ^id)
     |> Repo.all()
+  end
 
+  def nested_ancestors(id) do
+    entity_tree_initial_query = Entity
+    |> where([e], e.id == ^id)
+  
+    entity_tree_recursion_query = Entity
+    |> join(:inner, [e], t in "tree", on: t.parent_id == e.id)
+  
+    entity_tree_query = entity_tree_initial_query
+    |> union_all(^entity_tree_recursion_query)
+
+    entity_tree_query
+    |> recursive_ctes(true)
+    |> with_cte("tree", as: ^entity_tree_query)
+    |> Repo.all()
   end
 end
+

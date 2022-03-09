@@ -63,7 +63,13 @@ defmodule Qukath.Orgstructs do
     o.entity_id
   end
 
-  def get_orgstruct_parent!(id) do
+  def get_orgstruct_by_entity_id(entity_id) do  
+    query = from org in Orgstruct, where: org.entity_id == ^entity_id, select: org
+    Repo.all(query) ++ [nil] |> hd
+  end
+
+
+  def get_orgstruct_parent(id) do
     parent_entity = get_orgstruct!(id) |> Repo.preload([entity: :parent])
 
     query = from org in Orgstruct,
