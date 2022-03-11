@@ -30,8 +30,19 @@ defmodule Qukath.EmployeeRoles do
     Repo.all(query) |> Repo.preload([:role])
   end
 
-  def get_employee_role!(id), do: Repo.get!(EmployeeRole, id)
 
+  def list_employee_roles(%{"orgstruct_id" => orgstruct_id}),  do:
+    list_employee_roles(orgstruct_id: orgstruct_id)
+
+  def list_employee_roles(orgstruct_id: orgstruct_id) do
+    query = from er in EmployeeRole,
+      where: er.orgstruct_id == ^orgstruct_id
+    Repo.all(query) |> Repo.preload([:role, :employee])
+  end
+
+  ################################
+
+  def get_employee_role!(id), do: Repo.get!(EmployeeRole, id)
 
   ################################
 
@@ -40,7 +51,7 @@ defmodule Qukath.EmployeeRoles do
     Repo.transaction(fn ->
       with {:ok, entity} <- Entities.create_entity(%{type: :employee_role}),
            {:ok, employee_role} <- 
-             %EmployeeRole{entity: entity} |> EmployeeRole.changeset(attrs) |> Repo.insert()
+             %EmployeeRole{entity: entity, orgstruct: nil} |> EmployeeRole.changeset(attrs) |> Repo.insert()
       do
         {:ok, employee_role}
       else

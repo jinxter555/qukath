@@ -10,6 +10,10 @@
 @import "../node_modules/@fortawesome/fontawesome-free/scss/brands";
 
 
+.card .card-image,
+.card .card-image .image img {
+  height: 800px;
+}
 
 body { /* Add this */
   padding-top: 5rem;

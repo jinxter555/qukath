@@ -39,13 +39,12 @@ defmodule Qukath.Work do
     |> Repo.preload([
       @todo_info_preload_order,
       @todo_state_preload_order,
-      @todo_sholder_preload_order]) 
+      @todo_sholder_preload_order,
+      :orgstruct]) 
     |> merge(:todo_infos)
     |> merge(:todo_states)
   end
 
-
-                                                                                                                                                                                                             
   def get_todo_by_entity_id(entity_id) do
     query = from todo in Todo, where: todo.entity_id == ^entity_id, select: todo
     Repo.all(query) ++ [nil] |> hd

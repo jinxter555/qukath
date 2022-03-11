@@ -7,6 +7,8 @@ defmodule QukathWeb.TodoLive.Show do
   alias Surface.Components.Link
   alias SurfaceBulma.Dropdown
   import QukathWeb.TodoLive.Index, only: [todo_form_cid: 0]
+  alias Qukath.EmployeeRoles
+  alias QukathWeb.RoleLive.SelectEmployeeRoles
 
   #import QukathWeb.ExtraHelper, only: [hide_deleted: 2]
 
@@ -17,6 +19,7 @@ defmodule QukathWeb.TodoLive.Show do
     if connected?(socket), do: Work.subscribe()
     {:ok, socket
      |> assign(:show_dropdown, false)
+     |> assign(:employee_roles, [])
     }
   end
 
@@ -27,6 +30,7 @@ defmodule QukathWeb.TodoLive.Show do
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:todo, todo)
+     |> assign(:employee_roles, EmployeeRoles.list_employee_roles(orgstruct_id: todo.orgstruct_id))
     }
   end
 
@@ -50,6 +54,20 @@ defmodule QukathWeb.TodoLive.Show do
       |> assign(todo: todo) 
       #|> assign(show_dropdown: false) 
     }
+  end
+
+  @impl true
+  def handle_event("assign_owner", params, socket) do
+    IO.puts "assign_owner"
+    SelectEmployeeRoles.apply_action(params["action"], params, socket)
+    {:noreply, socket}
+  end
+ 
+  @impl true
+  def handle_event("assign_owner2", params, socket) do
+    IO.puts "assign_owner2"
+    SelectEmployeeRoles.apply_action2(params["action"], params, socket)
+    {:noreply, socket}
   end
 
 

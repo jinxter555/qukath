@@ -56,7 +56,8 @@ defmodule QukathWeb.MixProject do
       {:dart_sass, "~> 0.3", runtime: Mix.env() == :dev},
       {:bulma, "~> 0.9.3"},
       {:surface_bulma, "~> 0.3.2"},
-      {:surface, git: "https://github.com/surface-ui/surface", branch: "master", override: true},
+      # {:surface, git: "https://github.com/surface-ui/surface", branch: "master", override: true},
+      {:surface, "~> 0.7.1", override: true},
       {:surface_catalogue, "~> 0.2.0"},
       {:phx_gen_auth, "~> 0.7"},
 

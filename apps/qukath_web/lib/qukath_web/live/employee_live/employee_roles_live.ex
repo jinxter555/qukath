@@ -16,7 +16,7 @@ defmodule QukathWeb.EmployeeRolesLive.IndexRoles do
   @impl true
   def render(assigns) do
     ~F"""
-    Add Role for: {@employee.name} <br>
+    Add Role for: {@employee.name} {@selected_orgstruct.name}<br>
     <div class="columns ">
 
       <div class="column is-one-fifth">
@@ -62,6 +62,7 @@ defmodule QukathWeb.EmployeeRolesLive.IndexRoles do
 
    @impl true
   def handle_params(%{"employee_id" => employee_id} = _params, _url, socket) do
+    IO.puts "handling employee_id"
     employee = Employees.get_employee!(employee_id)
     orgstruct = Orgstructs.get_orgstruct!(employee.orgstruct_id)
     nested_orgstruct = Orgstructs.build_nested_orgstruct(employee.orgstruct_id)
@@ -72,8 +73,8 @@ defmodule QukathWeb.EmployeeRolesLive.IndexRoles do
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:employee, Employees.get_employee!(employee_id))
      |> assign(:orgstruct, orgstruct)
+     |> assign(:selected_orgstruct, orgstruct)
      |> assign(:nested_orgstruct, nested_orgstruct)
-     |> assign(:selected_orgstruct, %Orgstruct{})
      |> assign(:roles, roles)
      |> assign(:employee_roles, employee_roles)
     }
@@ -81,6 +82,8 @@ defmodule QukathWeb.EmployeeRolesLive.IndexRoles do
     
   @impl true
   def handle_event("select_orgstruct", params, socket) do
+    IO.puts "select_orgstruct "
+    IO.inspect socket.assigns.selected_orgstruct
     orgstruct = Orgstructs.get_orgstruct!(params["orgstruct-id"])
     roles = Roles.list_roles(orgstruct_id: orgstruct.id)
     {:noreply, socket
@@ -90,13 +93,17 @@ defmodule QukathWeb.EmployeeRolesLive.IndexRoles do
   end
 
   def handle_event("add_role", params, socket) do
+    IO.puts "add_role"
+    IO.inspect socket
+    IO.inspect params
     EmployeeRoles.create_employee_role(%{
       employee_id: socket.assigns.employee.id,
+      orgstruct_id: socket.assigns.selected_orgstruct.id,
       role_id: params["role-id"]}) 
     |> case do
       {:ok, er} -> {:noreply, socket
           |> assign(:employee_roles, EmployeeRoles.list_employee_roles(%{"employee_id" => er.employee_id}))
-          |> put_flash(:info, "employee role created successfully")}
+          |> put_flash(:info, "employee role added successfully")}
       _ -> {:noreply,
           socket |> put_flash(:error, "employee role create error")}
     end
