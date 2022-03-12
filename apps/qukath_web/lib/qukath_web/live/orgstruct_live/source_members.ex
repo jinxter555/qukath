@@ -1,7 +1,7 @@
 defmodule QukathWeb.OrgstructLive.SourceMembers do
   use Surface.LiveComponent
 
-  alias Phoenix.LiveView.JS
+  #alias Phoenix.LiveView.JS
 
   alias Qukath.Employees
   alias Qukath.Orgstructs
@@ -24,7 +24,8 @@ defmodule QukathWeb.OrgstructLive.SourceMembers do
 
   def render(assigns) do
     assigns = if Map.has_key?(assigns, :page), do: assigns, # not sure why page
-    else: Map.put(assigns, :page, %Scrivener.Page{total_pages: 0})        # page doesn't exist in assigns
+    else: Map.put(assigns, :page, %Scrivener.Page{total_pages: 0})        
+    # page doesn't exist in assigns
 
     ~F"""
     <div>
@@ -38,12 +39,12 @@ defmodule QukathWeb.OrgstructLive.SourceMembers do
         update_id="source_member"
         :let={employee: employee, item_id: _item_id}>
 
-       <Link label={employee.name} to="#" click={
-         JS.push("orgstruct_employee", value: %{employee_id: employee.id, action: :add})} />
+        <Link label={employee.name} to="#" click="orgstruct_employee"
+        values={employee_id: employee.id, action: :add} />
 
       </EmployeeIndexEmployees>
 
-    </div>
+      </div>
     """
          #JS.hide(to: "#" <> item_id) |> JS.show(to: "#" <> "target_member-" <> item_id) |> 
     
@@ -89,7 +90,7 @@ defmodule QukathWeb.OrgstructLive.SourceMembers do
   def handle_event("orgstruct_employee", params, socket) do
     Orgstructs.insert_orgstruct_member(
       socket.assigns.tgt_orgstruct.id, 
-      params["employee_id"])
+      params["employee-id"])
 
     if socket.assigns.func do
       (socket.assigns.func).(socket, params)

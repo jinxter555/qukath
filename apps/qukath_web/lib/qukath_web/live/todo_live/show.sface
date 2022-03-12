@@ -23,9 +23,3 @@
   <Link label="assign owner" to="#" click="assign_owner" values={action: :assign_owner} class="button"/>
 {/if}
 
-<br>
-{#for er <- @employee_roles}
-  {er.role.name}:{er.employee.name} <br>
-{/for}
-                                  
-

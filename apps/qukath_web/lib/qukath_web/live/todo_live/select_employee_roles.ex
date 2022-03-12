@@ -11,11 +11,13 @@ defmodule QukathWeb.RoleLive.SelectEmployeeRoles do
   #alias QukathWeb.Router.Helpers, as: Routes
   alias SurfaceBulma.Dropdown  
   alias SurfaceBulma.Modal.{Card, Header, Footer}
+  alias Surface.Components.Link
 
 
   import QukathWeb.ExtraHelper, only: [merge_socket_assigns: 2]
   prop orgstruct, :any, required: true
   data show, :boolean, default: false
+  data show_dd, :boolean, default: false
   data employee_roles, :list, default: []
   data ancestor_orgstruct, :any, default: nil
   data orgstruct_list, :list, default: []
@@ -26,25 +28,25 @@ defmodule QukathWeb.RoleLive.SelectEmployeeRoles do
     <Card show={@show} close_event="modal_close" show_close_button={true} class="container is-max-desktop">
 
       <Header >
-        Assign Role
+        Assign Role show_dd: {@show_dd}
       </Header>
 
-    <Dropdown active={false} id="serhdd01" >
+    <Dropdown active={@show_dd} id="serhdd01" >
       <:trigger>{@orgstruct.name}</:trigger>
       <div class="dropdown-menu" id="dropdown-menu" role="menu" >
         <div class="dropdown-content">
 
        {#for org <- @orgstruct_list }
-       {org.name} <br>
+          <Link label={org.name} to="#" click="select_orgstruct"
+             values={selected_orgstruct_id: org.id} class={"dropdown-item" <> active_orgstruct(org.id, @orgstruct.id)} />
        {/for}
-
         </div>
       </div>
     </Dropdown> <br>
 
 
     {#for er <- @employee_roles}
-      {er.role.name} <br>
+      {er.role.name}: {er.employee.name} <br>
     {/for}
 
     </Card>
@@ -79,10 +81,22 @@ defmodule QukathWeb.RoleLive.SelectEmployeeRoles do
 
   @impl true
   def handle_event("modal_close", _params, socket) do
+
     {:noreply, assign(socket, show: false)}
   end
 
+  @impl true
+  def handle_event("select_orgstruct", params, socket) do
+    orgstruct = Orgstructs.get_orgstruct!(params["selected-orgstruct-id"])
+    {:noreply, socket 
+    |> assign(orgstruct: orgstruct)
+    # |> assign(:show_dd, !socket.assigns.show_dd)
+    |> assign(:employee_roles, EmployeeRoles.list_employee_roles(orgstruct_id: orgstruct.id))
+    }
+  end
 
+  defp active_orgstruct(orgstruct1, orgstruct2) when orgstruct1 == orgstruct2, do: " is-active"  
+  defp active_orgstruct(_, _),  do: " "
 
 end
 
