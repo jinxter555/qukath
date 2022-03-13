@@ -64,14 +64,6 @@ defmodule QukathWeb.TodoLive.Show do
   end
  
   @impl true
-  def handle_event("assign_owner2", params, socket) do
-    IO.puts "assign_owner2"
-    SelectEmployeeRoles.apply_action2(params["action"], params, socket)
-    {:noreply, socket}
-  end
-
-
-    @impl true
   def handle_info({:todo_created, todo}, socket) do
     {:noreply, update(socket, :todos, fn todos ->
       [todo | todos]

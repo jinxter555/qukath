@@ -8,6 +8,7 @@ defmodule Qukath.Work do
 
   alias Qukath.Work.{Todo, TodoInfo, TodoState, TodoSholder}
   alias Qukath.Entities
+  alias Qukath.EmployeeRoles
 
   ##############
   @todo_info_preload_order todo_infos: from(ti in TodoInfo, order_by: [desc: ti.updated_at])
@@ -201,6 +202,14 @@ defmodule Qukath.Work do
 
   def create_todo_sholder(todo), do: create_todo_sholder(todo, %{})
 
+  def create_todo_sholder(todo, %{"employee_role_id" => employee_role_id} = attrs) do
+    employee_role = EmployeeRoles.get_employee_role!(employee_role_id)
+    create_todo_sholder(todo, %{
+      "type" => attrs["type"],
+      "entity_id" => employee_role.entity_id
+    })
+  end
+
   def create_todo_sholder(todo, attrs ) when is_list(attrs) do
     result = Enum.map(attrs, fn x -> 
       create_todo_sholder(todo, x)
@@ -209,7 +218,8 @@ defmodule Qukath.Work do
   end
 
   def create_todo_sholder(todo, attrs) when is_map(attrs) do
-    IO.puts "create_todo_sholder in  map"
+    IO.puts "create_todo_sholder in map: attrs:"
+    IO.inspect attrs
     %TodoSholder{todo_id: todo.id}
     |> TodoSholder.changeset(attrs)
     |> Repo.insert()
@@ -223,6 +233,7 @@ defmodule Qukath.Work do
     IO.inspect todo
     IO.puts "----"
   end
+
 
 
   def update_todo_sholder(%TodoSholder{} = todo_sholder, attrs) do

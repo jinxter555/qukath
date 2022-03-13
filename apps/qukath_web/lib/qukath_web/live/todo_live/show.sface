@@ -18,7 +18,7 @@
 </Dropdown>
 
 {#if @todo && @todo.orgstruct}
-  <SelectEmployeeRoles id="ser01" orgstruct={@todo.orgstruct} >
+<SelectEmployeeRoles id="ser01" todo={@todo} orgstruct={@todo.orgstruct} sholder_type="owner" >
   </SelectEmployeeRoles>
   <Link label="assign owner" to="#" click="assign_owner" values={action: :assign_owner} class="button"/>
 {/if}

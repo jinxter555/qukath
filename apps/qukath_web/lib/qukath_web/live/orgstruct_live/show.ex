@@ -23,11 +23,13 @@ defmodule QukathWeb.OrgstructLive.Show do
   @impl true
   def handle_params(%{"id" => id} = _params, _url, socket) do
      orgstruct = Orgstructs.get_orgstruct!(id)
+     orgstruct_list = Orgstructs.list_descendants(orgstruct.id)
     {:noreply,
      socket
      #|> put_flash(:info, "hello who r u?: #{orgstruct.name}")
      #|> put_flash(:error, "what is going on: #{orgstruct.name}")
      |> assign(:orgstruct, orgstruct)
+     |> assign(:orgstruct_list, orgstruct_list)
      |> assign(:page_title, page_title(socket.assigns.live_action))
     }
   end

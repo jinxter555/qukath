@@ -219,31 +219,31 @@ defmodule Qukath.WorkTest do
 
     @invalid_attrs %{}
 
-    @tag :skip
+    #@tag :skip
     test "list_todo_sholders/0 returns all todo_sholders" do
       todo_sholder = todo_sholder_fixture()
       assert Work.list_todo_sholders() == [todo_sholder]
     end
 
-    @tag :skip
+    #@tag :skip
     test "get_todo_sholder!/1 returns the todo_sholder with given id" do
       todo_sholder = todo_sholder_fixture()
       assert Work.get_todo_sholder!(todo_sholder.id) == todo_sholder
     end
 
-    @tag :skip
+    #@tag :skip
     test "create_todo_sholder/1 with valid data creates a todo_sholder" do
       valid_attrs = %{}
 
       assert {:ok, %TodoSholder{} = todo_sholder} = Work.create_todo_sholder(valid_attrs)
     end
 
-    @tag :skip
+    #@tag :skip
     test "create_todo_sholder/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Work.create_todo_sholder(@invalid_attrs)
     end
 
-    @tag :skip
+    #@tag :skip
     test "update_todo_sholder/2 with valid data updates the todo_sholder" do
       todo_sholder = todo_sholder_fixture()
       update_attrs = %{}
@@ -251,21 +251,21 @@ defmodule Qukath.WorkTest do
       assert {:ok, %TodoSholder{} = todo_sholder} = Work.update_todo_sholder(todo_sholder, update_attrs)
     end
 
-    @tag :skip
+    #@tag :skip
     test "update_todo_sholder/2 with invalid data returns error changeset" do
       todo_sholder = todo_sholder_fixture()
       assert {:error, %Ecto.Changeset{}} = Work.update_todo_sholder(todo_sholder, @invalid_attrs)
       assert todo_sholder == Work.get_todo_sholder!(todo_sholder.id)
     end
 
-    @tag :skip
+    #@tag :skip
     test "delete_todo_sholder/1 deletes the todo_sholder" do
       todo_sholder = todo_sholder_fixture()
       assert {:ok, %TodoSholder{}} = Work.delete_todo_sholder(todo_sholder)
       assert_raise Ecto.NoResultsError, fn -> Work.get_todo_sholder!(todo_sholder.id) end
     end
 
-    @tag :skip
+    #@tag :skip
     test "change_todo_sholder/1 returns a todo_sholder changeset" do
       todo_sholder = todo_sholder_fixture()
       assert %Ecto.Changeset{} = Work.change_todo_sholder(todo_sholder)

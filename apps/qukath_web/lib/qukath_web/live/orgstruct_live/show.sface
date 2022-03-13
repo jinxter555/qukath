@@ -6,6 +6,10 @@
 <LiveRedirect label="Members" to={Routes.orgstruct_members_members_path(@socket, :members, @orgstruct)}/>
 <br>
 {newlinks(assigns)}
+<br>
+{#for org <- @orgstruct_list}
+<LiveRedirect label={org.name} to={Routes.orgstruct_show_path(@socket, :show, org)}/> <br>
+{/for}
 
 <OrgstructFormBulma id={orgstruct_form_cid()} />
 

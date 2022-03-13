@@ -10,6 +10,7 @@ defmodule Qukath.Entities do
   
   alias Qukath.Orgstructs
   alias Qukath.Employees
+  alias Qukath.EmployeeRoles
   alias Qukath.Work
 
   @doc """
@@ -66,6 +67,10 @@ defmodule Qukath.Entities do
 
   def entity_struct(:employee, id) do
     Employees.get_employee_by_entity_id(id)
+  end
+
+  def entity_struct(:employee_role, id) do
+    EmployeeRoles.get_employee_role_by_entity_id(id)
   end
 
   def entity_struct(:todo, id) do
