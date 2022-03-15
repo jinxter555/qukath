@@ -18,7 +18,7 @@ defmodule Qukath.Work.TodoSholder do
   @doc false
   def changeset(todo_sholder, attrs) do
     todo_sholder
-    |> cast(attrs, [:todo_id, :entity_id, :type])
-    |> validate_required([:todo_id, :entity_id, :type])
+    |> cast(attrs, [:todo_id, :approved, :type])
+    |> validate_required([:todo_id, :approved, :type])
   end
 end

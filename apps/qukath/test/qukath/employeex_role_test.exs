@@ -1,18 +1,18 @@
-defmodule Qukath.EmployeexRoleTest do
+defmodule Qukath.EmployeeRoleTest do
   use Qukath.DataCase
 
-  alias Qukath.EmployeexRole
+  alias Qukath.EmployeeRole
 
-  describe "employee_x_roles" do
-    alias Qukath.EmployeexRole.EmployeeRole
+  describe "employee_roles" do
+    alias Qukath.EmployeeRole.EmployeeRole
 
-    import Qukath.EmployeexRoleFixtures
+    import Qukath.EmployeeRoleFixtures
 
     @invalid_attrs %{}
 
-    test "list_employee_x_roles/0 returns all employee_x_roles" do
+    test "list_employee_roles/0 returns all employee_roles" do
       employee_role = employee_role_fixture()
-      assert EmployeexRole.list_employee_x_roles() == [employee_role]
+      assert EmployeeRole.list_employee_roles() == [employee_role]
     end
 
     test "get_employee_role!/1 returns the employee_role with given id" do

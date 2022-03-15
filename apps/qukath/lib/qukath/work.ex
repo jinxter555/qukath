@@ -84,7 +84,8 @@ defmodule Qukath.Work do
       do
         {:ok, todo}
       else
-        {:error, error} -> Repo.rollback(error)
+        {:error, error} -> 
+          Repo.rollback(error)
       end
     end) |> case do
       {:ok, result} -> 
@@ -218,8 +219,6 @@ defmodule Qukath.Work do
   end
 
   def create_todo_sholder(todo, attrs) when is_map(attrs) do
-    IO.puts "create_todo_sholder in map: attrs:"
-    IO.inspect attrs
     %TodoSholder{todo_id: todo.id}
     |> TodoSholder.changeset(attrs)
     |> Repo.insert()

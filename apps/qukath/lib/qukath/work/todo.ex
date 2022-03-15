@@ -27,7 +27,7 @@ defmodule Qukath.Work.Todo do
   def changeset(todo, attrs) do
     todo
     |> cast(attrs, [:type, :orgstruct_id, :description, :name])
-    |> validate_required([:type, :orgstruct_id, :description])
+    |> validate_required([:type, :orgstruct_id, :description, :name])
     |> cast_assoc(:entity)
     |> cast_assoc(:orgstruct)
   end

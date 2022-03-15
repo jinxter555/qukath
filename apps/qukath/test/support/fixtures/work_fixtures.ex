@@ -12,8 +12,8 @@ defmodule Qukath.WorkFixtures do
   Generate a todo.
   """
   def todo_fixture(attrs \\ %{}) do
-    employee = insert(:employee)
     orgstruct =  insert(:orgstruct)
+    employee_role = insert(:employee_role)
 
     {:ok, todo} =
       attrs
@@ -24,7 +24,7 @@ defmodule Qukath.WorkFixtures do
         "state" => :notstarted,
         "type" => :task,
         # "sholder" => [entity: employee.entity, type: :owner],
-        "sholder" => [],
+        "sholder" => [%{type: :owner, entity: employee_role.entity, approved: :yes}],
       })
       |> Work.create_todo()
     todo # |> Map.drop([:entity, :owner_entity])
@@ -34,13 +34,10 @@ defmodule Qukath.WorkFixtures do
   Generate a todo_state.
   """
   def todo_state_fixture(attrs \\ %{}) do
+    todo = insert(:todo)
     {:ok, todo_state} =
-      attrs
-      |> Enum.into(%{
-        state: :notstarted
-      })
-      |> Qukath.Work.create_todo_state()
-
+      Qukath.Work.create_todo_state(todo, 
+        attrs |> Enum.into(%{ state: :notstarted }))
     todo_state
   end
 
@@ -48,15 +45,11 @@ defmodule Qukath.WorkFixtures do
   Generate a todo_sholder.
   """
   def todo_sholder_fixture(attrs \\ %{}) do
-    employee = insert(:employee)
+    todo = insert(:todo)
+    employee_role = insert(:employee_role)
     {:ok, todo_sholder} =
-      attrs
-      |> Enum.into(%{
-        type: :owner,
-        entity: employee.entity,
-        approved: :yes
-      })
-      |> Qukath.Work.create_todo_sholder()
+      Qukath.Work.create_todo_sholder(todo, Enum.into(attrs, %{ type: :owner, entity: employee_role.entity, approved: :yes
+      }))
 
     todo_sholder
   end
@@ -65,14 +58,14 @@ defmodule Qukath.WorkFixtures do
   Generate a todo_info.
   """
   def todo_info_fixture(attrs \\ %{}) do
+    todo = insert(:todo)
     {:ok, todo_info} =
-      attrs
-      |> Enum.into(%{
+      Qukath.Work.create_todo_info(todo, 
+        Enum.into(attrs, %{
         dependency: "some dependency",
         description: "some description",
         name: "some name"
-      })
-      |> Qukath.Work.create_todo_info()
+      }))
 
     todo_info
   end
