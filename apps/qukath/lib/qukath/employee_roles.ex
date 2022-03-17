@@ -55,16 +55,16 @@ defmodule Qukath.EmployeeRoles do
   ################################
 
   def create_employee_role(attrs \\ %{}) do
-    IO.puts "begin create_employee_role"
+    #IO.puts "begin create_employee_role"
     Repo.transaction(fn ->
       with {:ok, entity} <- Entities.create_entity(%{type: :employee_role}),
            {:ok, employee_role} <- 
-             %EmployeeRole{entity: entity, orgstruct: nil} |> EmployeeRole.changeset(attrs) |> Repo.insert()
+             %EmployeeRole{entity: entity} |> EmployeeRole.changeset(attrs) |> Repo.insert()
       do
         {:ok, employee_role}
       else
         {:error, error} ->
-          IO.puts "error create employee_role1"
+          #IO.puts "error create employee_role1"
           Repo.rollback(error)
       end
     end) |> case do
@@ -72,7 +72,7 @@ defmodule Qukath.EmployeeRoles do
         broadcast(result, :employee_role_created)
         result
       error -> 
-          IO.puts "error create employee_role2"
+          #IO.puts "error create employee_role2"
         error
     end
   end

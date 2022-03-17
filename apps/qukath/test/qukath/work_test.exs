@@ -185,6 +185,21 @@ defmodule Qukath.WorkTest do
     end
 
     #@tag :skip
+    test "create_todo/1 with 'employee_role_id' and valid data " do
+      orgstruct = insert(:orgstruct)
+      employee_role = insert(:employee_role)
+      valid_attrs = %{
+        "orgstruct_id" => orgstruct.id,
+        "type" => :task,
+        "name" => "morning task",
+        "description" => "make milk coffee",
+        "sholder" => %{"employee_role_id" => employee_role.id, "type" => :owner}}
+
+      assert {:ok, todo} = Work.create_todo(valid_attrs)
+      #IO.inspect (todo |> Repo.preload([:todo_sholders]))
+    end
+
+    #@tag :skip
     test "update_todo_sholder/2 with valid data updates the todo_sholder" do
       todo_sholder = todo_sholder_fixture()
       update_attrs = %{}

@@ -78,9 +78,11 @@ defmodule Qukath.Factory do
   end
 
   def role_factory do
+    orgstruct = insert(:orgstruct)
     %Role {
       name: Faker.Person.title(),
       entity: build(:entity, %{type: :role}),
+      orgstruct: orgstruct,
     }
   end
 
