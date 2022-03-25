@@ -40,6 +40,7 @@ defmodule QukathWeb.Router do
     live "/orgstructs/:orgstruct_id/employees", EmployeeLive.Index, :orgstruct
     live "/orgstructs/:orgstruct_id/todos", TodoLive.Index, :orgstruct
     live "/orgstructs/:orgstruct_id/roles", RoleLive.Index, :orgstruct
+    live "/orgstructs/:orgstruct_id/resources", ResourceLive.Index, :orgstruct
     live "/orgstructs/:orgstruct_id/employee_roles", RoleLive.EmployeeRoles, :orgstruct
 
     #live "/orgstructs/:src_orgstruct_id/:tgt_orgstruct_id/members", EmployeeLive.Members, :add_members
@@ -51,6 +52,7 @@ defmodule QukathWeb.Router do
     live "/employees/:employee_id/roles", EmployeeRolesLive.IndexRoles, :index
 
     live "/roles/:id", RoleLive.Show, :show
+    live "/resources/:id", ResourceLive.Show, :show
 
     #live "/employees/:orgstruct_id/orgstruct", EmployeeLive.Index, :orgstruct
 

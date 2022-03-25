@@ -1,0 +1,18 @@
+{#if @orgstruct}
+<Link
+    label="New Resource" to="#" click="resource_form" 
+    values={orgstruct_id: @orgstruct.id,
+    action: :new, cid: resource_form_cid()} class="button"/>
+{/if}
+
+<ResourceFormBulma id={resource_form_cid()} /> 
+
+<div id="resources" phx-update="append">
+  {#for resource <- @resources }
+  <div id={"resource-#{resource.id}"} class={hide_deleted(resource, "container")}>
+    <LiveRedirect label={resource.name} to={Routes.resource_show_path(@socket, :show, resource)}} />
+    <Link label="Edit" to="#" click="resource_form" values={resource_id: resource.id, action: :edit, cid: resource_form_cid} />
+    <Link label="Delete" to="#" click="resource_form" values={resource_id: resource.id, action: :delete} />
+  </div>
+  {/for}
+</div>

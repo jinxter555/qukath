@@ -6,6 +6,7 @@ defmodule Qukath.Repo.Migrations.CreateTodoInfos do
       add :name, :string
       add :description, :string
       add :dependency, :string
+      add :priority, :integer, default: 1
       add :required_approval, :boolean
       add :todo_id, references(:todos, on_delete: :delete_all)
 
