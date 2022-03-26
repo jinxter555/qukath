@@ -17,4 +17,18 @@ defmodule Qukath.ResourcesFixtures do
 
     resource
   end
+
+  @doc """
+  Generate a action.
+  """
+  def action_fixture(attrs \\ %{}) do
+    {:ok, action} =
+      attrs
+      |> Enum.into(%{
+        verb: "some verb"
+      })
+      |> Qukath.Resources.create_action()
+
+    action
+  end
 end
