@@ -1,10 +1,10 @@
-defmodule Qukath.Resources.Action do
+defmodule Qukath.Resources.Permit do
   use Ecto.Schema
   import Ecto.Changeset
 
   alias Qukath.Resources.Resource
 
-  schema "actions" do
+  schema "permits" do
     field :verb, :string
     #field :resource_id, :id
     belongs_to :resource, Resource
@@ -13,8 +13,8 @@ defmodule Qukath.Resources.Action do
   end
 
   @doc false
-  def changeset(action, attrs) do
-    action
+  def changeset(permit, attrs) do
+    permit
     |> cast(attrs, [:verb, :resource_id])
     |> validate_required([:verb, :resource_id])
   end

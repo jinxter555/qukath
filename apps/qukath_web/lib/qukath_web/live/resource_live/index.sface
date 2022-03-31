@@ -10,8 +10,8 @@
 <div id="resources" phx-update="append">
   {#for resource <- @resources }
   <div id={"resource-#{resource.id}"} class={hide_deleted(resource, "container")}>
-    <LiveRedirect label={resource.name} to={Routes.resource_show_path(@socket, :show, resource)}} />
-    <Link label="Edit" to="#" click="resource_form" values={resource_id: resource.id, action: :edit, cid: resource_form_cid} />
+    <LiveRedirect label={resource.name} to={Routes.resource_show_path(@socket, :show, resource)} />
+    <Link label="Edit" to="#" click="resource_form" values={resource_id: resource.id, action: :edit, cid: resource_form_cid()} />
     <Link label="Delete" to="#" click="resource_form" values={resource_id: resource.id, action: :delete} />
   </div>
   {/for}

@@ -80,9 +80,14 @@ defmodule QukathWeb.ResourceLive.Index do
   end
 
 
+  def permit_form_cid() do
+    "pfb01"
+  end
+
   def resource_form_cid() do
     "rscfb01"
   end
+
 
 
 end
