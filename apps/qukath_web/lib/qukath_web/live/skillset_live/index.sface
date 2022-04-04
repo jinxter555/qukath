@@ -1,0 +1,18 @@
+{#if @role}
+<Link
+    label="New Skillset" to="#" click="skillset_form" 
+    values={role_id: @role.id,
+    action: :new, cid: skillset_form_cid()} class="button"/>
+{/if}
+
+<SkillsetFormBulma id={skillset_form_cid()} /> 
+
+<div id="skillsets" phx-update="append">
+  {#for skillset <- @skillsets }
+  <div id={"skillset-#{skillset.id}"} class={hide_deleted(skillset, "container")}>
+    <LiveRedirect label={skillset.name} to={Routes.skillset_show_path(@socket, :show, skillset)}} />
+    <Link label="Edit" to="#" click="skillset_form" values={skillset_id: skillset.id, action: :edit, cid: skillset_form_cid()} />
+    <Link label="Delete" to="#" click="skillset_form" values={skillset_id: skillset.id, action: :delete} />
+  </div>
+  {/for}
+</div>

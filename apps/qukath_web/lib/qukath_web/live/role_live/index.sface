@@ -11,7 +11,7 @@
   {#for role <- @roles }
   <div id={"role-#{role.id}"} class={hide_deleted(role, "container")}>
     <LiveRedirect label={role.name} to={Routes.role_show_path(@socket, :show, role)}} />
-    <Link label="Edit" to="#" click="role_form" values={role_id: role.id, action: :edit, cid: role_form_cid} />
+    <Link label="Edit" to="#" click="role_form" values={role_id: role.id, action: :edit, cid: role_form_cid()} />
     <Link label="Delete" to="#" click="role_form" values={role_id: role.id, action: :delete} />
   </div>
   {/for}

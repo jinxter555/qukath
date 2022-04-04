@@ -52,7 +52,10 @@ defmodule QukathWeb.Router do
     live "/employees/:employee_id/roles", EmployeeRolesLive.IndexRoles, :index
 
     live "/roles/:id", RoleLive.Show, :show
+    live "/roles/:role_id/skillset", SkillsetLive.Index, :index
+
     live "/resources/:id", ResourceLive.Show, :show
+    live "/skillset/:id", SkillsetLive.Show, :show
 
     #live "/employees/:orgstruct_id/orgstruct", EmployeeLive.Index, :orgstruct
 

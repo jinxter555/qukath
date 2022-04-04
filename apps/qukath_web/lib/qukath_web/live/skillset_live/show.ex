@@ -1,4 +1,4 @@
-defmodule QukathWeb.RoleLive.Show do
+defmodule QukathWeb.SkillsetLive.Show do
 
   use Surface.LiveView, layout: {QukathWeb.LayoutView, "live.html"}
 
@@ -12,7 +12,7 @@ defmodule QukathWeb.RoleLive.Show do
   alias Surface.Components.{Link,LiveRedirect}
   alias QukathWeb.Router.Helpers, as: Routes
 
-  #import QukathWeb.ExtraHelper, only: [hide_deleted: 2]
+  import QukathWeb.ExtraHelper, only: [hide_deleted: 2]
 
   import QukathWeb.RoleLive.Index, only: [role_form_cid: 0]
 
@@ -25,8 +25,6 @@ defmodule QukathWeb.RoleLive.Show do
     ~F"""
      <RoleFormBulma id={role_form_cid()} />
       role: <Link label={@role.name} to="#" click="role_form" values={role_id: @role.id, action: :edit, cid: role_form_cid()} />
-      <LiveRedirect label="Skillsets" to={Routes.skillset_index_path(@socket, :index, @role)}/>
-
     """
   end
 

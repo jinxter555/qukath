@@ -6,7 +6,7 @@ defmodule Qukath.Skillsets do
   import Ecto.Query, warn: false
   alias Qukath.Repo
 
-  alias Qukath.Skillsets.Skillset
+  alias Qukath.Roles.Skillset
 
   @doc """
   Returns the list of skillsets.
@@ -19,6 +19,16 @@ defmodule Qukath.Skillsets do
   """
   def list_skillsets do
     Repo.all(Skillset)
+  end
+
+  def list_skillsets(%{"role_id" => role_id}), do:
+      list_skillsets(role_id: role_id)
+
+  def list_skillsets(role_id: role_id) do
+    query = from s in Skillset,
+      where: s.role_id == ^role_id,
+      select: s
+    Repo.all(query) 
   end
 
   @doc """
@@ -53,6 +63,8 @@ defmodule Qukath.Skillsets do
     %Skillset{}
     |> Skillset.changeset(attrs)
     |> Repo.insert()
+    |> broadcast(:skillset_created)
+
   end
 
   @doc """
@@ -71,6 +83,7 @@ defmodule Qukath.Skillsets do
     skillset
     |> Skillset.changeset(attrs)
     |> Repo.update()
+    |> broadcast(:skillset_updated)
   end
 
   @doc """
@@ -87,6 +100,7 @@ defmodule Qukath.Skillsets do
   """
   def delete_skillset(%Skillset{} = skillset) do
     Repo.delete(skillset)
+    |> broadcast(:skillset_deleted)
   end
 
   @doc """
@@ -101,4 +115,18 @@ defmodule Qukath.Skillsets do
   def change_skillset(%Skillset{} = skillset, attrs \\ %{}) do
     Skillset.changeset(skillset, attrs)
   end
+
+
+   #########################
+  def subscribe do
+    Phoenix.PubSub.subscribe(Qukath.PubSub, "skillsets")
+  end
+
+  defp broadcast({:error, _reason} = error, _event), do: error
+  defp broadcast({:ok, skillset}, event) do
+    Phoenix.PubSub.broadcast(Qukath.PubSub, "skillsets", {event, skillset})
+    {:ok, skillset}
+  end
+
+
 end
