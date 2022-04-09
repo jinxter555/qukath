@@ -7,6 +7,7 @@ defmodule QukathWeb.RoleLive.Show do
 
 
   alias Qukath.Roles
+  alias Qukath.Orgstructs
   alias QukathWeb.RoleLive.RoleFormBulma
 
   alias Surface.Components.{Link,LiveRedirect}
@@ -40,9 +41,11 @@ defmodule QukathWeb.RoleLive.Show do
   @impl true
   def handle_params(%{"id" => id} = _params, _url, socket) do
     role = Roles.get_role!(id)
+    orgstruct = Orgstructs.get_orgstruct!(role.orgstruct_id)
     {:noreply,
      socket
      |> assign(:role, role)
+     |> assign(:orgstruct, orgstruct)
      |> assign(:page_title, page_title(socket.assigns.live_action))
     }
   end

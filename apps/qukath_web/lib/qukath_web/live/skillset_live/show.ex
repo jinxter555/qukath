@@ -6,15 +6,15 @@ defmodule QukathWeb.SkillsetLive.Show do
   alias QukathWeb.Router.Helpers, as: Routes
 
 
-  alias Qukath.Roles
-  alias QukathWeb.RoleLive.RoleFormBulma
+  alias Qukath.{Skillsets,Roles}
+  alias QukathWeb.SkillsetLive.SkillsetFormBulma
 
   alias Surface.Components.{Link,LiveRedirect}
   alias QukathWeb.Router.Helpers, as: Routes
 
   import QukathWeb.ExtraHelper, only: [hide_deleted: 2]
 
-  import QukathWeb.RoleLive.Index, only: [role_form_cid: 0]
+  import QukathWeb.SkillsetLive.Index, only: [skillset_form_cid: 0]
 
 
   on_mount QukathWeb.AuthUser
@@ -23,8 +23,9 @@ defmodule QukathWeb.SkillsetLive.Show do
   @impl true
   def render(assigns) do
     ~F"""
-     <RoleFormBulma id={role_form_cid()} />
-      role: <Link label={@role.name} to="#" click="role_form" values={role_id: @role.id, action: :edit, cid: role_form_cid()} />
+     <SkillsetFormBulma id={skillset_form_cid()} />
+     skillset for role: {@role.name}: <br>
+    <Link label={@skillset.name} to="#" click="skillset_form" values={skillset_id: @skillset.id, action: :edit, cid: skillset_form_cid()} />
     """
   end
 
@@ -37,23 +38,25 @@ defmodule QukathWeb.SkillsetLive.Show do
 
   @impl true
   def handle_params(%{"id" => id} = _params, _url, socket) do
-    role = Roles.get_role!(id)
+    skillset = Skillsets.get_skillset!(id)
+    role = Roles.get_role!(skillset.role_id)
     {:noreply,
      socket
+     |> assign(:skillset, skillset)
      |> assign(:role, role)
      |> assign(:page_title, page_title(socket.assigns.live_action))
     }
   end
 
   @impl true
-  def handle_event("role_form", params, socket) do
-     RoleFormBulma.apply_action(params["action"], params, socket)
+  def handle_event("skillset_form", params, socket) do
+     SkillsetFormBulma.apply_action(params["action"], params, socket)
     {:noreply, socket}
   end
 
 
-  defp page_title(:show), do: "Show role"
-  defp page_title(:edit), do: "Edit role"
+  defp page_title(:show), do: "Show skillset"
+  defp page_title(:edit), do: "Edit skillset"
 
 
 end

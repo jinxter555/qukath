@@ -2,7 +2,8 @@
 <Link
     label="New Skillset" to="#" click="skillset_form" 
     values={role_id: @role.id,
-    action: :new, cid: skillset_form_cid()} class="button"/>
+                                action: :new, cid: skillset_form_cid()} class="button"/>
+for role {@role.name}
 {/if}
 
 <SkillsetFormBulma id={skillset_form_cid()} /> 

@@ -49,6 +49,11 @@ defmodule Qukath.Roles do
   """
   def get_role!(id), do: Repo.get!(Role, id)
 
+  def get_orgstruct_id!(role_id) do
+    role = get_role!(role_id)
+    role.orgstruct_id
+  end
+
   @doc """
   Creates a role.
 
